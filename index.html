@@ -506,15 +506,15 @@
             lessonsCollection: [],
             progressMatrix: [],
             activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828" 
-            
         };
-let todayActiveMinutes = 0;
+        let todayActiveMinutes = 0;
+
         // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
         document.addEventListener("DOMContentLoaded", async () => {
             if (typeof lucide !== 'undefined') lucide.createIcons();
             runClockEngine();
             await evaluateSessionContextState();
-            startRealTimeActivityTracker();
+            startRealTimeActivityTracker(); // Make sure this function exists or remove it if not needed
         });
 
         async function evaluateSessionContextState() {
@@ -552,7 +552,7 @@ let todayActiveMinutes = 0;
                 await syncClassroomSyllabusEngine();
                 
                 if(profile.role === 'super_admin') {
-                    fetchAdminLiveStats();
+                    fetchAdminLiveStats(); // Make sure this function exists or rename to updateAdminDashboard
                 }
 
                 displayScreenLayer("app-container");
@@ -608,7 +608,6 @@ let todayActiveMinutes = 0;
                 const fileName = `${globalState.sessionUser.id}-${Math.random()}.${fileExt}`;
                 const filePath = `avatars/${fileName}`;
                 
-                // Note: Needs 'avatars' bucket created in Supabase
                 let { error: uploadError } = await supabaseClientInstance.storage.from('avatars').upload(filePath, file);
                 if (uploadError) throw uploadError;
 
@@ -684,43 +683,32 @@ let todayActiveMinutes = 0;
         };
 
         // --- BUSINESS LOGIC & CLASSROOM ---
+        async function syncClassroomSyllabusEngine() {
+            try {
+                let { data: lessons, error: lessonError } = await supabaseClientInstance
+                    .from('lessons')
+                    .select('*')
+                    .order('lesson_number', { ascending: true });
 
- // --- 1. syncClassroomSyllabusEngine کا صحیح اختتام ---
-async function syncClassroomSyllabusEngine() {
-    try {
-        let { data: lessons, error: lessonError } = await supabaseClientInstance
-            .from('lessons')
-            .select('*')
-            .order('lesson_number', { ascending: true });
+                if (lessonError) throw lessonError;
+                globalState.lessonsCollection = lessons || [];
 
-        if (lessonError) throw lessonError;
-        globalState.lessonsCollection = lessons || [];
-
-        if(globalState.sessionUser) {
-            let { data: progress, error: progError } = await supabaseClientInstance
-                .from('lesson_progress')
-                .select('*')
-                .eq('student_id', globalState.sessionUser.id);
-            
-            globalState.progressMatrix = progress || [];
-        }
-        
-        renderClassroomSyllabusTreeLayout();
-        await evaluateAnalyticsAggregatesMetricsContainers(); 
+                if(globalState.sessionUser) {
+                    let { data: progress, error: progError } = await supabaseClientInstance
+                        .from('lesson_progress')
+                        .select('*')
+                        .eq('student_id', globalState.sessionUser.id);
+                    
+                    globalState.progressMatrix = progress || [];
+                }
                 
-    } catch(e) { 
-        console.error("Critical System Error:", e);
-    }
-} // This closes the first function
-
-async function evaluateAnalyticsAggregatesMetricsContainers() {
-    if (!globalState.sessionUser) return;
-    
-    // ... [Your existing logic for updating DOM elements] ...
-    
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-} // This closes the second function
-        
+                renderClassroomSyllabusTreeLayout();
+                await evaluateAnalyticsAggregatesMetricsContainers(); 
+                        
+            } catch(e) { 
+                console.error("Critical System Error:", e);
+            }
+        } 
         
         function renderClassroomSyllabusTreeLayout() {
             const container = document.getElementById("classroom-lessons-stack");
@@ -778,8 +766,7 @@ async function evaluateAnalyticsAggregatesMetricsContainers() {
             updateWatchProgressBarUIState(percentage);
 
             const gateContainer = document.getElementById("assignment-gate-container");
-                        if(gateContainer) {
-                // Force Unlock بٹن والا نیا لاجک
+            if(gateContainer) {
                 gateContainer.innerHTML = `
                     <div class="p-5 border border-emerald-200 bg-emerald-50/50 rounded-2xl space-y-3">
                         <div class="flex items-center space-x-2 text-emerald-800"><i data-lucide="check-circle" class="w-5 h-5"></i><span class="font-bold text-sm">Assignment Gateway</span></div>
@@ -804,175 +791,147 @@ async function evaluateAnalyticsAggregatesMetricsContainers() {
             }
         }
 
-        
-    async function evaluateAnalyticsAggregatesMetricsContainers() {
-    if (!globalState.sessionUser) return;
+        async function evaluateAnalyticsAggregatesMetricsContainers() {
+            if (!globalState.sessionUser) return;
 
-    const totalItemsCount = globalState.lessonsCollection.length;
-    const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
-    const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
+            const totalItemsCount = globalState.lessonsCollection.length;
+            const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
+            const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
 
-    // پروگریس بار اور بیج اپ ڈیٹ کریں
-    const badge = document.getElementById("dash-course-progress-badge");
-    if (badge) badge.textContent = `${completedCount}/${totalItemsCount} Modules`;
-    
-    const bar = document.getElementById("dash-progress-bar-fill");
-    if (bar) bar.style.width = `${completionRatio}%`;
-
-    // سرٹیفکیٹ لاجک
-    const certWrapper = document.getElementById("certificate-delivery-wrapper");
-    if (certWrapper) {
-        if (totalItemsCount > 0 && completedCount === totalItemsCount) {
-            certWrapper.innerHTML = `
-                <button onclick="generateAndDownloadCertificate()" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
-                    <i data-lucide="award" class="inline w-4 h-4 mr-1"></i> Download Verified Certificate
-                </button>`;
-        } else {
-            certWrapper.innerHTML = `
-                <button disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">
-                    Certificate Locked (${completedCount}/${totalItemsCount} Completed)
-                </button>`;
-        }
-    }
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-}
-
-    // آئیکنز کو ریفریش کریں
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-}
-
-
-        // اسٹریک کیلکولیشن اور ڈسپلے
-async function calculateAndDisplayStreak() {
-    const { data: activity } = await supabaseClientInstance
-        .from('daily_activity')
-        .select('date')
-        .eq('student_id', globalState.sessionUser.id)
-        .order('date', { ascending: false });
-
-    if (!activity || activity.length === 0) return;
-
-    let streak = 0;
-    let today = new Date();
-    today.setHours(0,0,0,0);
-
-    for (let i = 0; i < activity.length; i++) {
-        let activityDate = new Date(activity[i].date);
-        activityDate.setHours(0,0,0,0);
-        
-        // اگر تاریخیں ترتیب سے ہیں تو اسٹریک بڑھائیں
-        let expectedDate = new Date(today);
-        expectedDate.setDate(today.getDate() - i);
-
-        if (activityDate.toDateString() === expectedDate.toDateString()) {
-            streak++;
-        } else {
-            break; 
-        }
-    }
-    const streakEl = document.getElementById("stat-current-streak");
-    if(streakEl) streakEl.textContent = `${streak} Days`;
-        }
-        
-// ایکٹیویٹی ہسٹری فیچنگ
-async function fetchActivityHistory() {
-    let { data: history } = await supabaseClientInstance
-        .from('daily_activity')
-        .select('*')
-        .eq('student_id', globalState.sessionUser.id)
-        .order('date', { ascending: false });
-
-    const list = document.getElementById('activity-history-list');
-    if (!list) return;
-
-    list.innerHTML = history.map(h => `
-        <div class="activity-card p-4 border rounded-xl mb-2">
-            <h4 class="font-bold text-lg">${h.date}</h4>
-            <p>⏱ کل وقت: ${h.active_minutes} منٹ</p>
-            <p class="text-sm">📚 دیکھے گئے لیکچرز: ${h.lectures_watched.length > 0 ? h.lectures_watched.join(', ') : 'کوئی لیکچر نہیں'}</p>
-        </div>
-    `).join('');
-}
-        // --- 1. منٹس ٹریکر (ہر 1 منٹ میں کال ہوگا) ---
-async function trackActivity() {
-    if (!globalState.sessionUser) return;
-    
-    todayActiveMinutes++; 
-    
-    // منٹس اور وقت اپ ڈیٹ کریں
-    await supabaseClientInstance.from('daily_activity').upsert({
-        student_id: globalState.sessionUser.id,
-        date: new Date().toISOString().split('T')[0],
-        active_minutes: todayActiveMinutes,
-        last_seen: new Date().toISOString()
-    }, { onConflict: 'student_id, date' });
-}
-setInterval(trackActivity, 60000);
-
-// --- 2. لیکچر ٹریکر (جب یزر لیکچر کھولے یا بٹن دبائے تو اسے کال کریں) ---
-async function logLectureActivity(lessonTitle) {
-    if (!globalState.sessionUser) return;
-
-    const today = new Date().toISOString().split('T')[0];
-    
-    // پہلے موجودہ ڈیٹا حاصل کریں
-    let { data: row } = await supabaseClientInstance
-        .from('daily_activity')
-        .select('lectures_watched')
-        .eq('student_id', globalState.sessionUser.id)
-        .eq('date', today)
-        .single();
-
-    let list = row ? row.lectures_watched : [];
-    
-    // اگر لیکچر لسٹ میں نہیں ہے تو ڈالیں
-    if (!list.includes(lessonTitle)) {
-        list.push(lessonTitle);
-        
-        await supabaseClientInstance.from('daily_activity').upsert({
-            student_id: globalState.sessionUser.id,
-            date: today,
-            lectures_watched: list
-        }, { onConflict: 'student_id, date' });
-    }
-}
-
-        
-        
-        // --- ADMIN LIVE STATS ---
-        // یہ فنکشن تلاش کریں اور بدل دیں
-async function updateAdminDashboard() {
-    try {
-        // 1. کل رجسٹرڈ سٹوڈنٹس کی تعداد
-        const { count: totalStudents } = await supabaseClientInstance
-            .from('profiles')
-            .select('*', { count: 'exact', head: true });
-
-        // 2. لائیو ایکٹیو سٹوڈنٹس (پچھلے 5 منٹ میں جس نے ایکٹیویٹی کی)
-        const fiveMinsAgo = new Date(Date.now() - 5 * 60000).toISOString();
-        const { count: activeStudents } = await supabaseClientInstance
-            .from('daily_activity')
-            .select('*', { count: 'exact', head: true })
-            .gte('last_seen', fiveMinsAgo);
-
-        // UI اپ ڈیٹ
-        if(document.getElementById('admin-total-students')) 
-            document.getElementById('admin-total-students').textContent = totalStudents || 0;
-        if(document.getElementById('admin-active-students')) 
-            document.getElementById('admin-active-students').textContent = activeStudents || 0;
+            const badge = document.getElementById("dash-course-progress-badge");
+            if (badge) badge.textContent = `${completedCount}/${totalItemsCount} Modules`;
             
-    } catch (err) {
-        console.error("Admin stats update failed:", err);
-    }
-}
-// ہر 30 سیکنڈ میں ریفریش
-setInterval(updateAdminDashboard, 30000);
+            const bar = document.getElementById("dash-progress-bar-fill");
+            if (bar) bar.style.width = `${completionRatio}%`;
 
+            const certWrapper = document.getElementById("certificate-delivery-wrapper");
+            if (certWrapper) {
+                if (totalItemsCount > 0 && completedCount === totalItemsCount) {
+                    certWrapper.innerHTML = `
+                        <button onclick="generateAndDownloadCertificate()" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
+                            <i data-lucide="award" class="inline w-4 h-4 mr-1"></i> Download Verified Certificate
+                        </button>`;
+                } else {
+                    certWrapper.innerHTML = `
+                        <button disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">
+                            Certificate Locked (${completedCount}/${totalItemsCount} Completed)
+                        </button>`;
+                }
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
 
-    
+        async function calculateAndDisplayStreak() {
+            const { data: activity } = await supabaseClientInstance
+                .from('daily_activity')
+                .select('date')
+                .eq('student_id', globalState.sessionUser.id)
+                .order('date', { ascending: false });
 
+            if (!activity || activity.length === 0) return;
 
-        // --- CERTIFICATE GENERATION LOGIC ---
+            let streak = 0;
+            let today = new Date();
+            today.setHours(0,0,0,0);
+
+            for (let i = 0; i < activity.length; i++) {
+                let activityDate = new Date(activity[i].date);
+                activityDate.setHours(0,0,0,0);
+                
+                let expectedDate = new Date(today);
+                expectedDate.setDate(today.getDate() - i);
+
+                if (activityDate.toDateString() === expectedDate.toDateString()) {
+                    streak++;
+                } else {
+                    break; 
+                }
+            }
+            const streakEl = document.getElementById("stat-current-streak");
+            if(streakEl) streakEl.textContent = `${streak} Days`;
+        }
+        
+        async function fetchActivityHistory() {
+            let { data: history } = await supabaseClientInstance
+                .from('daily_activity')
+                .select('*')
+                .eq('student_id', globalState.sessionUser.id)
+                .order('date', { ascending: false });
+
+            const list = document.getElementById('activity-history-list');
+            if (!list) return;
+
+            list.innerHTML = history.map(h => `
+                <div class="activity-card p-4 border rounded-xl mb-2">
+                    <h4 class="font-bold text-lg">${h.date}</h4>
+                    <p>⏱ کل وقت: ${h.active_minutes} منٹ</p>
+                    <p class="text-sm">📚 دیکھے گئے لیکچرز: ${h.lectures_watched.length > 0 ? h.lectures_watched.join(', ') : 'کوئی لیکچر نہیں'}</p>
+                </div>
+            `).join('');
+        }
+
+        async function trackActivity() {
+            if (!globalState.sessionUser) return;
+            
+            todayActiveMinutes++; 
+            
+            await supabaseClientInstance.from('daily_activity').upsert({
+                student_id: globalState.sessionUser.id,
+                date: new Date().toISOString().split('T')[0],
+                active_minutes: todayActiveMinutes,
+                last_seen: new Date().toISOString()
+            }, { onConflict: 'student_id, date' });
+        }
+        setInterval(trackActivity, 60000);
+
+        async function logLectureActivity(lessonTitle) {
+            if (!globalState.sessionUser) return;
+
+            const today = new Date().toISOString().split('T')[0];
+            
+            let { data: row } = await supabaseClientInstance
+                .from('daily_activity')
+                .select('lectures_watched')
+                .eq('student_id', globalState.sessionUser.id)
+                .eq('date', today)
+                .single();
+
+            let list = row ? row.lectures_watched : [];
+            
+            if (!list.includes(lessonTitle)) {
+                list.push(lessonTitle);
+                
+                await supabaseClientInstance.from('daily_activity').upsert({
+                    student_id: globalState.sessionUser.id,
+                    date: today,
+                    lectures_watched: list
+                }, { onConflict: 'student_id, date' });
+            }
+        }
+        
+        async function updateAdminDashboard() {
+            try {
+                const { count: totalStudents } = await supabaseClientInstance
+                    .from('profiles')
+                    .select('*', { count: 'exact', head: true });
+
+                const fiveMinsAgo = new Date(Date.now() - 5 * 60000).toISOString();
+                const { count: activeStudents } = await supabaseClientInstance
+                    .from('daily_activity')
+                    .select('*', { count: 'exact', head: true })
+                    .gte('last_seen', fiveMinsAgo);
+
+                if(document.getElementById('admin-total-students')) 
+                    document.getElementById('admin-total-students').textContent = totalStudents || 0;
+                if(document.getElementById('admin-active-students')) 
+                    document.getElementById('admin-active-students').textContent = activeStudents || 0;
+                    
+            } catch (err) {
+                console.error("Admin stats update failed:", err);
+            }
+        }
+        setInterval(updateAdminDashboard, 30000);
+
         function generateAndDownloadCertificate() {
             const studentName = globalState.profileData?.full_name || "Student Name";
             document.getElementById('cert-student-name').textContent = studentName;
@@ -980,7 +939,6 @@ setInterval(updateAdminDashboard, 30000);
             
             const certNode = document.getElementById('certificate-template');
             
-            // Temporarily bring it to screen to render properly
             certNode.parentElement.classList.remove('absolute', 'top-[-9999px]');
             certNode.parentElement.classList.add('fixed', 'inset-0', 'z-[9999]', 'flex', 'items-center', 'justify-center', 'bg-white');
             
@@ -992,70 +950,70 @@ setInterval(updateAdminDashboard, 30000);
                 link.href = canvas.toDataURL('image/png');
                 link.click();
                 
-                // Hide again
                 certNode.parentElement.classList.remove('fixed', 'inset-0', 'z-[9999]', 'flex', 'items-center', 'justify-center', 'bg-white');
                 certNode.parentElement.classList.add('absolute', 'top-[-9999px]');
             });
         }
-const adminConsole = {
-    createLesson: async (e) => {
-        e.preventDefault();
-        console.log("Publishing started..."); // یہ کنسول میں چیک کرنے کے لیے ہے
 
-        const lesson_number = parseInt(document.getElementById("adm-les-num").value);
-        const title = document.getElementById("adm-les-title").value.trim();
-        const gdrive_id = document.getElementById("adm-les-gdrive").value.trim();
-        const duration = parseInt(document.getElementById("adm-les-duration").value);
-        const description = document.getElementById("adm-les-desc").value.trim();
+        const adminConsole = {
+            createLesson: async (e) => {
+                e.preventDefault();
+                console.log("Publishing started..."); 
 
-        try {
-            const { data, error } = await supabaseClientInstance
-                .from('lessons')
-                .insert([
-                    { 
-                        lesson_number: lesson_number, 
-                        title: title, 
-                        google_drive_video_id: gdrive_id, 
-                        estimated_duration: duration, 
-                        description: description 
+                const lesson_number = parseInt(document.getElementById("adm-les-num").value);
+                const title = document.getElementById("adm-les-title").value.trim();
+                const gdrive_id = document.getElementById("adm-les-gdrive").value.trim();
+                const duration = parseInt(document.getElementById("adm-les-duration").value);
+                const description = document.getElementById("adm-les-desc").value.trim();
+
+                try {
+                    const { data, error } = await supabaseClientInstance
+                        .from('lessons')
+                        .insert([
+                            { 
+                                lesson_number: lesson_number, 
+                                title: title, 
+                                google_drive_video_id: gdrive_id, 
+                                estimated_duration: duration, 
+                                description: description 
+                            }
+                        ]);
+
+                    if (error) {
+                        console.error("Supabase Error:", error);
+                        alert("اپلوڈ میں ایرر ہے: " + error.message);
+                    } else {
+                        alert("کامیابی: لیکچر اپلوڈ ہو گیا!");
+                        document.getElementById("admin-lesson-form").reset();
+                        syncClassroomSyllabusEngine(); 
                     }
-                ]);
-
-            if (error) {
-                console.error("Supabase Error:", error);
-                alert("اپلوڈ میں ایرر ہے: " + error.message);
-            } else {
-                alert("کامیابی: لیکچر اپلوڈ ہو گیا!");
-                document.getElementById("admin-lesson-form").reset();
-                syncClassroomSyllabusEngine(); 
+                } catch (err) {
+                    console.error("System Error:", err);
+                }
             }
-        } catch (err) {
-            console.error("System Error:", err);
-        }
-    }
-};
-        async function unlockAssignmentManually(lessonId) {
-    if(!confirm("کیا آپ واقعی اسائنمنٹ ان لاک کرنا چاہتے ہیں؟")) return;
-    try {
-        await supabaseClientInstance.from('lesson_progress').upsert({
-            student_id: globalState.sessionUser.id,
-            lesson_id: lessonId,
-            is_completed: true
-        });
-        alert("کامیاب! اسائنمنٹ ان لاک ہو گئی ہے۔");
-        location.reload(); 
-    } catch(err) {
-        alert("ایرر: " + err.message);
-    }
-}
+        };
 
-        
+        async function unlockAssignmentManually(lessonId) {
+            if(!confirm("کیا آپ واقعی اسائنمنٹ ان لاک کرنا چاہتے ہیں؟")) return;
+            try {
+                await supabaseClientInstance.from('lesson_progress').upsert({
+                    student_id: globalState.sessionUser.id,
+                    lesson_id: lessonId,
+                    is_completed: true
+                });
+                alert("کامیاب! اسائنمنٹ ان لاک ہو گئی ہے۔");
+                location.reload(); 
+            } catch(err) {
+                alert("ایرر: " + err.message);
+            }
+        }
+
         // --- CLOCK CONTROLLER ---
         function runClockEngine() {
             setInterval(() => {
                 const now = new Date();
                 const deadline = new Date();
-                deadline.setHours(22, 0, 0, 0); // Changed to 10:00 PM (22:00)
+                deadline.setHours(22, 0, 0, 0); // 10:00 PM (22:00)
                 let diff = deadline - now;
                 const element = document.getElementById("assignment-countdown");
                 if (!element) return;
