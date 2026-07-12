@@ -862,72 +862,66 @@ async function calculateAndDisplayStreak() {
 }
 
 // ایکٹیویٹی ہسٹری فیچنگ
-async function fetchActivityHistory() {
-    if(!globalState.sessionUser) return;
-    try {
-        let { data: history } = await supabaseClientInstance.from('daily_activity')
-            .select('*')
-            .eq('student_id', globalState.sessionUser.id)
-            .order('date', { ascending: false });
-        
-        const list = document.getElementById('activity-history-list');
-        if(!list) return;
-        
-        if (history && history.length > 0) {
-            list.innerHTML = history.map(h => `
-                <div class="flex items-center justify-between p-3 border border-gray-100 rounded-xl bg-gray-50">
-                    <span class="text-xs font-bold text-gray-800">${h.date}</span>
-                    <span class="text-xs font-bold text-brand-red bg-red-50 px-3 py-1 rounded-full">${h.active_minutes} Mins</span>
-                </div>
-            `).join('');
-        }
-    } catch(e) { console.error("History Error:", e); }
-}
-
-// ریئل ٹائم ٹریکر
 async function startRealTimeActivityTracker() {
     setInterval(async () => {
         if (!globalState.sessionUser) return;
         todayActiveMinutes++;
-        const timeEl = document.getElementById("stat-study-hours");
-        if(timeEl) timeEl.textContent = `${todayActiveMinutes} mins`;
         
-        try {
-            await supabaseClientInstance.from('daily_activity').upsert({
-                student_id: globalState.sessionUser.id,
-                date: currentDayStr,
-                active_minutes: todayActiveMinutes,
-                last_seen: new Date().toISOString()
-            }, { onConflict: 'student_id, date' });
-            
-            await calculateAndDisplayStreak();
-            await fetchActivityHistory();
-        } catch(e) { console.error("Tracker Error:", e); }
+        // UI اپ ڈیٹ
+        if(document.getElementById("stat-study-hours")) 
+            document.getElementById("stat-study-hours").textContent = `${todayActiveMinutes} mins`;
+        
+        // Supabase میں ڈیٹا سیو کریں
+        await supabaseClientInstance.from('daily_activity').upsert({
+            student_id: globalState.sessionUser.id,
+            date: new Date().toISOString().split('T')[0],
+            active_minutes: todayActiveMinutes,
+            last_seen: new Date().toISOString()
+        }, { onConflict: 'student_id, date' });
+
+        await fetchActivityHistory();
     }, 60000);
+}
+
+async function fetchActivityHistory() {
+    if(!globalState.sessionUser) return;
+    let { data: history } = await supabaseClientInstance.from('daily_activity')
+        .select('*')
+        .eq('student_id', globalState.sessionUser.id)
+        .order('date', { ascending: false });
+    
+    const list = document.getElementById('activity-history-list');
+    if(list && history) {
+        list.innerHTML = history.map(h => `
+            <div class="flex items-center justify-between p-3 border border-gray-100 rounded-xl bg-gray-50">
+                <span class="text-xs font-bold text-gray-800">${h.date}</span>
+                <span class="text-xs font-bold text-brand-red bg-red-50 px-3 py-1 rounded-full">${h.active_minutes} Mins</span>
+            </div>
+        `).join('');
+    }
         }
+        
         
         // --- ADMIN LIVE STATS ---
         // یہ فنکشن تلاش کریں اور بدل دیں
 async function fetchAdminLiveStats() {
     try {
+        // کل سٹوڈنٹس
         const { count: totalCount } = await supabaseClientInstance.from('profiles').select('*', { count: 'exact', head: true });
-        // پچھلے 5 منٹ میں جس کی ایکٹیویٹی ہوئی، وہ "ایکٹو" ہے
+        
+        // ایکٹو سٹوڈنٹس (جنہوں نے پچھلے 5 منٹ میں لاسٹ سین اپ ڈیٹ کیا)
         const fiveMinsAgo = new Date(Date.now() - 5 * 60000).toISOString();
         const { count: activeCount } = await supabaseClientInstance.from('daily_activity')
             .select('*', { count: 'exact', head: true })
             .gte('last_seen', fiveMinsAgo);
 
-        const totalEl = document.getElementById('admin-total-students');
-        const activeEl = document.getElementById('admin-active-students');
-        
-        if(totalEl) totalEl.textContent = totalCount || 0;
-        if(activeEl) activeEl.textContent = activeCount || 0;
+        document.getElementById('admin-total-students').textContent = totalCount || 0;
+        document.getElementById('admin-active-students').textContent = activeCount || 0;
     } catch(e) { console.error("Admin stats error:", e); }
 }
-
-// اسے اپنے مین اسکرپٹ کے آخر میں کال کریں
-setInterval(fetchAdminLiveStats, 30000); 
-        
+// ہر 30 سیکنڈ میں ریفریش کریں
+setInterval(fetchAdminLiveStats, 30000);
+    
 
 
         // --- CERTIFICATE GENERATION LOGIC ---
