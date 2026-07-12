@@ -283,7 +283,7 @@
                         <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-[calc(100vh-140px)] flex flex-col">
                             <h2 class="text-lg font-bold text-gray-800 border-b border-gray-100 pb-3 flex items-center space-x-2">
                                 <i data-lucide="history" class="text-brand-red w-5 h-5"></i>
-                                <span>Activity History</span>
+                                <span>Activity History (Real-Time)</span>
                             </h2>
                             <p class="text-xs text-gray-500 mt-2">Your daily active time spent learning on Education Point.</p>
                             <div id="activity-history-list" class="flex-1 overflow-y-auto custom-scrollbar mt-4 space-y-3">
@@ -305,11 +305,11 @@
                                         <h2 id="player-lesson-title" class="text-xl font-bold tracking-tight text-gray-900">Select Scheduled Module Node</h2>
                                         <span id="player-duration-badge" class="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full whitespace-nowrap">Est. Duration: -- mins</span>
                                     </div>
-                                    <a id="drive-fullscreen-btn" href="#" target="_blank" class="shrink-0 hidden px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-2xl text-xs font-bold shadow-lg shadow-red-500/20 flex items-center space-x-2 transition-all duration-300 transform hover:scale-[1.02] border border-white/10 backdrop-blur-sm">
+                                    <a id="drive-fullscreen-btn" href="#" target="_blank" 
+                                        class="shrink-0 hidden px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-2xl text-xs font-bold shadow-lg shadow-red-500/20 flex items-center space-x-2 transition-all duration-300 transform hover:scale-[1.02] border border-white/10 backdrop-blur-sm">
                                         <i data-lucide="external-link" class="w-4 h-4"></i>
                                         <span class="tracking-wide">Watch Full Video in Drive</span>
                                     </a>
-
                                 </div>
                                 <p id="player-lesson-desc" class="text-sm text-gray-500 leading-relaxed">Launch an engineering stream sequence parameter from the right matrix map vector tree.</p>
                                 
@@ -506,12 +506,14 @@
             activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828" 
         };
         let todayActiveMinutes = 0;
+        let loginTimeRecorded = false;
 
         // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
         document.addEventListener("DOMContentLoaded", async () => {
             if (typeof lucide !== 'undefined') lucide.createIcons();
             runClockEngine();
             await evaluateSessionContextState();
+            startRealTimeActivityTracker(); 
         });
 
         async function evaluateSessionContextState() {
@@ -521,6 +523,7 @@
                 if (session) {
                     globalState.sessionUser = session.user;
                     await pullProfileContextAndInitialize(session.user.id);
+                    recordLoginTime();
                 } else {
                     displayScreenLayer("auth-shield-container");
                 }
@@ -529,6 +532,13 @@
             } finally {
                 const loader = document.getElementById("global-loader");
                 if (loader) loader.classList.add("hidden");
+            }
+        }
+
+        function recordLoginTime() {
+            if(!loginTimeRecorded) {
+                console.log("User logged in at: " + new Date().toLocaleTimeString());
+                loginTimeRecorded = true;
             }
         }
 
@@ -546,10 +556,11 @@
                 syncProfileUILayoutRepresentations();
                 populateProfileInputsUIFields();
                 await fetchActivityHistory();
+                await calculateAndDisplayStreak();
                 await syncClassroomSyllabusEngine();
                 
                 if(profile.role === 'super_admin') {
-                    updateAdminDashboard(); // Fixed the function call here
+                    updateAdminDashboard(); 
                 }
 
                 displayScreenLayer("app-container");
@@ -591,10 +602,7 @@
 
                 if (error) throw error;
                 alert("پروفائل کامیابی سے سیو ہو گئی ہے!");
-                // Refresh data without breaking the view
-                let { data: profile } = await supabaseClientInstance.from('profiles').select('*').eq('id', globalState.sessionUser.id).maybeSingle();
-                globalState.profileData = profile;
-                syncProfileUILayoutRepresentations();
+                await pullProfileContextAndInitialize(globalState.sessionUser.id);
             } catch(err) { alert("Error: " + err.message); }
         }
 
@@ -618,7 +626,7 @@
                 document.getElementById('sb-avatar').src = data.publicUrl;
                 alert("تصویر اپڈیٹ ہو گئی!");
             } catch (error) {
-                console.error("Avatar error (Make sure 'avatars' storage bucket exists):", error);
+                console.error("Avatar error:", error);
             }
         }
 
@@ -752,7 +760,6 @@
             document.getElementById("player-lesson-desc").textContent = lesson.description || "";
             document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
             
-            // Setup Full Screen Drive Link
             const driveBtn = document.getElementById("drive-fullscreen-btn");
             if(driveBtn) {
                 driveBtn.classList.remove("hidden");
@@ -778,7 +785,9 @@
                     </div>
                 `;
             }
-
+            
+            // Log real-time lesson interaction
+            logLectureActivity(lesson.title);
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
@@ -821,6 +830,7 @@
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
+        // --- REAL TIME ATTENDANCE & HISTORY TRACKING ---
         async function calculateAndDisplayStreak() {
             const { data: activity } = await supabaseClientInstance
                 .from('daily_activity')
@@ -831,6 +841,7 @@
             if (!activity || activity.length === 0) return;
 
             let streak = 0;
+            let totalDaysActive = activity.length;
             let today = new Date();
             today.setHours(0,0,0,0);
 
@@ -847,73 +858,89 @@
                     break; 
                 }
             }
+            
+            // UI Update Current Streak
             const streakEl = document.getElementById("stat-current-streak");
             if(streakEl) streakEl.textContent = `${streak} Days`;
+            
+            // UI Update Live Attendance (Assuming Course is 60 Days Example, change as needed)
+            const attendanceEl = document.getElementById("stat-attendance-rate");
+            if(attendanceEl) {
+                let attRatio = Math.min((totalDaysActive / 60) * 100, 100).toFixed(0);
+                attendanceEl.textContent = `${attRatio}%`;
+            }
         }
         
         async function fetchActivityHistory() {
-            try {
-                let { data: history, error } = await supabaseClientInstance
-                    .from('daily_activity')
-                    .select('*')
-                    .eq('student_id', globalState.sessionUser.id)
-                    .order('date', { ascending: false });
+            if (!globalState.sessionUser) return;
+            let { data: history } = await supabaseClientInstance
+                .from('daily_activity')
+                .select('*')
+                .eq('student_id', globalState.sessionUser.id)
+                .order('date', { ascending: false });
 
-                const list = document.getElementById('activity-history-list');
-                if (!list) return;
+            const list = document.getElementById('activity-history-list');
+            if (!list) return;
 
-                if (error || !history || history.length === 0) {
-                    list.innerHTML = `<div class="text-center p-4 bg-gray-50 border border-gray-100 rounded-xl text-gray-500 text-sm">ابھی تک کوئی ہسٹری موجود نہیں ہے۔</div>`;
-                    return;
-                }
+            list.innerHTML = history.map(h => {
+                let parsedDate = new Date(h.date).toLocaleDateString('ur-PK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                let lecturesHtml = h.lectures_watched.length > 0 
+                    ? h.lectures_watched.map(l => `<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs inline-block m-0.5">${l}</span>`).join('') 
+                    : '<span class="text-xs text-gray-400">کوئی لیکچر نہیں دیکھا گیا</span>';
 
-                list.innerHTML = history.map(h => {
-                    const hasLectures = h.lectures_watched && Array.isArray(h.lectures_watched) && h.lectures_watched.length > 0;
-                    const lecturesText = hasLectures ? h.lectures_watched.join(', ') : 'کوئی لیکچر نہیں';
-                    
-                    return `
-                    <div class="p-4 bg-white border border-gray-200 rounded-xl mb-3 shadow-sm hover:border-brand-red transition-all duration-300 group">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-bold text-gray-800 text-sm flex items-center">
-                                <i data-lucide="calendar" class="w-4 h-4 mr-2 text-brand-red"></i>
-                                ${h.date}
-                            </h4>
-                            <span class="text-[10px] font-bold bg-red-50 text-brand-red px-2.5 py-1 rounded-full border border-red-100 group-hover:bg-brand-red group-hover:text-white transition-colors">
-                                ${h.active_minutes || 0} منٹ
-                            </span>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-2 flex items-start space-x-2 bg-gray-50 p-2 rounded-lg">
-                            <i data-lucide="play-circle" class="w-4 h-4 ${hasLectures ? 'text-emerald-500' : 'text-gray-400'} shrink-0"></i>
-                            <span class="leading-relaxed">📚 دیکھے گئے لیکچرز: ${lecturesText}</span>
-                        </p>
+                return `
+                <div class="activity-card p-4 bg-white border border-gray-100 rounded-xl shadow-sm space-y-2 hover:border-brand-red transition-all">
+                    <div class="flex justify-between items-center border-b border-gray-50 pb-2">
+                        <h4 class="font-bold text-sm text-gray-800"><i data-lucide="calendar" class="w-4 h-4 inline mr-1 text-brand-red"></i> ${parsedDate}</h4>
+                        <span class="text-xs font-bold bg-red-50 text-brand-red px-2 py-1 rounded-full">${h.active_minutes} Mins Active</span>
                     </div>
-                    `;
-                }).join('');
-                
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-            } catch (err) {
-                console.error("History Render Error:", err);
+                    <div class="pt-1">
+                        <p class="text-xs text-gray-500 font-bold uppercase mb-1">Lectures Accessed:</p>
+                        <div class="flex flex-wrap">${lecturesHtml}</div>
+                    </div>
+                </div>
+            `}).join('');
+            
+            // Set Today's Active Minutes live on Dashboard
+            if(history.length > 0 && history[0].date === new Date().toISOString().split('T')[0]) {
+                todayActiveMinutes = history[0].active_minutes;
+                const hrsUI = document.getElementById('stat-study-hours');
+                if(hrsUI) hrsUI.textContent = `${todayActiveMinutes} mins`;
             }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         async function trackActivity() {
             if (!globalState.sessionUser) return;
             
             todayActiveMinutes++; 
+            const today = new Date().toISOString().split('T')[0];
             
             await supabaseClientInstance.from('daily_activity').upsert({
                 student_id: globalState.sessionUser.id,
-                date: new Date().toISOString().split('T')[0],
+                date: today,
                 active_minutes: todayActiveMinutes,
                 last_seen: new Date().toISOString()
             }, { onConflict: 'student_id, date' });
+
+            // Realtime Sync UI
+            const hrsUI = document.getElementById('stat-study-hours');
+            if(hrsUI) hrsUI.textContent = `${todayActiveMinutes} mins`;
+            
+            // Fetch visually updated history
+            if (todayActiveMinutes % 2 === 0) fetchActivityHistory(); // update list every 2 mins to save bandwidth
         }
-        setInterval(trackActivity, 60000);
+        
+        function startRealTimeActivityTracker() {
+            setInterval(trackActivity, 60000); // 1 Minute interval
+        }
 
         async function logLectureActivity(lessonTitle) {
             if (!globalState.sessionUser) return;
 
             const today = new Date().toISOString().split('T')[0];
+            let timeAccessed = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            let logString = `${lessonTitle} (at ${timeAccessed})`;
             
             let { data: row } = await supabaseClientInstance
                 .from('daily_activity')
@@ -924,14 +951,20 @@
 
             let list = row ? row.lectures_watched : [];
             
-            if (!list.includes(lessonTitle)) {
-                list.push(lessonTitle);
+            // Check if exact title already in array to avoid spamming 
+            let alreadyWatched = list.some(l => l.includes(lessonTitle));
+
+            if (!alreadyWatched) {
+                list.push(logString);
                 
                 await supabaseClientInstance.from('daily_activity').upsert({
                     student_id: globalState.sessionUser.id,
                     date: today,
                     lectures_watched: list
                 }, { onConflict: 'student_id, date' });
+
+                // Sync history immediately real-time
+                fetchActivityHistory();
             }
         }
         
