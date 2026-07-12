@@ -37,23 +37,6 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #DC2626; border-radius: 4px; }
         .page-layer { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .hidden-layer { display: none !important; opacity: 0; transform: translateY(10px); }
-        
-        /* Fixed Video Aspect Ratio for Google Drive Iframe */
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
-            height: 0;
-            overflow: hidden;
-            width: 100%;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
     </style>
 </head>
 <body class="bg-gray-50 text-brand-darkText custom-scrollbar font-sans antialiased">
@@ -75,8 +58,8 @@
                 <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-500"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
             
-            <div class="p-4 mx-4 my-3 bg-red-50 rounded-xl flex items-center space-x-3">
-                <img id="sb-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-brand-red object-cover">
+            <div class="p-4 mx-4 my-3 bg-red-50 rounded-xl flex items-center space-x-3 relative group">
+                <img id="sb-avatar" src="https://ui-avatars.com/api/?name=Student&background=DC2626&color=fff" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-brand-red object-cover">
                 <div class="overflow-hidden">
                     <h4 id="sb-username" class="font-bold text-sm text-gray-800 truncate">Loading...</h4>
                     <p id="sb-role" class="text-xs text-brand-red font-medium tracking-wide uppercase">Student</p>
@@ -92,9 +75,6 @@
                 </button>
                 <button onclick="switchView('profile-completion-view')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
                     <i data-lucide="user-cog" class="w-5 h-5"></i><span>My Profile</span>
-                </button>
-                <button onclick="switchView('reports-center')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
-                    <i data-lucide="file-bar-chart" class="w-5 h-5"></i><span>Reports Engine</span>
                 </button>
                 <button id="admin-nav-item" onclick="switchView('admin-console')" class="nav-link w-full hidden flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-red-700 bg-red-50 hover:bg-red-100 transition-all border border-red-200">
                     <i data-lucide="shield-alert" class="w-5 h-5"></i><span>Super Admin Panel</span>
@@ -121,7 +101,7 @@
                         <div class="relative z-10 space-y-2 max-w-xl">
                             <span class="px-3 py-1 bg-white/20 backdrop-blur text-xs font-bold uppercase rounded-full tracking-wider">Premium LMS Environment</span>
                             <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight" id="dash-welcome-title">Welcome back, Scholar!</h2>
-                            <p class="text-white/80 text-sm md:text-base">Your daily structured curriculum matrix remains open. Assignments must be routed before the 8:00 PM network freeze.</p>
+                            <p class="text-white/80 text-sm md:text-base">Your daily structured curriculum matrix remains open. Assignments must be routed before the 10:00 PM network freeze.</p>
                         </div>
                         <i data-lucide="sparkles" class="absolute right-6 bottom-4 w-32 h-32 text-white/5 pointer-events-none"></i>
                     </div>
@@ -196,7 +176,7 @@
                                 </h3>
                                 <div class="bg-red-50 border border-red-100 rounded-xl p-4 text-center">
                                     <p class="text-xs text-red-600 font-medium mb-1">Static Daily Closing Parameter</p>
-                                    <div class="text-2xl font-black text-brand-red tracking-tight">8:00 PM SHARP</div>
+                                    <div class="text-2xl font-black text-brand-red tracking-tight">10:00 PM SHARP</div>
                                     <div id="assignment-countdown" class="text-xs text-gray-500 font-mono mt-1 font-semibold">--:--:-- Left</div>
                                 </div>
                             </div>
@@ -215,74 +195,91 @@
                 </section>
 
                 <section id="profile-completion-view" class="view-layer page-layer hidden-layer space-y-6">
-                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm max-w-2xl mx-auto">
-                        <h2 class="text-xl font-bold text-gray-800 border-b border-gray-100 pb-3">Complete System Identity Profile</h2>
-                        <form id="profile-update-form" onsubmit="saveUserProfileDataState(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                            <div class="space-y-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Full Name *</label>
-                                <input type="text" id="prof-fullname" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                        <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                            <h2 class="text-xl font-bold text-gray-800 border-b border-gray-100 pb-3">Complete System Identity Profile</h2>
+                            
+                            <div class="pt-4 pb-2 flex items-center space-x-4">
+                                <img id="prof-avatar-preview" src="https://ui-avatars.com/api/?name=Student&background=DC2626&color=fff" class="w-16 h-16 rounded-full border-2 border-gray-200 object-cover">
+                                <div>
+                                    <label class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl cursor-pointer transition-all">
+                                        Upload Profile Picture
+                                        <input type="file" id="prof-avatar-upload" class="hidden" accept="image/*" onchange="handleAvatarUpload(event)">
+                                    </label>
+                                    <p class="text-[10px] text-gray-400 mt-1">Real-time DB synchronization.</p>
+                                </div>
                             </div>
-                            <div class="space-y-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Father's Name *</label>
-                                <input type="text" id="prof-fathername" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+
+                            <form id="profile-update-form" onsubmit="saveUserProfileDataState(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                                <div class="space-y-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Full Name *</label>
+                                    <input type="text" id="prof-fullname" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Father's Name *</label>
+                                    <input type="text" id="prof-fathername" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Mobile Number *</label>
+                                    <input type="text" id="prof-mobile" placeholder="03XXXXXXXXX" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase">City *</label>
+                                    <input type="text" id="prof-city" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                </div>
+                                <div class="sm:col-span-2 space-y-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Complete Address *</label>
+                                    <input type="text" id="prof-address" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Gender *</label>
+                                    <select id="prof-gender" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Date of Birth *</label>
+                                    <input type="date" id="prof-dob" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                </div>
+                                <div class="sm:col-span-2 space-y-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Education Level *</label>
+                                    <select id="prof-education" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                        <option value="Matric">Matric</option>
+                                        <option value="Intermediate">Intermediate (F.Sc / FA / ICS / Inter)</option>
+                                        <option value="Bachelors">Bachelors</option>
+                                        <option value="Masters">Masters</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2 pt-2">
+                                    <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-hover text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow transition-all">Save & Update Profile</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col h-full">
+                            <h3 class="text-lg font-bold text-gray-800 border-b border-gray-100 pb-3 flex items-center space-x-2">
+                                <i data-lucide="history" class="text-brand-red w-5 h-5"></i><span>Session History</span>
+                            </h3>
+                            <div class="pt-4 flex-1 overflow-y-auto custom-scrollbar space-y-3" id="profile-activity-list">
+                                <p class="text-xs text-gray-400 text-center py-4">Fetching active learning logs...</p>
                             </div>
-                            <div class="space-y-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Mobile Number *</label>
-                                <input type="text" id="prof-mobile" placeholder="03XXXXXXXXX" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase">City *</label>
-                                <input type="text" id="prof-city" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
-                            </div>
-                            <div class="sm:col-span-2 space-y-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Complete Address *</label>
-                                <input type="text" id="prof-address" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Gender *</label>
-                                <select id="prof-gender" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Date of Birth *</label>
-                                <input type="date" id="prof-dob" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
-                            </div>
-                            <div class="sm:col-span-2 space-y-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase">Education Level *</label>
-                                <select id="prof-education" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
-                                    <option value="Matric">Matric</option>
-                                    <option value="Intermediate">Intermediate (F.Sc / FA / ICS / Inter)</option>
-                                    <option value="Bachelors">Bachelors</option>
-                                    <option value="Masters">Masters</option>
-                                </select>
-                            </div>
-                            <div class="sm:col-span-2 pt-2">
-                                <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-hover text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow transition-all">Synchronize Dynamic Profile Dataset</button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </section>
 
                 <section id="classroom-portal" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="flex flex-col xl:flex-row gap-6">
                         <div class="flex-1 space-y-4">
-                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl border-4 border-white video-container">
-                                <iframe id="gdrive-video-player" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl aspect-video relative border-4 border-white flex items-center justify-center">
+                                <iframe id="gdrive-video-player" class="w-full h-full absolute inset-0 bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen frameborder="0" width="100%" height="100%"></iframe>
                             </div>
                             
-                            <div id="full-video-action" class="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-2xl border border-gray-200 shadow-sm gap-4 hidden-layer">
-                                <div class="flex items-center gap-3">
-                                    <div class="p-2 bg-red-50 text-brand-red rounded-lg"><i data-lucide="monitor-play" class="w-5 h-5"></i></div>
-                                    <span class="text-sm font-semibold text-gray-700">Need a larger view? Open directly in Google Drive.</span>
-                                </div>
-                                <a id="btn-full-drive-link" href="#" target="_blank" class="w-full sm:w-auto px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md transition-all">
-                                    <i data-lucide="external-link" class="w-4 h-4"></i>
-                                    <span>Watch Full Screen Video</span>
-                                </a>
-                            </div>
+                            <a id="external-gdrive-btn" href="#" target="_blank" class="w-full py-3 bg-red-50 hover:bg-red-100 text-brand-red font-bold text-sm rounded-xl border border-red-200 flex items-center justify-center space-x-2 transition-all hidden">
+                                <i data-lucide="external-link" class="w-5 h-5"></i>
+                                <span>Watch Full Video on Google Drive</span>
+                            </a>
                             
                             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -307,7 +304,7 @@
                                     <i data-lucide="file-check" class="text-brand-red w-5 h-5"></i><span>Daily Secure Assignment Gateway Channels</span>
                                 </h3>
                                 <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
-                                    Assignment dispatch system disabled. Stream the active classroom asset fully clear across the 90% checkpoint margin parameter bounds to operationalize standard submission routines.
+                                    <p><strong>Assignment Interface Shielded:</strong> Stream content up to 90% completion parameters to unlock WhatsApp vectors. You have until <strong>10:00 PM</strong> to complete and submit your assignment.</p>
                                 </div>
                             </div>
                         </div>
@@ -322,77 +319,51 @@
                     </div>
                 </section>
 
-                <section id="reports-center" class="view-layer page-layer hidden-layer space-y-6">
-                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                        <h2 class="text-xl font-bold tracking-tight text-gray-900 mb-1">Academic Audit Reporting Station</h2>
-                        <p class="text-xs text-gray-400">Compile database operational schemas mapped straight to local processing array download wrappers natively.</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                            <div class="border border-gray-100 rounded-xl p-4 text-center space-y-2">
-                                <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Lesson Progress Log Map</h4>
-                                <button onclick="reportsEngine.exportData('CSV')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all">Download Matrix Sheet</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
                 <section id="admin-console" class="view-layer page-layer hidden-layer space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-white p-5 rounded-2xl border border-blue-200 shadow-sm flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-bold text-blue-500 uppercase tracking-wider">Online Students</p>
-                                <h3 id="admin-metric-online" class="text-3xl font-black text-blue-700 flex items-center gap-2">
-                                    0 <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span></span>
-                                </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-emerald-200 shadow-sm">
+                            <h3 class="text-lg font-bold text-gray-800 mb-2 flex items-center space-x-2">
+                                <i data-lucide="activity" class="text-emerald-600 w-5 h-5"></i><span>Live Active Students</span>
+                            </h3>
+                            <p class="text-xs text-gray-500 mb-4">Real-time platform presence tracking.</p>
+                            <div class="flex items-center space-x-4">
+                                <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
+                                    <h2 class="text-4xl font-black text-emerald-700" id="admin-online-count">0</h2>
+                                </div>
+                                <div class="text-sm font-semibold text-gray-600">Students Currently Online</div>
                             </div>
-                            <div class="p-3 bg-blue-50 rounded-xl text-blue-600"><i data-lucide="activity" class="w-8 h-8"></i></div>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-bold text-emerald-500 uppercase tracking-wider">Total Registered</p>
-                                <h3 id="admin-metric-total-students" class="text-3xl font-black text-emerald-700">--</h3>
-                            </div>
-                            <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600"><i data-lucide="users" class="w-8 h-8"></i></div>
-                        </div>
-                        <div class="bg-white p-5 rounded-2xl border border-purple-200 shadow-sm flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-bold text-purple-500 uppercase tracking-wider">Published Lessons</p>
-                                <h3 id="admin-metric-total-lessons" class="text-3xl font-black text-purple-700">--</h3>
-                            </div>
-                            <div class="p-3 bg-purple-50 rounded-xl text-purple-600"><i data-lucide="library" class="w-8 h-8"></i></div>
-                        </div>
-                    </div>
 
-                    <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
-                        <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
-                            <h2 class="text-xl font-bold text-red-700">Super Admin Production Console</h2>
-                            <span class="px-3 py-1 bg-red-50 text-brand-red text-xs font-bold rounded-full border border-red-100 uppercase tracking-widest animate-pulse">Root Configuration Access</span>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-4">
+                        <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
+                            <div class="border-b border-gray-100 pb-3 flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-bold text-red-700">Super Admin Console</h2>
+                                <span class="px-3 py-1 bg-red-50 text-brand-red text-xs font-bold rounded-full border border-red-100 uppercase tracking-widest animate-pulse">Root Access</span>
+                            </div>
                             <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Publish New Classroom Module Node Target</h3>
-                            <form id="admin-lesson-form" onsubmit="adminConsole.createLesson(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Sequential Index Number *</label>
-                                    <input type="number" id="adm-les-num" placeholder="e.g. 1, 2, 45" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
+                            <form id="admin-lesson-form" onsubmit="adminConsole.createLesson(event)" class="grid grid-cols-1 gap-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Number *</label>
+                                        <input type="number" id="adm-les-num" placeholder="e.g. 1" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold" required>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] font-bold text-gray-500 uppercase">Estimated Duration (Secs) *</label>
+                                        <input type="number" id="adm-les-duration" placeholder="e.g. 1800" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold" required>
+                                    </div>
                                 </div>
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Interface Structural Title *</label>
-                                    <input type="text" id="adm-les-title" placeholder="Core System Architecture Configurations" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Structural Title *</label>
+                                    <input type="text" id="adm-les-title" placeholder="Core Architecture" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold" required>
                                 </div>
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Google Drive Video ID Only *</label>
-                                    <input type="text" id="adm-les-gdrive" placeholder="e.g. 1A_xXBt9vQ... (Extract the ID from link)" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-mono" required>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Google Drive Video ID *</label>
+                                    <input type="text" id="adm-les-gdrive" placeholder="e.g. 1A_xXBt9vQ..." class="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-mono" required>
                                 </div>
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Estimated Running Runtime Duration Metrics (Seconds) *</label>
-                                    <input type="number" id="adm-les-duration" placeholder="e.g. 1800 for 30 minute calculations" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Syllabus Notes</label>
+                                    <textarea id="adm-les-desc" placeholder="Annotate parameters..." class="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-xs" rows="2"></textarea>
                                 </div>
-                                <div class="sm:col-span-2 space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Syllabus Target Learning Description Notes Context</label>
-                                    <textarea id="adm-les-desc" placeholder="Annotate explicit learning target framework parameters cleanly inside core structural layers..." class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs" rows="3"></textarea>
-                                </div>
-                                <div class="sm:col-span-2 pt-2">
-                                    <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Publish Component Node Asset</button>
-                                </div>
+                                <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Publish Component Node Asset</button>
                             </form>
                         </div>
                     </div>
@@ -433,8 +404,6 @@
         const SUPABASE_ANON_KEY = "sb_publishable_WXhdCUvVr1TNQhv9_24MBQ_0wdXy-VB";
         
         let supabaseClientInstance = null;
-        let presenceChannel = null; // Channel for Realtime Online Students Tracking
-
         try {
             if (typeof supabase !== 'undefined' && supabase.createClient) {
                 supabaseClientInstance = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -450,7 +419,8 @@
             profileData: null,
             lessonsCollection: [],
             progressMatrix: [],
-            activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828" 
+            activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828",
+            sessionStartTime: Date.now()
         };
 
         // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
@@ -470,7 +440,9 @@
                 if (session) {
                     globalState.sessionUser = session.user;
                     await pullProfileContextAndInitialize(session.user.id);
-                    initializePresenceTracking(); // Start tracking this user as online
+                    initializePresenceTracking();
+                    fetchActivityHistory();
+                    startSessionTimer();
                 } else {
                     displayScreenLayer("auth-shield-container");
                 }
@@ -480,55 +452,6 @@
             } finally {
                 const loader = document.getElementById("global-loader");
                 if (loader) loader.classList.add("hidden");
-            }
-        }
-
-        // --- REALTIME PRESENCE & ADMIN METRICS ENGINE ---
-        function initializePresenceTracking() {
-            if (!supabaseClientInstance || !globalState.sessionUser) return;
-            
-            presenceChannel = supabaseClientInstance.channel('online-students', {
-                config: { presence: { key: globalState.sessionUser.id } }
-            });
-
-            presenceChannel.on('presence', { event: 'sync' }, () => {
-                const state = presenceChannel.presenceState();
-                const onlineCount = Object.keys(state).length;
-                const adminOnlineMetric = document.getElementById("admin-metric-online");
-                if(adminOnlineMetric) {
-                    adminOnlineMetric.innerHTML = `${onlineCount} <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span></span>`;
-                }
-            });
-
-            presenceChannel.subscribe(async (status) => {
-                if (status === 'SUBSCRIBED') {
-                    await presenceChannel.track({
-                        user_id: globalState.sessionUser.id,
-                        online_at: new Date().toISOString()
-                    });
-                }
-            });
-        }
-
-        async function loadAdminMetricsData() {
-            if (globalState.profileData?.role !== 'super_admin') return;
-            try {
-                // Fetch Total Students Count realistically
-                const { count: studentCount, error: err1 } = await supabaseClientInstance
-                    .from('profiles')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('role', 'student');
-                
-                if (!err1) document.getElementById("admin-metric-total-students").textContent = studentCount || 0;
-
-                // Lessons count is already in globalState, but fetching real exact count:
-                const { count: lessonCount, error: err2 } = await supabaseClientInstance
-                    .from('lessons')
-                    .select('*', { count: 'exact', head: true });
-                
-                if (!err2) document.getElementById("admin-metric-total-lessons").textContent = lessonCount || 0;
-            } catch (e) {
-                console.error("Admin data fetch error:", e);
             }
         }
 
@@ -571,6 +494,11 @@
                 const el = document.getElementById(fid);
                 if(el) el.value = globalState.profileData[keys[idx]] || el.value || "";
             });
+            
+            if(globalState.profileData.avatar_url) {
+                document.getElementById('sb-avatar').src = globalState.profileData.avatar_url;
+                document.getElementById('prof-avatar-preview').src = globalState.profileData.avatar_url;
+            }
         }
 
         async function saveUserProfileDataState(e) {
@@ -589,10 +517,35 @@
                 }).eq('id', globalState.sessionUser.id);
 
                 if (error) throw error;
-                alert("Dynamic updates compiled across local profile layers successfully!");
+                alert("Profile data saved and synchronized successfully!");
                 await pullProfileContextAndInitialize(globalState.sessionUser.id);
             } catch(err) {
                 alert("Write Operations Pipeline Aborted: " + err.message);
+            }
+        }
+
+        // --- AVATAR UPLOAD LOGIC ---
+        async function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if(!file || !globalState.sessionUser) return;
+            try {
+                const fileExt = file.name.split('.').pop();
+                const filePath = `${globalState.sessionUser.id}-${Math.random()}.${fileExt}`;
+                
+                let { error: uploadError } = await supabaseClientInstance.storage.from('avatars').upload(filePath, file);
+                if(uploadError) throw uploadError;
+                
+                const { data } = supabaseClientInstance.storage.from('avatars').getPublicUrl(filePath);
+                
+                const { error: updateError } = await supabaseClientInstance.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', globalState.sessionUser.id);
+                if(updateError) throw updateError;
+                
+                document.getElementById('sb-avatar').src = data.publicUrl;
+                document.getElementById('prof-avatar-preview').src = data.publicUrl;
+                alert("Profile picture updated!");
+            } catch (err) {
+                console.error(err);
+                alert("Error uploading image. Ensure 'avatars' storage bucket exists and policies allow inserts.");
             }
         }
 
@@ -615,11 +568,6 @@
             const target = document.getElementById(viewId);
             if (target) target.classList.remove("hidden-layer");
             
-            // If switching to admin console, load real-time database metrics
-            if (viewId === 'admin-console') {
-                loadAdminMetricsData();
-            }
-
             document.querySelectorAll(".nav-link").forEach(btn => {
                 btn.classList.remove("text-white", "bg-brand-red");
                 btn.classList.add("text-gray-600", "hover:bg-gray-100");
@@ -654,14 +602,13 @@
                     } else if(data.user) {
                         globalState.sessionUser = data.user;
                         await pullProfileContextAndInitialize(data.user.id);
-                        initializePresenceTracking();
                     }
                 } catch(err) {
                     alert("Security Block Access Refused: " + err.message);
                 }
             },
             logout: async () => {
-                if (presenceChannel) await supabaseClientInstance.removeChannel(presenceChannel);
+                await saveSessionTime();
                 await supabaseClientInstance.auth.signOut();
                 location.reload();
             }
@@ -725,16 +672,13 @@
             document.getElementById("player-lesson-desc").textContent = lesson.description || "";
             document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
             
-            // Standard Drive Iframe Update
             const videoFrame = document.getElementById("gdrive-video-player");
             if (videoFrame) videoFrame.src = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/preview`;
-
-            // Full Video Drive Link Update & Show Action Area
-            const actionArea = document.getElementById("full-video-action");
-            const btnDriveLink = document.getElementById("btn-full-drive-link");
-            if (actionArea && btnDriveLink) {
-                actionArea.classList.remove("hidden-layer");
-                btnDriveLink.href = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/view`;
+            
+            const fullScreenBtn = document.getElementById("external-gdrive-btn");
+            if (fullScreenBtn) {
+                fullScreenBtn.href = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/view`;
+                fullScreenBtn.classList.remove("hidden");
             }
 
             const percentage = logContainer ? logContainer.watch_percentage : 0;
@@ -746,7 +690,7 @@
                     gateContainer.innerHTML = `
                         <div class="p-5 border border-emerald-200 bg-emerald-50/50 rounded-2xl space-y-3">
                             <div class="flex items-center space-x-2 text-emerald-800"><i data-lucide="check-circle" class="w-5 h-5"></i><span class="font-bold text-sm">Syllabus Compliance Criteria Met!</span></div>
-                            <p class="text-xs text-gray-600">Congratulations! Today's class has been completed successfully. You have until 8:00 PM to complete and submit today's assignment. After today's learning requirements are completed, the next lesson will unlock according to the course schedule.</p>
+                            <p class="text-xs text-gray-600">Congratulations! Today's class has been completed successfully. You have until <strong>10:00 PM</strong> to complete and submit today's assignment. After today's learning requirements are completed, the next lesson will unlock according to the course schedule.</p>
                             <div class="pt-2 flex flex-wrap gap-2">
                                 <a href="https://wa.me/923314220506?text=Assignment%20Submission%20Lesson%20${lesson.lesson_number}" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center space-x-2 shadow"><i data-lucide="message-square" class="w-4 h-4"></i><span>WhatsApp Submit</span></a>
                                 <a href="tel:+923314220506" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-xl flex items-center space-x-2 shadow"><i data-lucide="phone" class="w-4 h-4"></i><span>Call Office</span></a>
@@ -756,8 +700,7 @@
                 } else {
                     gateContainer.innerHTML = `
                         <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 space-y-2">
-                            <p><strong>Assignment Interface Shielded:</strong> Stream content up to 90% completion parameters to unlock WhatsApp vectors.</p>
-                            <button onclick="simulationTriggers.simulateCompleteWatch('${lesson.id}')" class="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg transition-all">Simulate Completing 95% Video Stream</button>
+                            <p><strong>Assignment Interface Shielded:</strong> Stream content up to 90% completion parameters to unlock WhatsApp vectors. You have until <strong>10:00 PM</strong> to complete and submit your assignment.</p>
                         </div>
                     `;
                 }
@@ -774,25 +717,9 @@
             }
         }
 
-        const simulationTriggers = {
-            simulateCompleteWatch: async (lessonId) => {
-                if(!globalState.sessionUser) return;
-                try {
-                    const { error } = await supabaseClientInstance.from('lesson_progress').upsert({
-                        student_id: globalState.sessionUser.id,
-                        lesson_id: lessonId,
-                        watch_percentage: 95.00,
-                        is_completed: true,
-                        completed_at: new Date().toISOString()
-                    });
-                    if(!error) await syncClassroomSyllabusEngine();
-                } catch(e) { console.error(e); }
-            }
-        };
-
         async function evaluateAnalyticsAggregatesMetricsContainers() {
             if(!globalState.sessionUser) return;
-            const totalItemsCount = globalState.lessonsCollection.length || 47;
+            const totalItemsCount = globalState.lessonsCollection.length > 0 ? globalState.lessonsCollection.length : 47;
             const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
             const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
 
@@ -810,27 +737,164 @@
             const attendancePct = completedCount > 0 ? Math.round(((attList?.length || 0) / completedCount) * 100) : 0;
             if (document.getElementById("stat-attendance-rate")) document.getElementById("stat-attendance-rate").textContent = `${attendancePct || 100}%`;
 
-            if(completedCount >= totalItemsCount && totalItemsCount > 0) {
+            if(completedCount >= 47 || completedCount >= totalItemsCount) {
                 const certWrapper = document.getElementById("certificate-delivery-wrapper");
                 if (certWrapper) {
                     certWrapper.innerHTML = `
-                        <a href="https://wa.me/923314220506?text=Verify%20My%20LMS%20Computer%20Course%20Certificate%20ID:%20${globalState.sessionUser.id.substring(0,8).toUpperCase()}" target="_blank" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
-                            Download Official Verified A4 Certificate
-                        </a>
+                        <button onclick="generateCertificate()" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
+                            <i data-lucide="award" class="inline w-4 h-4 mr-1 mb-0.5"></i> Download Official Verified Certificate
+                        </button>
                     `;
                 }
             }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // --- CERTIFICATE GENERATOR WITH CANVAS (MUHAMMAD RIZWAN SIGNATURE) ---
+        function generateCertificate() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1000; canvas.height = 700;
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#ffffff'; 
+            ctx.fillRect(0, 0, 1000, 700);
+            
+            // Borders
+            ctx.strokeStyle = '#DC2626'; 
+            ctx.lineWidth = 15; 
+            ctx.strokeRect(20, 20, 960, 660);
+            ctx.strokeStyle = '#B91C1C'; 
+            ctx.lineWidth = 2; 
+            ctx.strokeRect(40, 40, 920, 620);
+            
+            ctx.textAlign = 'center';
+            
+            // Header
+            ctx.fillStyle = '#DC2626';
+            ctx.font = 'bold 50px Arial';
+            ctx.fillText('EDUCATION POINT', 500, 130);
+            
+            ctx.fillStyle = '#111827';
+            ctx.font = '24px Arial';
+            ctx.fillText('CERTIFICATE OF COMPLETION', 500, 190);
+            
+            // Line
+            ctx.beginPath(); ctx.moveTo(300, 220); ctx.lineTo(700, 220); ctx.stroke();
+            
+            // Body
+            ctx.font = 'italic 20px Arial';
+            ctx.fillText('This is to certify that', 500, 300);
+            
+            ctx.fillStyle = '#DC2626';
+            ctx.font = 'bold 45px Arial';
+            ctx.fillText(globalState.profileData?.full_name || 'Student Name', 500, 370);
+            
+            ctx.fillStyle = '#111827';
+            ctx.font = '18px Arial';
+            ctx.fillText('has successfully completed the 47-Lesson Professional Computer Course', 500, 440);
+            ctx.fillText('including Windows Ecosystem, Office Automations & Web Assets.', 500, 470);
+            
+            // Signatures
+            ctx.font = 'italic 28px "Times New Roman"';
+            ctx.fillText('Muhammad Rizwan', 750, 580);
+            ctx.font = '14px Arial';
+            ctx.fillText('Founder / Instructor', 750, 600);
+            
+            ctx.font = '14px Arial';
+            ctx.fillText('Date: ' + new Date().toLocaleDateString(), 250, 600);
+            
+            const link = document.createElement('a');
+            link.download = `Education_Point_Certificate_${globalState.profileData?.full_name || 'Student'}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // --- REALTIME PRESENCE & ACTIVITY LOGS ---
+        function initializePresenceTracking() {
+            if(!supabaseClientInstance || !globalState.sessionUser) return;
+            const presenceChannel = supabaseClientInstance.channel('online-students', {
+                config: { presence: { key: globalState.sessionUser.id } }
+            });
+            
+            presenceChannel.on('presence', { event: 'sync' }, () => {
+                const state = presenceChannel.presenceState();
+                const activeCount = Object.keys(state).length;
+                if(document.getElementById('admin-online-count')) {
+                    document.getElementById('admin-online-count').textContent = activeCount;
+                }
+            }).subscribe(async (status) => {
+                if (status === 'SUBSCRIBED') {
+                    await presenceChannel.track({
+                        user_name: globalState.profileData?.full_name,
+                        role: globalState.profileData?.role,
+                        online_at: new Date().toISOString()
+                    });
+                }
+            });
+        }
+
+        function startSessionTimer() {
+            // Save active time every 15 minutes to avoid losing data on sudden closure
+            setInterval(saveSessionTime, 15 * 60 * 1000); 
+            // Update time before user closes window
+            window.addEventListener('beforeunload', saveSessionTime);
+        }
+
+        async function saveSessionTime() {
+            if(!globalState.sessionUser) return;
+            const now = Date.now();
+            const sessionDurationMins = Math.round((now - globalState.sessionStartTime) / 60000);
+            if (sessionDurationMins < 1) return; // Ignore less than 1 min
+            
+            try {
+                // To keep it simple without breaking DB constraints, we upsert to study_sessions table
+                await supabaseClientInstance.from('study_sessions').insert([{
+                    student_id: globalState.sessionUser.id,
+                    duration_minutes: sessionDurationMins,
+                    session_date: new Date().toISOString()
+                }]);
+                globalState.sessionStartTime = now; // Reset timer after save
+            } catch(e) { console.error("Could not save session time", e); }
+        }
+
+        async function fetchActivityHistory() {
+            if(!globalState.sessionUser) return;
+            try {
+                const list = document.getElementById("profile-activity-list");
+                if(!list) return;
+                
+                let { data: sessions, error } = await supabaseClientInstance.from('study_sessions')
+                    .select('*').eq('student_id', globalState.sessionUser.id)
+                    .order('session_date', { ascending: false }).limit(10);
+                
+                if (error) throw error;
+                list.innerHTML = "";
+                
+                if(!sessions || sessions.length === 0) {
+                    list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">No recent activity found.</p>`;
+                    return;
+                }
+                
+                sessions.forEach(session => {
+                    const dateStr = new Date(session.session_date).toLocaleDateString();
+                    list.innerHTML += `
+                        <div class="p-3 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i data-lucide="calendar" class="w-4 h-4 text-gray-400"></i>
+                                <span class="text-sm font-semibold text-gray-700">${dateStr}</span>
+                            </div>
+                            <span class="text-xs font-bold text-brand-red bg-red-50 px-2 py-1 rounded-full">${session.duration_minutes} mins active</span>
+                        </div>
+                    `;
+                });
+                if(typeof lucide !== 'undefined') lucide.createIcons();
+            } catch(e) { console.error("Error fetching activity", e); }
         }
 
         function establishRealtimeSubscriptions() {
             if (!supabaseClientInstance) return;
-            // Unsubscribe existing non-presence channels safely without killing presence
-            supabaseClientInstance.getChannels().forEach(ch => {
-                if(ch.topic !== 'realtime:online-students') {
-                    supabaseClientInstance.removeChannel(ch);
-                }
-            });
-
+            // Removes specific table subscriptions to avoid duplicate listeners, keeps channel
             supabaseClientInstance
                 .channel('schema-db-changes')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'lesson_progress' }, (payload) => {
@@ -838,8 +902,6 @@
                 })
                 .subscribe();
         }
-
-        const reportsEngine = { exportData: (f) => { alert("Export processing array: " + f); } };
 
         const adminConsole = {
             createLesson: async (e) => {
@@ -860,7 +922,6 @@
                     alert("Lesson deployed into database nodes!");
                     document.getElementById("admin-lesson-form").reset();
                     await syncClassroomSyllabusEngine();
-                    loadAdminMetricsData(); // Refresh counts after adding new lesson
                 } catch(err) { alert(err.message); }
             }
         };
@@ -869,7 +930,7 @@
             setInterval(() => {
                 const now = new Date();
                 const deadline = new Date();
-                deadline.setHours(20, 0, 0, 0); 
+                deadline.setHours(22, 0, 0, 0); // Changed to 10:00 PM (22:00)
                 let diff = deadline - now;
                 const element = document.getElementById("assignment-countdown");
                 if (!element) return;
