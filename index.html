@@ -4,13 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Education Point - Advanced LMS</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Canvas-Confetti for Success Celebrations -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
@@ -21,7 +17,6 @@
 </head>
 <body class="text-slate-800">
 
-    <!-- TOP NAVIGATION BAR -->
     <nav class="glass sticky top-0 z-50 border-b border-slate-200 bg-white/90 px-6 py-4 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-3">
             <div class="bg-red-600 text-white p-2 rounded-xl shadow-md shadow-red-200">
@@ -30,7 +25,6 @@
             <span class="font-bold text-xl tracking-tight text-slate-900">EDUCATION <span class="text-red-600">POINT</span></span>
         </div>
         <div class="flex items-center gap-4">
-            <!-- Active Learners Widget for Motivation -->
             <div id="live-counter" class="hidden sm:flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-green-200 animate-pulse">
                 <span class="w-2 h-2 rounded-full bg-green-500"></span>
                 <span id="active-students-count">12</span> Students Active Now
@@ -39,13 +33,10 @@
         </div>
     </nav>
 
-    <!-- MAIN APP WRAPPER -->
     <div class="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- LEFT COLUMN: AUTH & DASHBOARD STRUCUTURE -->
         <main class="col-span-1 lg:col-span-8 space-y-6">
             
-            <!-- AUTHENTICATION SCREEN -->
             <section id="auth-section" class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100 max-w-md mx-auto mt-10">
                 <h2 class="text-2xl font-bold text-slate-900 mb-2 text-center" id="auth-title">Welcome Back</h2>
                 <p class="text-slate-500 text-center text-sm mb-6">Learn complete computer courses with automated real-time verification.</p>
@@ -88,9 +79,7 @@
                 </p>
             </section>
 
-            <!-- CLASSROOM / VIDEO PLAYER PORTION -->
             <section id="classroom-section" class="hidden space-y-6">
-                <!-- Video Display Frame -->
                 <div class="bg-slate-900 rounded-2xl overflow-hidden shadow-xl border border-slate-800 relative">
                     <div class="video-container relative pb-[56.25%] h-0 w-full bg-black">
                         <div id="video-placeholder" class="absolute inset-0 flex flex-col items-center justify-between p-6 text-center text-slate-400">
@@ -102,14 +91,12 @@
                     </div>
                 </div>
 
-                <!-- Video Status & Interactive Assignment Portal -->
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-4">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
                         <div>
                             <h1 id="active-lesson-title" class="text-xl font-bold text-slate-900">Welcome to Your Classroom</h1>
                             <p id="active-lesson-duration" class="text-slate-500 text-xs mt-1"><i class="fa-regular fa-clock mr-1.5"></i>Select a lesson to begin monitoring runtime dynamics.</p>
                         </div>
-                        <!-- Daily Completion Banner -->
                         <div id="completion-status-badge" class="hidden bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-2 rounded-xl text-center">
                             <p class="text-sm font-bold"><i class="fa-solid fa-circle-check mr-2"></i>Today's Lesson Done!</p>
                         </div>
@@ -117,7 +104,6 @@
                     
                     <p id="active-lesson-desc" class="text-slate-600 text-sm leading-relaxed">Your digital growth starts here. Watch your lessons completely to automatically activate your presence and unlock validation tracking parameters.</p>
 
-                    <!-- ASSIGNMENT SUBMISSION MODULE -->
                     <div id="assignment-module" class="hidden bg-slate-50 border border-slate-200 p-4 rounded-xl mt-4">
                         <h3 class="text-sm font-bold text-slate-900 mb-2"><i class="fa-solid fa-file-arrow-up text-red-600 mr-2"></i>Daily Assignment Submission</h3>
                         <p class="text-xs text-slate-500 mb-3">Upload your practical proof file or project document to Google Drive/OneDrive and share the complete URL link below:</p>
@@ -130,10 +116,8 @@
             </section>
         </main>
 
-        <!-- RIGHT COLUMN: CORE ANALYTICS, SYLLABUS, AND CERTIFICATES -->
         <aside class="col-span-1 lg:col-span-4 space-y-6">
             
-            <!-- STUDENT GAMIFIED DASHBOARD / METRICS -->
             <section id="student-stats-card" class="hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-6">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200 text-slate-700 font-bold" id="avatar-fallback">U</div>
@@ -143,7 +127,6 @@
                     </div>
                 </div>
 
-                <!-- STREAKS AND ATTENDANCE CORE METRICS -->
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 p-4 rounded-xl relative overflow-hidden">
                         <i class="fa-solid fa-fire text-orange-400 absolute right-3 bottom-3 text-3xl opacity-20"></i>
@@ -157,7 +140,6 @@
                     </div>
                 </div>
 
-                <!-- STUDENT MOTIVATIONAL PROGRESS BAR -->
                 <div class="space-y-2 border-t border-slate-100 pt-4">
                     <div class="flex justify-between text-xs font-semibold">
                         <span class="text-slate-500">Overall Syllabus Cleared</span>
@@ -168,7 +150,6 @@
                     </div>
                 </div>
 
-                <!-- VERIFIED AUTOMATED CERTIFICATE MODULE -->
                 <div id="certificate-delivery-box" class="hidden border-2 border-dashed border-emerald-200 bg-emerald-50/50 p-4 rounded-xl text-center space-y-3 transition-all">
                     <i class="fa-solid fa-award text-4xl text-emerald-600 animate-bounce"></i>
                     <div>
@@ -176,30 +157,25 @@
                         <p class="text-xs text-emerald-700 mt-0.5">Your official verifiable certificate asset is prepared.</p>
                     </div>
                     <button id="generate-cert-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-lg transition-all shadow-md shadow-emerald-100"><i class="fa-solid fa-file-arrow-down mr-2"></i>Download PNG Certificate</button>
-                    <!-- HIDDEN CANVAS FOR PRODUCTION RENDERING -->
                     <canvas id="cert-canvas" width="800" height="550" class="hidden"></canvas>
                 </div>
             </section>
 
-            <!-- SYLLABUS LESSONS NODE NAVIGATION LIST -->
             <section id="syllabus-card" class="hidden bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <h3 class="font-bold text-slate-900 text-sm tracking-tight"><i class="fa-solid fa-layer-group text-red-600 mr-2"></i>Course Syllabus Outline</h3>
                     <span class="bg-slate-100 text-slate-700 text-xs px-2.5 py-1 rounded-md font-semibold" id="lesson-count-badge">0 Classes</span>
                 </div>
                 <div id="syllabus-nodes-target" class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
-                    <!-- Dynamic Items Injector Area -->
-                </div>
+                    </div>
             </section>
 
-            <!-- EXCLUSIVE SUPER ADMIN OPERATIONS ENGINE (NO STUDENT METRICS MIXED HERE) -->
             <section id="admin-control-hub" class="hidden bg-slate-900 text-white rounded-2xl p-5 shadow-xl border border-slate-800 space-y-6">
                 <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
                     <h3 class="font-bold text-red-400 text-sm tracking-wider uppercase"><i class="fa-solid fa-shield-halved mr-2"></i>Super Admin Terminal</h3>
                     <span class="bg-red-900/40 text-red-400 border border-red-800 text-[10px] uppercase font-bold px-2 py-0.5 rounded">Console Active</span>
                 </div>
 
-                <!-- REALTIME DATA METRIC INSIGHTS -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-slate-800/50 border border-slate-800 p-3 rounded-xl">
                         <p class="text-[10px] text-slate-400 font-medium uppercase">Active Registrations</p>
@@ -211,7 +187,6 @@
                     </div>
                 </div>
 
-                <!-- SYSTEM MAINTENANCE / ADD SYLLABUS NODE MODULE -->
                 <div class="space-y-3">
                     <p class="text-xs font-semibold text-slate-400 border-b border-slate-800 pb-1">Publish New Course Resource</p>
                     <div class="space-y-2.5 text-slate-300">
@@ -244,9 +219,8 @@
         </aside>
     </div>
 
-    <!-- CORE FUNCTIONAL INFRASTRUCTURE LOGIC DRIVER -->
     <script>
-        // SUPABASE CONNECTION PARAMS (Replace with your actual live operational keys)
+        // SUPABASE CONNECTION PARAMS (Your verified database credentials)
         const SUPABASE_URL = "https://sulgxyktyvngazgodvxf.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_WXhdCUvVr1TNQhv9_24MBQ_0wdXy-VB";
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -254,7 +228,7 @@
         // Core App Runtime Variables
         let activeSessionUser = null;
         let activeSessionProfile = null;
-        let currentCourseID = "81335b2e-062e-4b2e-9dcb-70d51381c828"; // Global hardcoded target id
+        let currentCourseID = "81335b2e-062e-4b2e-9dcb-70d51381c828"; 
         let cachedLessonsArray = [];
         let drivePollerMechanism = null;
 
@@ -262,6 +236,7 @@
         const authSec = document.getElementById('auth-section'), authForm = document.getElementById('auth-form');
         const regFields = document.getElementById('register-fields'), authTitle = document.getElementById('auth-title');
         const authSubmit = document.getElementById('auth-submit'), authToggleBtn = document.getElementById('auth-toggle-btn');
+        const authToggleMsg = document.getElementById('auth-toggle-msg');
         const classroomSec = document.getElementById('classroom-section'), logoutBtn = document.getElementById('logout-btn');
         const studentStatsCard = document.getElementById('student-stats-card'), syllabusCard = document.getElementById('syllabus-card');
         const adminControlHub = document.getElementById('admin-control-hub'), liveCounterWidget = document.getElementById('live-counter');
@@ -275,7 +250,7 @@
                 handleAuthStateShift(session?.user || null);
             });
             
-            // Randomly Simulate Realtime Active Learners counter for user high-grade motivation
+            // Randomly Simulate Realtime Active Learners counter
             document.getElementById('active-students-count').innerText = Math.floor(Math.random() * (48 - 18 + 1)) + 18;
         });
 
@@ -283,7 +258,6 @@
         async function handleAuthStateShift(user) {
             activeSessionUser = user;
             if (!user) {
-                // Toggle Views to Logged Out configuration
                 authSec.classList.remove('hidden');
                 classroomSec.classList.add('hidden');
                 studentStatsCard.classList.add('hidden');
@@ -295,7 +269,6 @@
                 return;
             }
 
-            // Sync Profile Layer
             authSec.classList.add('hidden');
             logoutBtn.classList.remove('hidden');
             liveCounterWidget.classList.remove('hidden');
@@ -316,7 +289,6 @@
             if (error || !profile) return;
             activeSessionProfile = profile;
 
-            // Render Core Interfaces Based on Access Permission Node
             studentStatsCard.classList.remove('hidden');
             syllabusCard.classList.remove('hidden');
             classroomSec.classList.remove('hidden');
@@ -325,7 +297,6 @@
             document.getElementById('student-display-edu').innerText = `${profile.education_level} • ${profile.role.toUpperCase()}`;
             document.getElementById('avatar-fallback').innerText = profile.full_name.charAt(0).toUpperCase();
 
-            // Direct View Routing Based on Role Security Model
             if (profile.role === 'super_admin') {
                 adminControlHub.classList.remove('hidden');
                 await loadAdminAnalyticsFrame();
@@ -350,7 +321,6 @@
 
             document.getElementById('lesson-count-badge').innerText = `${cachedLessonsArray.length} Classes`;
             
-            // Get user execution progress for all nodes
             let { data: progressLogs } = await supabase
                 .from('lesson_progress')
                 .select('*')
@@ -382,7 +352,6 @@
                 targetContainer.appendChild(nodeItem);
             });
 
-            // Update Global Metrics Progress Indicators
             if (cachedLessonsArray.length > 0) {
                 const completedCount = progressLogs?.filter(p => p.is_completed).length || 0;
                 const percentage = Math.round((completedCount / cachedLessonsArray.length) * 100);
@@ -402,7 +371,6 @@
             const frameContainer = document.getElementById('player-frame-target');
             frameContainer.classList.remove('hidden');
             
-            // Render the Native Google Drive Preview Component Player
             frameContainer.innerHTML = `
                 <iframe src="https://drive.google.com/file/d/${lesson.google_drive_video_id}/preview" allow="autoplay; encrypted-media" class="w-full h-full border-0"></iframe>
             `;
@@ -421,11 +389,8 @@
                 completionBadge.classList.add('hidden');
                 assignmentModule.classList.add('hidden');
                 
-                // CRITICAL REQUIREMENT: Realtime Tracking Validation Audit Engine
-                // Because iframes can't pass accurate API progress events across domains, 
-                // we calculate actual user time spent viewing the dynamic session asset frame.
                 let simulationSecondsCount = 0;
-                const targetExecutionRequirement = Math.min(lesson.estimated_duration * 0.8, 300); // Trigger complete after 80% or max 5 mins audit loop
+                const targetExecutionRequirement = Math.min(lesson.estimated_duration * 0.8, 300); 
 
                 drivePollerMechanism = setInterval(async () => {
                     simulationSecondsCount += 5;
@@ -433,13 +398,12 @@
                         clearInterval(drivePollerMechanism);
                         await commitLessonCompletionDatabaseLog(lesson.id);
                     }
-                }, 5000); // Heartbeat cycle check execution every 5 seconds
+                }, 5000); 
             }
         }
 
         // COMMIT PROGRESS VALIDATION LOGS TO DATABASE
         async function commitLessonCompletionDatabaseLog(lessonID) {
-            // 1. Progress State Log Mutation
             await supabase.from('lesson_progress').upsert({
                 student_id: activeSessionUser.id,
                 lesson_id: lessonID,
@@ -448,14 +412,12 @@
                 completed_at: new Date().toISOString()
             }, { onConflict: 'student_id,lesson_id' });
 
-            // 2. Mark Attendance Node Log for Today
             const todayString = new Date().toISOString().split('T')[0];
             const { error: attErr } = await supabase.from('attendance').insert({
                 student_id: activeSessionUser.id,
                 marked_date: todayString
             });
 
-            // 3. Update Streak Counters if Attendance Log was fresh execution today
             if (!attErr) {
                 let { data: currentEnrollment } = await supabase
                     .from('enrollments')
@@ -479,23 +441,18 @@
                 }, { onConflict: 'student_id' });
             }
 
-            // Fire Success Effects
             confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
-            
-            // Refresh Core Interface UI Blocks
             await syncProfileDataNode();
         }
 
         // REFRESH METRICS OVERVIEW PANELS
         async function refreshGamifiedMetrics() {
-            // Get Current Enrollment Node State Logs
             let { data: enrollment } = await supabase
                 .from('enrollments')
                 .select('*')
                 .eq('student_id', activeSessionUser.id)
                 .single();
 
-            // Get Current Attendance Count Aggregate Array
             let { data: attendanceLogs } = await supabase
                 .from('attendance')
                 .select('id')
@@ -544,7 +501,6 @@
             if (error) return alert(`Execution failure: ${error.message}`);
             
             alert("Component node published dynamically!");
-            // Reset Admin Form Input Nodes
             document.getElementById('adm-index').value = '';
             document.getElementById('adm-duration').value = '';
             document.getElementById('adm-title').value = '';
@@ -560,20 +516,17 @@
             const canvas = document.getElementById('cert-canvas');
             const ctx = canvas.getContext('2d');
 
-            // Render High Quality Background Frame
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Add Elegant Dual Border Configurations
-            ctx.strokeStyle = "#dc2626"; // Crimson Red accent
+            ctx.strokeStyle = "#dc2626"; 
             ctx.lineWidth = 14;
             ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
             
-            ctx.strokeStyle = "#1e293b"; // Dark Slate inner
+            ctx.strokeStyle = "#1e293b"; 
             ctx.lineWidth = 2;
             ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
 
-            // Draw Header Identity Brand Text
             ctx.fillStyle = "#1e293b";
             ctx.font = "bold 26px sans-serif";
             ctx.textAlign = "center";
@@ -583,7 +536,6 @@
             ctx.font = "italic 16px sans-serif";
             ctx.fillText("Verified Professional Training Milestone Authentication Certificate", canvas.width / 2, 120);
 
-            // Core Statement Definition Text
             ctx.fillStyle = "#dc2626";
             ctx.font = "bold 38px sans-serif";
             ctx.fillText("CERTIFICATE OF COMPLETION", canvas.width / 2, 200);
@@ -592,12 +544,10 @@
             ctx.font = "normal 16px sans-serif";
             ctx.fillText("This state document explicitly verifies and registers that", canvas.width / 2, 250);
 
-            // Student Identity Full Name Placement
             ctx.fillStyle = "#0f172a";
             ctx.font = "bold 32px sans-serif";
             ctx.fillText(activeSessionProfile?.full_name || "Academy Graduate Student", canvas.width / 2, 300);
 
-            // Course Target Text Specifications
             ctx.fillStyle = "#475569";
             ctx.font = "normal 15px sans-serif";
             ctx.fillText("has successfully fulfilled the absolute rigorous curriculum execution rules for the course titled", canvas.width / 2, 345);
@@ -606,7 +556,6 @@
             ctx.font = "bold 22px sans-serif";
             ctx.fillText("Complete Professional Computer Course", canvas.width / 2, 385);
 
-            // Footer Signature Infrastructure Panels
             ctx.strokeStyle = "#cbd5e1";
             ctx.lineWidth = 1;
             ctx.beginPath(); ctx.moveTo(150, 470); ctx.lineTo(320, 470); ctx.stroke();
@@ -617,7 +566,6 @@
             ctx.fillText("Director Signature", 235, 490);
             ctx.fillText("Verification Authority Node", 565, 490);
 
-            // Stamp Graphic Design Implementation
             ctx.fillStyle = "rgba(220, 38, 38, 0.08)";
             ctx.beginPath(); ctx.arc(canvas.width / 2, 460, 45, 0, 2 * Math.PI); ctx.fill();
             ctx.strokeStyle = "rgba(220, 38, 38, 0.4)";
@@ -627,7 +575,6 @@
             ctx.fillText("PASSED", canvas.width / 2, 458);
             ctx.fillText("OFFICIAL SEAL", canvas.width / 2, 472);
 
-            // Force Binary Data Stream Asset Download Workflow
             const imageURL = canvas.toDataURL("image/png");
             const linkNode = document.createElement('a');
             linkNode.download = `${activeSessionProfile?.full_name || 'Student'}_Verified_EducationPoint_Certificate.png`;
@@ -642,7 +589,7 @@
             regFields.classList.toggle('hidden', !isRegistrationViewActive);
             authTitle.innerText = isRegistrationViewActive ? "Register Secure Profile" : "Welcome Back";
             authSubmit.innerText = isRegistrationViewActive ? "Build Dynamic Profile" : "Sign In";
-            authToggle-msg.innerText = isRegistrationViewActive ? "Already possess an active profile?" : "Don't have an account?";
+            authToggleMsg.innerText = isRegistrationViewActive ? "Already possess an active profile?" : "Don't have an account?";
             authToggleBtn.innerText = isRegistrationViewActive ? "Sign In Instead" : "Create Account";
         };
 
@@ -671,7 +618,7 @@
                         mobile_number: mobile,
                         role: 'student'
                     });
-                    alert("Verification email dispatched or Account Initialized! Log in to access classroom assets.");
+                    alert("Account Initialized successfully! You can now Sign In.");
                     authToggleBtn.click();
                 }
             } else {
