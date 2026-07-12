@@ -776,14 +776,9 @@
             document.getElementById("player-lesson-title").textContent = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
             document.getElementById("player-lesson-desc").textContent = lesson.description || "";
             document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
+            Const videoFrame = document.getElementById("gdrive-video-player");
+            if (videoFrame) videoFrame.src = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/preview`;
             
-            document.addEventListener("DOMContentLoaded", () => {
-    const videoFrame = document.getElementById("gdrive-video-player");
-    
-    // Check if the element exists and the video ID is available
-    if (videoFrame && typeof lesson !== 'undefined' && lesson.google_drive_video_id) {
-        videoFrame.src = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/preview`;
-    }
 });
             
             const percentage = logContainer ? logContainer.watch_percentage : 0;
