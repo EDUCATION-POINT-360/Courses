@@ -860,59 +860,79 @@ await evaluateAnalyticsAggregatesMetricsContainers();
             }, 60000);
         }
 
-        async function fetchActivityHistory() {
-            if(!globalState.sessionUser) return;
-            try {
-                let { data: history } = await supabaseClientInstance.from('daily_activity')
-                    .select('*')
-                    .eq('student_id', globalState.sessionUser.id)
-                    .order('date', { ascending: false });
-                
-                const list = document.getElementById('activity-history-list');
-                if(!list) return;
-                
-                if(history && history.length > 0) {
-                    // Find today's
-                    const todayRec = history.find(h => h.date === currentDayStr);
-                    if(todayRec) {
-                        todayActiveMinutes = todayRec.active_minutes;
-                        document.getElementById("stat-study-hours").textContent = `${todayActiveMinutes} mins`;
-                    }
+        async function startRealTimeActivityTracker() {
+    setInterval(async () => {
+        if (!globalState.sessionUser) return;
+        todayActiveMinutes++;
+        if(document.getElementById("stat-study-hours")) document.getElementById("stat-study-hours").textContent = `${todayActiveMinutes} mins`;
+        
+        try {
+            await supabaseClientInstance.from('daily_activity').upsert({
+                student_id: globalState.sessionUser.id,
+                date: currentDayStr,
+                active_minutes: todayActiveMinutes,
+                last_seen: new Date().toISOString()
+            }, { onConflict: 'student_id, date' });
+            
+            // سٹریک اور ہسٹری کو ساتھ ہی اپ ڈیٹ کریں
+            await calculateAndDisplayStreak();
+            await fetchActivityHistory();
+        } catch(e) { console.error("Tracker Error:", e); }
+    }, 60000);
+}
 
-                    list.innerHTML = history.map(h => `
-                        <div class="flex items-center justify-between p-3 border border-gray-100 rounded-xl bg-gray-50">
-                            <div class="flex items-center space-x-3">
-                                <i data-lucide="calendar-clock" class="text-gray-400 w-5 h-5"></i>
-                                <span class="text-sm font-semibold text-gray-700">${new Date(h.date).toLocaleDateString()}</span>
-                            </div>
-                            <span class="text-xs font-bold text-brand-red bg-red-50 px-3 py-1 rounded-full">${h.active_minutes} Mins Active</span>
-                        </div>
-                    `).join('');
-                } else {
+async function fetchActivityHistory() {
+    if(!globalState.sessionUser) return;
+    let { data: history } = await supabaseClientInstance.from('daily_activity').select('*').eq('student_id', globalState.sessionUser.id).order('date', { ascending: false });
+    
+    const list = document.getElementById('activity-history-list');
+    if(!list || !history) return;
+    list.innerHTML = history.map(h => `
+        <div class="flex items-center justify-between p-3 border border-gray-100 rounded-xl bg-gray-50">
+            <span class="text-xs font-bold text-gray-800">${h.date}</span>
+            <span class="text-xs font-bold text-brand-red bg-red-50 px-3 py-1 rounded-full">${h.active_minutes} Mins</span>
+        </div>
+    `).join('');
+            } else {
                     list.innerHTML = `<p class="text-xs text-gray-400 text-center">No previous history found.</p>`;
                 }
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             } catch(e) {}
         }
+async function calculateAndDisplayStreak() {
+    let { data: history } = await supabaseClientInstance.from('daily_activity').select('date').eq('student_id', globalState.sessionUser.id).order('date', { ascending: false });
+    if (!history || history.length === 0) return;
 
-        // --- ADMIN LIVE STATS ---
-        async function fetchAdminLiveStats() {
-            try {
-                // Get total students
-                let { count: totalStudents } = await supabaseClientInstance.from('profiles').select('*', { count: 'exact', head: true });
-                document.getElementById('admin-total-students').textContent = totalStudents || 0;
+    let streak = 0;
+    let checkDate = new Date();
+    checkDate.setHours(0,0,0,0);
 
-                // Get active students in last 15 minutes
-                const fifteenMinsAgo = new Date(Date.now() - 15 * 60000).toISOString();
-                let { count: activeStudents } = await supabaseClientInstance.from('daily_activity')
-                    .select('*', { count: 'exact', head: true })
-                    .gte('last_seen', fifteenMinsAgo);
-                
-                document.getElementById('admin-active-students').textContent = activeStudents || 0;
-            } catch(e) {
-                console.error("Admin stats error", e);
-            }
+    for (let i = 0; i < history.length; i++) {
+        let entryDate = new Date(history[i].date);
+        if (entryDate.toDateString() === checkDate.toDateString()) {
+            streak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+        } else if (i > 0) { break; }
+    }
+    document.getElementById("stat-current-streak").textContent = `${streak} Days`;
         }
+        
+        // --- ADMIN LIVE STATS ---
+        // یہ فنکشن تلاش کریں اور بدل دیں
+async function fetchAdminLiveStats() {
+    try {
+        const { count: totalCount } = await supabaseClientInstance.from('profiles').select('*', { count: 'exact', head: true });
+        const fiveMinsAgo = new Date(Date.now() - 5 * 60000).toISOString();
+        const { count: activeCount } = await supabaseClientInstance.from('daily_activity').select('*', { count: 'exact', head: true }).gte('last_seen', fiveMinsAgo);
+
+        document.getElementById('admin-total-students').textContent = totalCount || 0;
+        document.getElementById('admin-active-students').textContent = activeCount || 0;
+    } catch(e) { console.error("Admin stats error:", e); }
+}
+
+// یہ لائن اپنے مین اسکرپٹ کے آخر میں شامل کریں
+setInterval(fetchAdminLiveStats, 30000); 
+
 
         // --- CERTIFICATE GENERATION LOGIC ---
         function generateAndDownloadCertificate() {
