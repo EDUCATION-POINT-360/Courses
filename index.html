@@ -30,7 +30,7 @@
         }
     </script>
     <!-- Fonts & Icons Frameworks -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -432,14 +432,14 @@
 
     <!-- MAIN ORCHESTRATION ENGINE ENGINE -->
     <script>
-        // REPLACE WITH ACTUAL CONFIGURATION PARAMETERS
+        // REPLACE WITH YOUR ACTUAL SUPABASE CREDS
         const SUPABASE_URL = "https://your-project-id.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
         
-        // Initialize Core Supabase Engine Safely
+        // Safe Initialization Block
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Core App Runtime State Cache Variables
+        // State Control Core Cache variables
         let currentSessionUser = null;
         let profileDataCache = null;
         let enrollmentState = null;
@@ -454,17 +454,15 @@
         });
 
         // ====================================================================
-        // AUTHENTICATION INFRASTRUCTURE ROUTINES (FIXED)
+        // FIXED AUTHENTICATION LOGICS
         // ====================================================================
         async function initAuthenticationEngine() {
-            // Check existing session state parameters safely
             const { data: { session }, error } = await supabase.auth.getSession();
-            if (error) console.error("Session resolve issue:", error.message);
+            if (error) console.error("Session fetch issue:", error.message);
             evaluateSessionState(session);
 
-            // Establish deep auth state change bindings
+            // Real-time Auth Listening Sync Hook
             supabase.auth.onAuthStateChange((event, updatedSession) => {
-                console.log(`Auth lifecycle change event noticed: ${event}`);
                 evaluateSessionState(updatedSession);
             });
         }
@@ -490,16 +488,32 @@
             document.getElementById("auth-toggle-btn").innerText = isSignUpMode ? "Sign In" : "Create Account";
         });
 
-        // Form pipeline controller logic execution route handler
+        // Email & Password Auth Router Form Pipeline Handler
         document.getElementById("auth-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             const email = document.getElementById("auth-email").value.trim();
             const password = document.getElementById("auth-password").value;
 
             if (isSignUpMode) {
+                // Step 1: Sign up user inside Supabase Auth Scheme
                 const { data, error } = await supabase.auth.signUp({ email, password });
                 if (error) return emitAlertNotification(error.message, "danger");
-                emitAlertNotification("Verification email dispatched. Confirm your profile link!", "warning");
+                
+                if (data?.user) {
+                    // Step 2: Auto-inject a structural SQL Profile node matching database constraints
+                    const { error: profileErr } = await supabase.from('profiles').insert([
+                        { 
+                            id: data.user.id, 
+                            full_name: email.split('@')[0], 
+                            role: 'student',
+                            current_streak: 0,
+                            total_xp: 0,
+                            longest_streak: 0
+                        }
+                    ]);
+                    if (profileErr) console.error("Auto profile matching warning:", profileErr.message);
+                }
+                emitAlertNotification("Account built! Check your email to verify.", "success");
             } else {
                 const { data, error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) return emitAlertNotification(error.message, "danger");
@@ -507,13 +521,13 @@
             }
         });
 
-        // Fixed Native Google Redirect Call Integration Method
+        // 100% Fixed Native Google OAuth Routing Flow
         document.getElementById("google-auth-btn").addEventListener("click", async (e) => {
             e.preventDefault();
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: window.location.origin
+                    redirectTo: window.location.href // Fallback redirection direct target URL scheme mapping
                 }
             });
             if (error) emitAlertNotification(error.message, "danger");
@@ -523,7 +537,7 @@
             e.preventDefault();
             const email = document.getElementById("auth-email").value.trim();
             if (!email) return emitAlertNotification("Provide email first.", "warning");
-            const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+            const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
             if (error) emitAlertNotification(error.message, "danger");
             else emitAlertNotification("Password reset email transmitted.", "success");
         });
@@ -534,24 +548,27 @@
         });
 
         // ====================================================================
-        // DATA ACCESS LAYER HANDLERS
+        // DATA ACCESS & PROFILE RE-SYNC HANDLERS (SQL COMPLIANT)
         // ====================================================================
         async function fetchCoreUserMetadataAndSync() {
+            // Safe fetch profile using maybeSingle() hook to bypass hard code crashes
             let { data: profile, error } = await supabase.from('profiles').select('*').eq('id', currentSessionUser.id).maybeSingle();
             
+            // If the user row profile node asset isn't mapped, direct them to profile generation
             if (!profile) {
                 switchView('profile-view');
                 document.getElementById("auth-container").classList.add("hidden");
                 document.getElementById("app-container").classList.remove("hidden");
-                emitAlertNotification("Please complete your profile details.", "warning");
+                emitAlertNotification("Please populate complete SQL profile attributes step.", "warning");
                 return;
             }
             
             profileDataCache = profile;
             
+            // Sync course enrollments table node mappings
             let { data: enroll } = await supabase.from('enrollments').select('*').eq('student_id', currentSessionUser.id).maybeSingle();
             if (!enroll) {
-                const { data: newEnroll } = await supabase.from('enrollments').insert([{ student_id: currentSessionUser.id }]).select().single();
+                const { data: newEnroll } = await supabase.from('enrollments').insert([{ student_id: currentSessionUser.id, current_unlocked_lesson: 1, completed_lessons_count: 0 }]).select().single();
                 enrollmentState = newEnroll;
             } else {
                 enrollmentState = enroll;
@@ -604,7 +621,7 @@
                     clearInterval(videoTrackerTimer);
                     await markLessonComplete();
                 }
-            }, 15000); // Heartbeat verification track updates
+            }, 15000);
         }
 
         async function markLessonComplete() {
@@ -616,19 +633,41 @@
                 completed_at: new Date().toISOString()
             });
             if (!error) {
-                emitAlertNotification("Lesson milestones tracked and saved successfully.", "success");
+                emitAlertNotification("Lesson tracked and saved successfully.", "success");
                 fetchCoreUserMetadataAndSync();
             }
         }
 
+        // Profile Form Setup Update Mutation Pipeline mapping to profiles table attributes
+        document.getElementById("profile-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const payload = {
+                full_name: document.getElementById("prof-fullname").value.trim(),
+                father_name: document.getElementById("prof-father").value.trim(),
+                mobile_number: document.getElementById("prof-mobile").value.trim(),
+                city: document.getElementById("prof-city").value.trim(),
+                physical_address: document.getElementById("prof-address").value.trim(),
+                date_of_birth: document.getElementById("prof-dob").value,
+                gender: document.getElementById("prof-gender").value,
+                education_level: document.getElementById("prof-edu").value.trim(),
+                updated_at: new Date().toISOString()
+            };
+
+            const { error } = await supabase.from('profiles').update(payload).eq('id', currentSessionUser.id);
+            if (error) return emitAlertNotification(error.message, "danger");
+            emitAlertNotification("SQL Profile matrix synced successfully!", "success");
+            fetchCoreUserMetadataAndSync();
+            switchView('dashboard-view');
+        });
+
         // ====================================================================
-        // UTILITIES & LAYOUT SWITCHERS
+        // INTERFACE UTILITIES & ROUTERS
         // ====================================================================
         function emitAlertNotification(message, variation = "info") {
             const box = document.getElementById("toast-container");
             const toast = document.createElement("div");
             const bgClass = variation === "danger" ? "bg-red-600 text-white" : variation === "success" ? "bg-emerald-600 text-white" : "bg-slate-900 text-white";
-            toast.className = `p-4 rounded-xl text-xs font-bold shadow-lg ${bgClass} transition-all duration-300 transform translate-y-2 animate-fade-in`;
+            toast.className = `p-4 rounded-xl text-xs font-bold shadow-lg ${bgClass} transition-all duration-300 transform translate-y-2`;
             toast.innerText = message;
             box.appendChild(toast);
             setTimeout(() => toast.remove(), 4000);
