@@ -72,6 +72,12 @@
                 </div>
             </div>
 
+            <!-- Strike Indicator Display For Student Context -->
+            <div id="student-strike-banner" class="mx-4 mb-2 p-3 bg-orange-50 border border-orange-200 rounded-xl hidden flex items-center justify-between">
+                <span class="text-xs font-bold text-orange-700 flex items-center gap-1"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Active Strikes:</span>
+                <span id="student-strike-count" class="px-2 py-0.5 bg-brand-red text-white text-xs font-black rounded-md">0</span>
+            </div>
+
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
                 <button onclick="switchView('student-dashboard')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all text-white bg-brand-red">
                     <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Dashboard</span>
@@ -89,6 +95,15 @@
                     <i data-lucide="shield-alert" class="w-5 h-5"></i><span>Super Admin Panel</span>
                 </button>
             </nav>
+
+            <!-- Realtime Study Clock Widget Context Sidebar -->
+            <div class="p-3 mx-4 my-2 bg-neutral-900 text-white rounded-xl flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
+                    <span class="text-[11px] uppercase tracking-wider text-gray-400 font-bold">Session Clock</span>
+                </div>
+                <span id="realtime-session-counter" class="font-mono text-xs font-bold text-emerald-400">00:00:00</span>
+            </div>
 
             <div class="p-4 border-t border-gray-100">
                 <button onclick="appAuth.logout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-red-50 hover:text-brand-red rounded-xl text-sm font-semibold transition-colors">
@@ -118,7 +133,7 @@
                     </div>
 
                     <!-- ANALYTICS HIGHLIGHT METRICS WIDGETS -->
-                    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
                             <div class="p-3 bg-red-100 text-brand-red rounded-xl"><i data-lucide="zap" class="w-6 h-6"></i></div>
                             <div>
@@ -144,15 +159,7 @@
                             <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i data-lucide="clock" class="w-6 h-6"></i></div>
                             <div>
                                 <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Study Time</p>
-                                <h3 class="text-xl font-black text-gray-800" id="stat-study-hours">0h 0m</h3>
-                            </div>
-                        </div>
-                        <!-- STRIKE SYSTEM DASH WIDGET -->
-                        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
-                            <div class="p-3 bg-orange-100 text-orange-600 rounded-xl"><i data-lucide="shield-alert" class="w-6 h-6"></i></div>
-                            <div>
-                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Active Strikes</p>
-                                <h3 class="text-xl font-black text-orange-600" id="stat-strike-count">0 / 3</h3>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-study-hours">0h</h3>
                             </div>
                         </div>
                     </div>
@@ -211,6 +218,18 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- HIGHLY VISUAL REALISTIC PNG RENDERING CERTIFICATE ENGINE STAGE CONTAINER -->
+                    <div id="visual-certificate-render-stage" class="hidden bg-white p-6 rounded-2xl border border-gray-200 shadow-md flex flex-col items-center">
+                        <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Your Verified Education Point Certificate Asset</h3>
+                        <div class="w-full max-w-2xl border shadow-inner p-2 bg-neutral-100 rounded-xl overflow-x-auto">
+                            <!-- Visual HTML Live Certificate Canvas Representation -->
+                            <canvas id="verified-certificate-canvas" width="800" height="560" class="mx-auto rounded border border-neutral-300 shadow bg-white"></canvas>
+                        </div>
+                        <button onclick="certificateGraphicsEngine.triggerCanvasDownload()" class="mt-4 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl uppercase tracking-wider shadow flex items-center gap-2">
+                            <i data-lucide="download-cloud" class="w-4 h-4"></i> Save Certificate Image Asset (.PNG)
+                        </button>
                     </div>
                 </section>
 
@@ -271,9 +290,9 @@
                 <section id="classroom-portal" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="flex flex-col xl:flex-row gap-6">
                         <div class="flex-1 space-y-4">
-                            <!-- IFRAME DISPLAY WRAPPER FIXED AND OVERHAULED FOR COMPLETE DISCOVERABILITY -->
-                            <div class="w-full bg-black rounded-2xl overflow-hidden shadow-xl relative border-4 border-white" style="padding-top: 56.25%;">
-                                <iframe id="gdrive-video-player" class="w-full h-full absolute inset-0 bg-neutral-900 z-10" src="" allow="autoplay; fullscreen" allowfullscreen style="border:0;"></iframe>
+                            <!-- FIXED OVERFLOW VIDEO BLOCK CONTAINER WITH RELATIVE PROPORTION ASPECT FOR EMBED -->
+                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl w-full relative" style="padding-top: 56.25%;">
+                                <iframe id="gdrive-video-player" class="w-full h-full absolute top-0 left-0 bottom-0 right-0 border-0 bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
                             </div>
                             
                             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
@@ -295,6 +314,9 @@
                             </div>
 
                             <div id="assignment-gate-container" class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
+                                <h3 class="text-base font-bold text-gray-800 flex items-center space-x-2">
+                                    <i data-lucide="file-check" class="text-brand-red w-5 h-5"></i><span>Daily Secure Assignment Gateway Channels</span>
+                                </h3>
                                 <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
                                     Assignment dispatch system disabled. Stream the active classroom asset fully clear across the 90% checkpoint margin parameter bounds to operationalize standard submission routines.
                                 </div>
@@ -326,61 +348,55 @@
                     </div>
                 </section>
 
-                <!-- VIEW 5: SUPER ADMIN ADMINISTRATIVE CONSOLE CONTROL NODE -->
+                <!-- VIEW 5: SUPER ADMIN ADMINISTRATIVE CONSOLE CONTROL NODE WITH REALTIME ATTENDANCE, ANALYSIS & STRIKE MANAGER -->
                 <section id="admin-console" class="view-layer page-layer hidden-layer space-y-6">
-                    <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
+                    <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm space-y-6">
                         <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
                             <h2 class="text-xl font-bold text-red-700">Super Admin Production Console</h2>
                             <span class="px-3 py-1 bg-red-50 text-brand-red text-xs font-bold rounded-full border border-red-100 uppercase tracking-widest animate-pulse">Root Configuration Access</span>
                         </div>
 
-                        <!-- REALTIME ANALYSIS & MANAGEMENT PANEL -->
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
-                            <div class="lg:col-span-2 bg-white p-4 rounded-xl border border-gray-200 space-y-3">
-                                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="users" class="text-brand-red w-4 h-4"></i><span>Realtime Student Database Control Panel</span>
-                                </h3>
-                                <div class="overflow-x-auto custom-scrollbar">
-                                    <table class="w-full text-left border-collapse text-xs">
-                                        <thead>
-                                            <tr class="bg-gray-100 text-gray-600 uppercase font-bold border-b border-gray-200">
-                                                <th class="p-2">Name</th>
-                                                <th class="p-2">Role</th>
-                                                <th class="p-2">Live Attendance</th>
-                                                <th class="p-2">Study Duration</th>
-                                                <th class="p-2">Strikes</th>
-                                                <th class="p-2 text-center">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="admin-students-tbody" class="divide-y divide-gray-100">
-                                            <!-- Managed via Realtime Array Iteration -->
-                                        </tbody>
-                                    </table>
-                                </div>
+                        <!-- Real-time Multi-Dimensional Analytical Workspace -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-neutral-900 text-white p-4 rounded-xl shadow-sm">
+                                <p class="text-[10px] text-neutral-400 uppercase tracking-wider font-bold">Total Platform Active Learners</p>
+                                <h3 id="admin-analytics-total-students" class="text-2xl font-black mt-1 text-red-500">0</h3>
                             </div>
-                            
-                            <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4">
-                                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="activity" class="text-brand-red w-4 h-4"></i><span>LMS Core Live Analysis Metrics</span>
-                                </h3>
-                                <div class="space-y-3 text-xs">
-                                    <div class="p-3 bg-red-50 rounded-lg flex justify-between items-center">
-                                        <span class="font-medium text-gray-600">Total System Runtime Logs</span>
-                                        <span id="adm-total-seconds-tracked" class="font-bold font-mono text-brand-red text-sm">0h 0m</span>
-                                    </div>
-                                    <div class="p-3 bg-gray-50 rounded-lg flex justify-between items-center">
-                                        <span class="font-medium text-gray-600">Aggregate Strikes Triggered</span>
-                                        <span id="adm-total-strikes-logged" class="font-bold text-gray-800 text-sm">0</span>
-                                    </div>
-                                    <div class="p-3 bg-emerald-50 rounded-lg flex justify-between items-center">
-                                        <span class="font-medium text-gray-600">Active Pipeline Observers</span>
-                                        <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
-                                    </div>
-                                </div>
+                            <div class="bg-neutral-900 text-white p-4 rounded-xl shadow-sm">
+                                <p class="text-[10px] text-neutral-400 uppercase tracking-wider font-bold">Total Platform Cumulative Hours Studied</p>
+                                <h3 id="admin-analytics-total-seconds" class="text-2xl font-black mt-1 text-emerald-400">0h</h3>
+                            </div>
+                            <div class="bg-neutral-900 text-white p-4 rounded-xl shadow-sm">
+                                <p class="text-[10px] text-neutral-400 uppercase tracking-wider font-bold">Platform System-Wide Lesson Node Count</p>
+                                <h3 id="admin-analytics-total-lessons" class="text-2xl font-black mt-1 text-blue-400">0 / 47</h3>
                             </div>
                         </div>
 
-                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-6">
+                        <!-- Full Controls Real-time Student Management Ledger & Attendance Panel -->
+                        <div class="border border-neutral-200 rounded-xl overflow-hidden bg-white">
+                            <div class="bg-neutral-50 px-4 py-3 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <h3 class="text-xs font-bold text-neutral-700 uppercase tracking-wider flex items-center gap-1"><i data-lucide="users" class="w-4 h-4"></i> Real-time Scholar Matrix & Complete Control</h3>
+                                <button onclick="adminConsole.fetchRealtimeControlRegistry()" class="px-3 py-1 bg-neutral-800 hover:bg-neutral-950 text-white text-[11px] font-bold rounded flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Refresh Data</button>
+                            </div>
+                            <div class="overflow-x-auto custom-scrollbar">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-neutral-100 text-[10px] font-bold uppercase text-neutral-500 border-b border-neutral-200">
+                                            <th class="p-3">Scholar Name / Contact</th>
+                                            <th class="p-3">Real-time Study Metrics</th>
+                                            <th class="p-3">Attendance / Streak</th>
+                                            <th class="p-3">Strikes Control System</th>
+                                            <th class="p-3 text-right">Actions Panel</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-student-registry-tbody" class="divide-y divide-neutral-100 text-xs">
+                                        <tr><td colspan="5" class="p-4 text-center text-neutral-400">Pulling global platform state parameters...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-4">
                             <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Publish New Classroom Module Node Target</h3>
                             <form id="admin-lesson-form" onsubmit="adminConsole.createLesson(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="space-y-1">
@@ -393,7 +409,7 @@
                                 </div>
                                 <div class="space-y-1">
                                     <label class="text-[10px] font-bold text-gray-500 uppercase">Google Drive Video ID Only *</label>
-                                    <input type="text" id="adm-les-gdrive" placeholder="e.g. 1A_xXBt9vQ..." class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-mono" required>
+                                    <input type="text" id="adm-les-gdrive" placeholder="e.g. 1A_xXBt9vQ... (Extract the ID from link)" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-mono" required>
                                 </div>
                                 <div class="space-y-1">
                                     <label class="text-[10px] font-bold text-gray-500 uppercase">Estimated Running Runtime Duration Metrics (Seconds) *</label>
@@ -463,19 +479,51 @@
             profileData: null,
             lessonsCollection: [],
             progressMatrix: [],
-            allProfilesAdmin: [],
-            allEnrollmentsAdmin: [],
             activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828",
-            studyTimerIntervalId: null,
-            activeLessonIdTracking: null
+            sessionSeconds: 0
         };
 
         // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
         document.addEventListener("DOMContentLoaded", async () => {
             if (typeof lucide !== 'undefined') lucide.createIcons();
             runClockEngine();
+            initializeRealtimeStudyTracker();
             await evaluateSessionContextState();
         });
+
+        // Real-time Incremental Study Time Tracker Architecture Function
+        function initializeRealtimeStudyTracker() {
+            setInterval(async () => {
+                if (globalState.sessionUser && globalState.profileData) {
+                    globalState.sessionSeconds++;
+                    
+                    const timeContainer = document.getElementById("realtime-session-counter");
+                    if (timeContainer) {
+                        const hours = String(Math.floor(globalState.sessionSeconds / 3600)).padStart(2, '0');
+                        const minutes = String(Math.floor((globalState.sessionSeconds % 3600) / 60)).padStart(2, '0');
+                        const seconds = String(globalState.sessionSeconds % 60).padStart(2, '0');
+                        timeContainer.textContent = `${hours}:${minutes}:${seconds}`;
+                    }
+
+                    // Write buffered session aggregates natively to cloud database parameters every 15 seconds
+                    if (globalState.sessionSeconds % 15 === 0) {
+                        try {
+                            const { data: enrollment } = await supabaseClientInstance.from('enrollments').select('total_study_seconds').eq('student_id', globalState.sessionUser.id).maybeSingle();
+                            const theoreticalCurrentSecs = (enrollment?.total_study_seconds || 0) + 15;
+                            
+                            await supabaseClientInstance.from('enrollments').upsert({
+                                student_id: globalState.sessionUser.id,
+                                total_study_seconds: theoreticalCurrentSecs,
+                                course_id: globalState.activeCourseId
+                            });
+
+                            const hoursDisplay = document.getElementById("stat-study-hours");
+                            if(hoursDisplay) hoursDisplay.textContent = `${Math.round(theoreticalCurrentSecs / 3600)}h`;
+                        } catch(e) { console.error("Realtime study tracking pipeline sync suspended:", e); }
+                    }
+                }
+            }, 1000);
+        }
 
         async function evaluateSessionContextState() {
             try {
@@ -516,25 +564,10 @@
                 }
 
                 globalState.profileData = profile;
-                
-                // Initialize clean default enrollment values for analytics matching
-                let { data: enrollCheck } = await supabaseClientInstance.from('enrollments').select('*').eq('student_id', uid).maybeSingle();
-                if(!enrollCheck) {
-                    await supabaseClientInstance.from('enrollments').insert([{
-                        student_id: uid, course_id: globalState.activeCourseId, current_streak: 0, longest_streak: 0, total_study_seconds: 0
-                    }]);
-                }
-
                 syncProfileUILayoutRepresentations();
                 populateProfileInputsUIFields();
                 await syncClassroomSyllabusEngine();
-                
-                if(globalState.profileData.role === 'super_admin') {
-                    await adminConsole.syncAdminIntelligenceDashboard();
-                }
-
                 establishRealtimeSubscriptions();
-                startRealtimeStudyTimer();
                 displayScreenLayer("app-container");
                 switchView("student-dashboard");
             } catch(err) {
@@ -603,6 +636,11 @@
             });
             const sb = document.getElementById("main-sidebar");
             if (sb) sb.classList.add("-translate-x-full");
+
+            // Automatically check and render real-time elements for super admin if targeted
+            if(viewId === 'admin-console' && globalState.profileData?.role === 'super_admin') {
+                adminConsole.fetchRealtimeControlRegistry();
+            }
         }
 
         function syncProfileUILayoutRepresentations() {
@@ -611,6 +649,14 @@
             if(document.getElementById("sb-role")) document.getElementById("sb-role").textContent = globalState.profileData.role;
             if(document.getElementById("meta-student-id")) document.getElementById("meta-student-id").textContent = globalState.profileData.id.substring(0,8).toUpperCase();
             
+            const strikeBanner = document.getElementById("student-strike-banner");
+            const strikeCount = document.getElementById("student-strike-count");
+            if(strikeBanner && strikeCount) {
+                const count = globalState.profileData.strikes_count || 0;
+                strikeCount.textContent = count;
+                strikeBanner.classList.remove("hidden");
+            }
+
             const adminNav = document.getElementById("admin-nav-item");
             if(globalState.profileData.role === 'super_admin' && adminNav) adminNav.classList.remove("hidden");
         }
@@ -637,7 +683,6 @@
                 }
             },
             logout: async () => {
-                if(globalState.studyTimerIntervalId) clearInterval(globalState.studyTimerIntervalId);
                 await supabaseClientInstance.auth.signOut();
                 location.reload();
             }
@@ -697,7 +742,6 @@
         }
 
         function mountActiveLessonToStagePlayer(lesson, logContainer) {
-            globalState.activeLessonIdTracking = lesson.id;
             document.getElementById("player-lesson-title").textContent = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
             document.getElementById("player-lesson-desc").textContent = lesson.description || "";
             document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
@@ -725,7 +769,7 @@
                     gateContainer.innerHTML = `
                         <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 space-y-2">
                             <p><strong>Assignment Interface Shielded:</strong> Stream content up to 90% completion parameters to unlock WhatsApp vectors.</p>
-                            <button onclick="simulationTriggers.simulateCompleteWatch('${lesson.id}')" class="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg transition-all">Simulate Completing 95% Video Stream</button>
+                            <button onclick="simulationTriggers.simulateCompleteWatch('${lesson.id}', ${lesson.lesson_number})" class="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg transition-all">Simulate Completing 95% Video Stream</button>
                         </div>
                     `;
                 }
@@ -743,16 +787,10 @@
         }
 
         const simulationTriggers = {
-            simulateCompleteWatch: async (lessonId) => {
+            simulateCompleteWatch: async (lessonId, lessonNumber) => {
                 if(!globalState.sessionUser) return;
                 try {
-                    // Instantly trigger attendance verification upon course segment completion
-                    await supabaseClientInstance.from('attendance').insert([{
-                        student_id: globalState.sessionUser.id,
-                        status: 'present',
-                        verified_at: new Date().toISOString()
-                    }]);
-
+                    // Update lesson progress state parameter elements
                     const { error } = await supabaseClientInstance.from('lesson_progress').upsert({
                         student_id: globalState.sessionUser.id,
                         lesson_id: lessonId,
@@ -760,51 +798,30 @@
                         is_completed: true,
                         completed_at: new Date().toISOString()
                     });
-                    
-                    if(!error) {
-                        await syncClassroomSyllabusEngine();
-                        if(globalState.profileData.role === 'super_admin') {
-                            await adminConsole.syncAdminIntelligenceDashboard();
-                        }
+
+                    // Real-time automated strike checking system upon module completion triggers
+                    // If a student finishes a class past standard closing parameters, increments an automated track variable.
+                    const now = new Date();
+                    if(now.getHours() >= 20) {
+                        const directCurrentStrikes = (globalState.profileData.strikes_count || 0) + 1;
+                        await supabaseClientInstance.from('profiles').update({ strikes_count: directCurrentStrikes }).eq('id', globalState.sessionUser.id);
+                        alert(`Class ${lessonNumber} logged! Note: System recorded 1 Active Strike automatically for completing course requirements past the 8:00 PM cutoff threshold.`);
+                    } else {
+                        alert(`Class ${lessonNumber} marked complete in real-time! Strike check verified clean.`);
                     }
+
+                    // Automated Realtime Attendance Logging Trigger Anchor
+                    await supabaseClientInstance.from('attendance').insert([{
+                        student_id: globalState.sessionUser.id,
+                        status: 'present',
+                        recorded_date: new Date().toISOString().split('T')[0]
+                    }]);
+
+                    // Reload application core states immediately
+                    await pullProfileContextAndInitialize(globalState.sessionUser.id);
                 } catch(e) { console.error(e); }
             }
         };
-
-        // --- REALTIME ACTIVE STUDY RUNTIME TRACKING SYSTEM ---
-        function startRealtimeStudyTimer() {
-            if(globalState.studyTimerIntervalId) clearInterval(globalState.studyTimerIntervalId);
-            
-            globalState.studyTimerIntervalId = setInterval(async () => {
-                // Increment study seconds only when application tab window is actively viewed
-                if (document.hidden || !globalState.sessionUser) return;
-                
-                try {
-                    let { data: enroll } = await supabaseClientInstance
-                        .from('enrollments')
-                        .select('total_study_seconds')
-                        .eq('student_id', globalState.sessionUser.id)
-                        .maybeSingle();
-                        
-                    let currentSecs = enroll ? enroll.total_study_seconds : 0;
-                    let updatedSecs = currentSecs + 10; // Tracks in 10s step allocations
-                    
-                    await supabaseClientInstance
-                        .from('enrollments')
-                        .update({ total_study_seconds: updatedSecs })
-                        .eq('student_id', globalState.sessionUser.id);
-                        
-                    // Instant locally optimized view reflection update logic
-                    let hours = Math.floor(updatedSecs / 3600);
-                    let minutes = Math.floor((updatedSecs % 3600) / 60);
-                    if(document.getElementById("stat-study-hours")) {
-                        document.getElementById("stat-study-hours").textContent = `${hours}h ${minutes}m`;
-                    }
-                } catch(e) {
-                    console.error("Timer heartbeat failure: ", e);
-                }
-            }, 10000); 
-        }
 
         async function evaluateAnalyticsAggregatesMetricsContainers() {
             if(!globalState.sessionUser) return;
@@ -819,155 +836,149 @@
             if(enrollment) {
                 if(document.getElementById("stat-current-streak")) document.getElementById("stat-current-streak").textContent = `${enrollment.current_streak} Days`;
                 if(document.getElementById("stat-longest-streak")) document.getElementById("stat-longest-streak").textContent = `${enrollment.longest_streak} Days`;
-                
-                let hrs = Math.floor(enrollment.total_study_seconds / 3600);
-                let mins = Math.floor((enrollment.total_study_seconds % 3600) / 60);
-                if(document.getElementById("stat-study-hours")) document.getElementById("stat-study-hours").textContent = `${hrs}h ${mins}m`;
-                
-                // Track dynamic real-time strike values inside UI nodes
-                if(document.getElementById("stat-strike-count")) {
-                    document.getElementById("stat-strike-count").textContent = `${enrollment.strikes || 0} / 3`;
-                }
+                if(document.getElementById("stat-study-hours")) document.getElementById("stat-study-hours").textContent = `${Math.round(enrollment.total_study_seconds / 3600)}h`;
             }
 
             let { data: attList } = await supabaseClientInstance.from('attendance').select('id').eq('student_id', globalState.sessionUser.id);
             const attendancePct = completedCount > 0 ? Math.round(((attList?.length || 0) / completedCount) * 100) : 0;
             if (document.getElementById("stat-attendance-rate")) document.getElementById("stat-attendance-rate").textContent = `${attendancePct || 100}%`;
 
-            // UNLOCK VERIFIED A4 DIGITALLY GENERATED CERTIFICATE AFTER 47 LESSON MODULE COMPLETIONS
-            if(completedCount >= 47) {
+            // Unlocks verified realistic official PNG certificate automatically after completing the full 47 modules
+            if(completedCount >= 47 && totalItemsCount >= 47) {
                 const certWrapper = document.getElementById("certificate-delivery-wrapper");
                 if (certWrapper) {
                     certWrapper.innerHTML = `
-                        <button onclick="certificateGenerationEngine.renderPNG()" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md animate-bounce">
-                            Download Verified A4 Premium PNG Certificate
+                        <button onclick="certificateGraphicsEngine.renderLiveLayerToCanvas()" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md animate-bounce">
+                            Generate Verified PNG Certificate Now
                         </button>
                     `;
                 }
+                // Show canvas block wrapper
+                document.getElementById("visual-certificate-render-stage").classList.remove("hidden");
+                certificateGraphicsEngine.renderLiveLayerToCanvas();
             }
         }
 
-        // --- HIGH-FIDELITY VISUAL CERTIFICATE GENERATION SYSTEM ARCHITECTURE ---
-        const certificateGenerationEngine = {
-            renderPNG: () => {
-                if(!globalState.profileData) return;
-                
-                // Create a dynamic high-resolution hidden compilation canvas canvas asset layout
-                const canvas = document.createElement("canvas");
-                canvas.width = 1920;
-                canvas.height = 1357; // Global standardized ISO standard landscape proportions
+        // --- 5. HIGH RES VISUAL CERTIFICATE CANVAS GRAPHICS ENGINE MODULE ---
+        const certificateGraphicsEngine = {
+            renderLiveLayerToCanvas: () => {
+                const canvas = document.getElementById("verified-certificate-canvas");
+                if (!canvas) return;
                 const ctx = canvas.getContext("2d");
+                if (!ctx) return;
 
-                // Background Aesthetic Textures Base styling
+                // Clear layout canvas block
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Draw premium border framework structure
                 ctx.fillStyle = "#FFFFFF";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Luxury Academic Double Borders Rendering Engine Blocks
-                ctx.lineWidth = 30;
-                ctx.strokeStyle = "#DC2626"; // Crimson accent mapping
-                ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+                // Outer border lines
+                ctx.strokeStyle = "#DC2626";
+                ctx.lineWidth = 12;
+                ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
 
-                ctx.lineWidth = 6;
-                ctx.strokeStyle = "#111827"; 
-                ctx.strokeRect(85, 85, canvas.width - 170, canvas.height - 170);
-
-                // Elegant Geometric Micro-vector Border Corners
-                ctx.fillStyle = "#DC2626";
-                ctx.fillRect(70, 70, 40, 40);
-                canvas.style.letterSpacing = "1px";
-
-                // Header Typography Architecture Layout
-                ctx.textAlign = "center";
-                ctx.fillStyle = "#111827";
-                ctx.font = "bold 32px Georgia, serif";
-                ctx.fillText("EDUCATION POINT ONLINE LMS NETWORK ACADEMY", canvas.width / 2, 220);
-
-                // Education Point Brand Identity Visual Logo Seal Simulation Rendering
-                ctx.beginPath();
-                ctx.arc(canvas.width / 2, 350, 65, 0, 2 * Math.PI);
-                ctx.fillStyle = "#DC2626";
-                ctx.fill();
-                
-                ctx.fillStyle = "#FFFFFF";
-                ctx.font = "bold 65px Inter, sans-serif";
-                ctx.fillText("EP", canvas.width / 2, 373);
-
-                ctx.fillStyle = "#4B5563";
-                ctx.font = "italic 26px Georgia, serif";
-                ctx.fillText("Verified Production Certification of Academic Completion", canvas.width / 2, 490);
-
-                ctx.fillStyle = "#111827";
-                ctx.font = "bold 60px Georgia, serif";
-                ctx.fillText("CERTIFICATE OF EXCELLENCE", canvas.width / 2, 570);
-
-                ctx.fillStyle = "#4B5563";
-                ctx.font = "24px Inter, sans-serif";
-                ctx.fillText("This official validation token verifies that standard coursework pathways were fully met by:", canvas.width / 2, 660);
-
-                // Dynamic Recipient Profile Name Rendering Layer 
-                ctx.fillStyle = "#DC2626";
-                ctx.font = "bold 52px Georgia, serif";
-                ctx.fillText(globalState.profileData.full_name.toUpperCase(), canvas.width / 2, 740);
-
-                // Course Syllabus Detail Metrics Matrix Lines
-                ctx.fillStyle = "#374151";
-                ctx.font = "24px Inter, sans-serif";
-                ctx.fillText(`For successful system-checked completion of the: Complete Professional Computer Course (47 Modules Track)`, canvas.width / 2, 820);
-                
-                ctx.font = "19px monospace";
-                ctx.fillStyle = "#6B7280";
-                ctx.fillText(`Student Passport Reference ID: ${globalState.profileData.id.toUpperCase()} | City Location Node: ${globalState.profileData.city}`, canvas.width / 2, 880);
-
-                // Separation Metric Lines
-                ctx.strokeStyle = "#E5E7EB";
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(canvas.width / 2 - 300, 940);
-                ctx.lineTo(canvas.width / 2 + 300, 940);
-                ctx.stroke();
-
-                // Authorized Signature Layers Architecture Mappings
-                ctx.fillStyle = "#111827";
-                ctx.font = "italic bold 36px 'Brush Script MT', cursive, Georgia";
-                ctx.fillText("Muhammad Rizwan", canvas.width / 2 - 400, 1070); // Executed Authorized Signature
-                
                 ctx.strokeStyle = "#111827";
                 ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(canvas.width / 2 - 550, 1090);
-                ctx.lineTo(canvas.width / 2 - 250, 1090);
-                ctx.stroke();
+                ctx.strokeRect(26, 26, canvas.width - 52, canvas.height - 52);
+
+                // Branding watermark logo representation overlay
+                ctx.fillStyle = "rgba(220, 38, 38, 0.03)";
+                ctx.font = "black 90px Inter";
+                ctx.textAlign = "center";
+                ctx.fillText("EDUCATION POINT", canvas.width / 2, canvas.height / 2 + 30);
+
+                // Heading content elements
+                ctx.fillStyle = "#DC2626";
+                ctx.font = "900 28px Inter";
+                ctx.fillText("EDUCATION POINT ONLINE ACADEMY", canvas.width / 2, 75);
 
                 ctx.fillStyle = "#4B5563";
-                ctx.font = "bold 18px Inter, sans-serif";
-                ctx.fillText("MUHAMMAD RIZWAN", canvas.width / 2 - 400, 1125);
-                ctx.font = "16px Inter, sans-serif";
-                ctx.fillText("Managing Director, Education Point", canvas.width / 2 - 400, 1155);
+                ctx.font = "bold 11px Inter";
+                ctx.fillText("VERIFIED ENTERPRISE COGNITIVE CREDENTIAL COMPLIANCE MATRIX", canvas.width / 2, 100);
 
-                // Official Verification System Secure Stamp Matrix Rendering
-                ctx.font = "bold 18px Inter, sans-serif";
                 ctx.fillStyle = "#111827";
-                ctx.fillText("SECURE BLOCK VERIFIED", canvas.width / 2 + 400, 1125);
-                ctx.font = "14px monospace";
-                ctx.fillStyle = "#10B981";
-                ctx.fillText("STATUS: SIGNED & ACTIVE", canvas.width / 2 + 400, 1155);
+                ctx.font = "italic 22px Inter";
+                ctx.fillText("Certificate of Completion", canvas.width / 2, 155);
 
-                ctx.strokeStyle = "#10B981";
+                ctx.fillStyle = "#6B7280";
+                ctx.font = "13px Inter";
+                ctx.fillText("This state credential parameter natively validates that professional scholar", canvas.width / 2, 195);
+
+                // Dynamic Student Profile Identifiers mapping fields directly
+                const nameText = (globalState.profileData?.full_name || "Premium Scholar Student").toUpperCase();
+                ctx.fillStyle = "#111827";
+                ctx.font = "900 26px Inter";
+                ctx.fillText(nameText, canvas.width / 2, 240);
+
+                // Decorative horizontal underline vector structure
+                ctx.strokeStyle = "#DC2626";
                 ctx.lineWidth = 3;
-                ctx.strokeRect(canvas.width / 2 + 250, 1090, 300, 80);
+                ctx.beginPath();
+                ctx.moveTo(canvas.width / 2 - 180, 252);
+                ctx.lineTo(canvas.width / 2 + 180, 252);
+                ctx.stroke();
 
-                // Auto Trigger Instant Download File Wrappers Context
-                const imageURI = canvas.toDataURL("image/png");
-                const downloadLink = document.createElement("a");
-                downloadLink.download = `EducationPoint-VerifiedCertificate-${globalState.profileData.full_name.replace(/\s+/g, '-')}.png`;
-                downloadLink.href = imageURI;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
+                // Detailed course accomplishment logs text
+                ctx.fillStyle = "#4B5563";
+                ctx.font = "13px Inter";
+                ctx.textAlign = "center";
+                ctx.fillText("has completed the complete curriculum matrix suite encompassing all 47 Scheduled classes of", canvas.width / 2, 290);
+                
+                ctx.fillStyle = "#DC2626";
+                ctx.font = "bold 15px Inter";
+                ctx.fillText("COMPLETE PROFESSIONAL COMPUTER COURSE", canvas.width / 2, 320);
+
+                ctx.fillStyle = "#6B7280";
+                ctx.font = "12px Inter";
+                ctx.fillText(`System Track Id: EP-LMS-${(globalState.profileData?.id || "XXXX").substring(0,8).toUpperCase()} | Education Level: ${globalState.profileData?.education_level || "Intermediate"}`, canvas.width / 2, 348);
+
+                // Footer data verification block anchors
+                ctx.strokeStyle = "#E5E7EB";
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(50, 420); ctx.lineTo(canvas.width - 50, 420);
+                ctx.stroke();
+
+                // Signature section left - Authorized Instructor Name
+                ctx.fillStyle = "#111827";
+                ctx.font = "italic bold 18px cursive";
+                ctx.fillText("Muhammad Rizwan", 180, 460); // Authoritative Signature text line element
+                
+                ctx.strokeStyle = "#9CA3AF";
+                ctx.beginPath(); ctx.moveTo(80, 470); ctx.lineTo(280, 470); ctx.stroke();
+
+                ctx.fillStyle = "#6B7280";
+                ctx.font = "bold 11px Inter";
+                ctx.fillText("MUHAMMAD RIZWAN", 180, 488);
+                ctx.font = "9px Inter";
+                ctx.fillText("Managing Director, Education Point", 180, 502);
+
+                // Verification seal emblem representation framework badge right
+                ctx.fillStyle = "#DC2626";
+                ctx.beginPath();
+                ctx.arc(620, 465, 32, 0, 2 * Math.PI);
+                ctx.fill();
+
+                ctx.fillStyle = "#FFFFFF";
+                ctx.font = "900 9px Inter";
+                ctx.fillText("EDU POINT", 620, 462);
+                ctx.font = "bold 7px Inter";
+                ctx.fillText("OFFICIAL SEAL", 620, 472);
+            },
+            triggerCanvasDownload: () => {
+                const canvas = document.getElementById("verified-certificate-canvas");
+                if (!canvas) return;
+                const imageWrapper = canvas.toDataURL("image/png");
+                const anchorNode = document.createElement("a");
+                anchorNode.download = `${globalState.profileData?.full_name || "Scholar"}_EducationPoint_Certificate.png`;
+                anchorNode.href = imageWrapper;
+                anchorNode.click();
             }
         };
 
-        // --- FIXED SYNTAX REALTIME ENGINE MAPPINGS ---
+        // --- FIXED SYNTAX REALTIME ENGINE ---
         function establishRealtimeSubscriptions() {
             if (!supabaseClientInstance) return;
             supabaseClientInstance.removeAllChannels();
@@ -976,18 +987,12 @@
                 .channel('schema-db-changes')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'lesson_progress' }, (payload) => {
                     syncClassroomSyllabusEngine();
-                    if(globalState.profileData && globalState.profileData.role === 'super_admin') {
-                        adminConsole.syncAdminIntelligenceDashboard();
-                    }
                 })
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'enrollments' }, (payload) => {
-                    if(globalState.sessionUser && payload.new && payload.new.student_id === globalState.sessionUser.id) {
-                        if(document.getElementById("stat-strike-count")) {
-                            document.getElementById("stat-strike-count").textContent = `${payload.new.strikes || 0} / 3`;
-                        }
-                    }
-                    if(globalState.profileData && globalState.profileData.role === 'super_admin') {
-                        adminConsole.syncAdminIntelligenceDashboard();
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, (payload) => {
+                    // Instantly patch active profile layers on dashboard when admin alters strike counters or roles
+                    if(globalState.sessionUser && payload.new?.id === globalState.sessionUser.id) {
+                        globalState.profileData = payload.new;
+                        syncProfileUILayoutRepresentations();
                     }
                 })
                 .subscribe();
@@ -995,80 +1000,94 @@
 
         const reportsEngine = { exportData: (f) => { alert("Export processing array: " + f); } };
 
-        // --- SUPER ADMIN MANAGEMENT CONSOLE CONTROL NODE OVERHAUL ENGINE ---
+        // --- EXTRA POWERFUL SUPER ADMIN ADMINISTRATIVE CONTROLS IMPLEMENTATION ---
         const adminConsole = {
-            syncAdminIntelligenceDashboard: async () => {
+            fetchRealtimeControlRegistry: async () => {
+                const tbody = document.getElementById("admin-student-registry-tbody");
+                if (!tbody) return;
+
                 try {
-                    let { data: profiles, error: pErr } = await supabaseClientInstance.from('profiles').select('*');
-                    let { data: enrollments, error: eErr } = await supabaseClientInstance.from('enrollments').select('*');
-                    let { data: attendanceLogs } = await supabaseClientInstance.from('attendance').select('*');
-                    
-                    if (pErr || eErr) return;
-                    
-                    globalState.allProfilesAdmin = profiles || [];
-                    globalState.allEnrollmentsAdmin = enrollments || [];
+                    // Draw fresh data values in real-time straight from primary relational database nodes
+                    const { data: profiles, error: pErr } = await supabaseClientInstance.from('profiles').select('*');
+                    const { data: enrollments } = await supabaseClientInstance.from('enrollments').select('*');
+                    const { data: lessons } = await supabaseClientInstance.from('lessons').select('id');
+                    const { data: attendanceLogs } = await supabaseClientInstance.from('attendance').select('*');
 
-                    // Calculate real-time aggregate analysis numbers metrics inside dashboard fields
-                    let totalSeconds = enrollments.reduce((acc, curr) => acc + (curr.total_study_seconds || 0), 0);
-                    let totalStrikes = enrollments.reduce((acc, curr) => acc + (curr.strikes || 0), 0);
-                    
-                    let aggHrs = Math.floor(totalSeconds / 3600);
-                    let aggMins = Math.floor((totalSeconds % 3600) / 60);
-                    
-                    if(document.getElementById("adm-total-seconds-tracked")) {
-                        document.getElementById("adm-total-seconds-tracked").textContent = `${aggHrs}h ${aggMins}m`;
-                    }
-                    if(document.getElementById("adm-total-strikes-logged")) {
-                        document.getElementById("adm-total-strikes-logged").textContent = totalStrikes;
-                    }
+                    if (pErr) throw pErr;
 
-                    // Populate operational student records tables row allocations
-                    const tbody = document.getElementById("admin-students-tbody");
-                    if(!tbody) return;
+                    // Update analytical top metric display elements
+                    document.getElementById("admin-analytics-total-students").textContent = profiles?.length || 0;
+                    document.getElementById("admin-analytics-total-lessons").textContent = `${lessons?.length || 0} / 47`;
+                    
+                    let totalPlatformSecondsAccumulated = 0;
+                    enrollments?.forEach(e => totalPlatformSecondsAccumulated += (e.total_study_seconds || 0));
+                    document.getElementById("admin-analytics-total-seconds").textContent = `${Math.round(totalPlatformSecondsAccumulated / 3600)} Hours`;
+
                     tbody.innerHTML = "";
 
-                    globalState.allProfilesAdmin.forEach(prof => {
-                        const enroll = globalState.allEnrollmentsAdmin.find(e => e.student_id === prof.id);
-                        const userAtts = attendanceLogs ? attendanceLogs.filter(a => a.student_id === prof.id) : [];
+                    profiles.forEach(student => {
+                        const enrollment = enrollments?.find(e => e.student_id === student.id);
+                        const studentHours = enrollment ? Math.round(enrollment.total_study_seconds / 3600) : 0;
+                        const studentMinutes = enrollment ? Math.round((enrollment.total_study_seconds % 3600) / 60) : 0;
                         
-                        const studyHrs = enroll ? Math.floor(enroll.total_study_seconds / 3600) : 0;
-                        const studyMins = enroll ? Math.floor((enroll.total_study_seconds % 3600) / 60) : 0;
-                        const strikeVal = enroll ? (enroll.strikes || 0) : 0;
+                        const currentStrikes = student.strikes_count || 0;
+                        const totalAttendanceCount = attendanceLogs?.filter(a => a.student_id === student.id && a.status === 'present').length || 0;
 
                         const tr = document.createElement("tr");
-                        tr.className = "hover:bg-gray-50/80 transition-colors border-b border-gray-100";
+                        tr.className = "hover:bg-neutral-50 transition-colors";
                         tr.innerHTML = `
-                            <td class="p-2 font-bold text-gray-800">${prof.full_name}</td>
-                            <td class="p-2 uppercase tracking-wider font-semibold text-[10px] text-gray-400">${prof.role}</td>
-                            <td class="p-2 font-mono font-bold text-emerald-600">${userAtts.length} Logs</td>
-                            <td class="p-2 font-mono">${studyHrs}h ${studyMins}m</td>
-                            <td class="p-2 font-mono font-bold ${strikeVal > 0 ? 'text-red-600' : 'text-gray-400'}">${strikeVal} Strikes</td>
-                            <td class="p-2 flex items-center justify-center gap-1">
-                                <button onclick="adminConsole.modifyStrikes('${prof.id}', 1)" class="px-2 py-1 bg-orange-600 text-white font-bold rounded hover:bg-orange-700 text-[10px]">Add Strike</button>
-                                <button onclick="adminConsole.modifyStrikes('${prof.id}', -1)" class="px-2 py-1 bg-gray-200 text-gray-700 font-bold rounded hover:bg-gray-300 text-[10px]">Clear</button>
+                            <td class="p-3">
+                                <div class="font-bold text-neutral-900">${student.full_name}</div>
+                                <div class="text-[10px] text-neutral-400 font-mono">${student.email} | ${student.mobile_number}</div>
+                            </td>
+                            <td class="p-3 font-mono text-neutral-700 font-semibold">
+                                <span class="text-emerald-600">${studentHours}h ${studentMinutes}m</span> cumulative study time
+                            </td>
+                            <td class="p-3">
+                                <span class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded font-bold">${totalAttendanceCount} Days Present</span>
+                                <div class="text-[10px] text-neutral-400 mt-0.5">Streak Index: ${enrollment?.current_streak || 0} days</div>
+                            </td>
+                            <td class="p-3">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="px-2 py-0.5 rounded text-[11px] font-black ${currentStrikes > 0 ? 'bg-orange-100 text-orange-800 border border-orange-200' : 'bg-neutral-100 text-neutral-500'}">
+                                        ${currentStrikes} Active
+                                    </span>
+                                    <div class="flex gap-0.5">
+                                        <button onclick="adminConsole.modifyStrikesDirectly('${student.id}', ${currentStrikes + 1})" class="p-1 bg-red-50 hover:bg-red-100 text-brand-red rounded" title="Add Strike"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                                        <button onclick="adminConsole.modifyStrikesDirectly('${student.id}', ${Math.max(0, currentStrikes - 1)})" class="p-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded" title="Deduct Strike"><i data-lucide="minus" class="w-3 h-3"></i></button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-3 text-right">
+                                <button onclick="adminConsole.toggleAttendanceOverride('${student.id}')" class="px-2.5 py-1 bg-neutral-800 hover:bg-neutral-950 text-white text-[10px] font-bold rounded uppercase tracking-wider shadow-sm transition-all">
+                                    Log Presence Override
+                                </button>
                             </td>
                         `;
                         tbody.appendChild(tr);
                     });
 
-                } catch(err) { console.error("Admin dashboard computation loop crash: ", err); }
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                } catch(e) { console.error("Admin real-time engine processing fault:", e); }
             },
-            modifyStrikes: async (studentId, allocationValue) => {
+            modifyStrikesDirectly: async (uid, newCount) => {
                 try {
-                    const matchEnroll = globalState.allEnrollmentsAdmin.find(e => e.student_id === studentId);
-                    let currentStrikes = matchEnroll ? (matchEnroll.strikes || 0) : 0;
-                    let nextStrikesValue = Math.max(0, currentStrikes + allocationValue);
-
-                    const { error } = await supabaseClientInstance
-                        .from('enrollments')
-                        .update({ strikes: nextStrikesValue })
-                        .eq('student_id', studentId);
-                    
-                    if(!error) {
-                        alert(`Realtime Strike metrics updated successfully to parameter count: [${nextStrikesValue}]`);
-                        await adminConsole.syncAdminIntelligenceDashboard();
-                    }
-                } catch(e) { console.error(e); }
+                    const { error } = await supabaseClientInstance.from('profiles').update({ strikes_count: newCount }).eq('id', uid);
+                    if (error) throw error;
+                    await adminConsole.fetchRealtimeControlRegistry();
+                } catch(e) { alert(e.message); }
+            },
+            toggleAttendanceOverride: async (uid) => {
+                try {
+                    const { error } = await supabaseClientInstance.from('attendance').insert([{
+                        student_id: uid,
+                        status: 'present',
+                        recorded_date: new Date().toISOString().split('T')[0]
+                    }]);
+                    if (error) throw error;
+                    alert("Real-time security attendance presence matrix override complete.");
+                    await adminConsole.fetchRealtimeControlRegistry();
+                } catch(e) { alert(e.message); }
             },
             createLesson: async (e) => {
                 e.preventDefault();
@@ -1088,7 +1107,7 @@
                     alert("Lesson deployed into database nodes!");
                     document.getElementById("admin-lesson-form").reset();
                     await syncClassroomSyllabusEngine();
-                    await adminConsole.syncAdminIntelligenceDashboard();
+                    await adminConsole.fetchRealtimeControlRegistry();
                 } catch(err) { alert(err.message); }
             }
         };
