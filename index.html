@@ -499,7 +499,7 @@
                 supabaseClientInstance = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch(err) { console.error("Client Init Interruption:", err); }
-let todayActiveMinutes = 0;
+
         let globalState = {
             sessionUser: null,
             profileData: null,
@@ -508,7 +508,7 @@ let todayActiveMinutes = 0;
             activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828" 
             
         };
-
+let todayActiveMinutes = 0;
         // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
         document.addEventListener("DOMContentLoaded", async () => {
             if (typeof lucide !== 'undefined') lucide.createIcons();
