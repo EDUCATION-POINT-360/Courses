@@ -305,11 +305,10 @@
                                         <h2 id="player-lesson-title" class="text-xl font-bold tracking-tight text-gray-900">Select Scheduled Module Node</h2>
                                         <span id="player-duration-badge" class="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full whitespace-nowrap">Est. Duration: -- mins</span>
                                     </div>
-                                    <a id="drive-fullscreen-btn" href="#" target="_blank" 
-   class="shrink-0 hidden px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-2xl text-xs font-bold shadow-lg shadow-red-500/20 flex items-center space-x-2 transition-all duration-300 transform hover:scale-[1.02] border border-white/10 backdrop-blur-sm">
-    <i data-lucide="external-link" class="w-4 h-4"></i>
-    <span class="tracking-wide">Watch Full Video in Drive</span>
-</a>
+                                    <a id="drive-fullscreen-btn" href="#" target="_blank" class="shrink-0 hidden px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-2xl text-xs font-bold shadow-lg shadow-red-500/20 flex items-center space-x-2 transition-all duration-300 transform hover:scale-[1.02] border border-white/10 backdrop-blur-sm">
+                                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                                        <span class="tracking-wide">Watch Full Video in Drive</span>
+                                    </a>
 
                                 </div>
                                 <p id="player-lesson-desc" class="text-sm text-gray-500 leading-relaxed">Launch an engineering stream sequence parameter from the right matrix map vector tree.</p>
@@ -484,7 +483,6 @@
     <script>
         // --- SECURITY ANTI-COPY SCRIPT ---
         document.addEventListener('keydown', function(e) {
-            // Prevent Ctrl+C, Ctrl+V, Ctrl+U, Ctrl+S, Ctrl+P, F12
             if (e.ctrlKey && ['c', 'v', 'u', 's', 'p'].includes(e.key.toLowerCase())) { e.preventDefault(); }
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) { e.preventDefault(); }
         });
@@ -514,7 +512,6 @@
             if (typeof lucide !== 'undefined') lucide.createIcons();
             runClockEngine();
             await evaluateSessionContextState();
-            startRealTimeActivityTracker(); // Make sure this function exists or remove it if not needed
         });
 
         async function evaluateSessionContextState() {
@@ -552,7 +549,7 @@
                 await syncClassroomSyllabusEngine();
                 
                 if(profile.role === 'super_admin') {
-                    fetchAdminLiveStats(); // Make sure this function exists or rename to updateAdminDashboard
+                    updateAdminDashboard(); // Fixed the function call here
                 }
 
                 displayScreenLayer("app-container");
@@ -594,7 +591,10 @@
 
                 if (error) throw error;
                 alert("پروفائل کامیابی سے سیو ہو گئی ہے!");
-                await pullProfileContextAndInitialize(globalState.sessionUser.id);
+                // Refresh data without breaking the view
+                let { data: profile } = await supabaseClientInstance.from('profiles').select('*').eq('id', globalState.sessionUser.id).maybeSingle();
+                globalState.profileData = profile;
+                syncProfileUILayoutRepresentations();
             } catch(err) { alert("Error: " + err.message); }
         }
 
@@ -852,22 +852,48 @@
         }
         
         async function fetchActivityHistory() {
-            let { data: history } = await supabaseClientInstance
-                .from('daily_activity')
-                .select('*')
-                .eq('student_id', globalState.sessionUser.id)
-                .order('date', { ascending: false });
+            try {
+                let { data: history, error } = await supabaseClientInstance
+                    .from('daily_activity')
+                    .select('*')
+                    .eq('student_id', globalState.sessionUser.id)
+                    .order('date', { ascending: false });
 
-            const list = document.getElementById('activity-history-list');
-            if (!list) return;
+                const list = document.getElementById('activity-history-list');
+                if (!list) return;
 
-            list.innerHTML = history.map(h => `
-                <div class="activity-card p-4 border rounded-xl mb-2">
-                    <h4 class="font-bold text-lg">${h.date}</h4>
-                    <p>⏱ کل وقت: ${h.active_minutes} منٹ</p>
-                    <p class="text-sm">📚 دیکھے گئے لیکچرز: ${h.lectures_watched.length > 0 ? h.lectures_watched.join(', ') : 'کوئی لیکچر نہیں'}</p>
-                </div>
-            `).join('');
+                if (error || !history || history.length === 0) {
+                    list.innerHTML = `<div class="text-center p-4 bg-gray-50 border border-gray-100 rounded-xl text-gray-500 text-sm">ابھی تک کوئی ہسٹری موجود نہیں ہے۔</div>`;
+                    return;
+                }
+
+                list.innerHTML = history.map(h => {
+                    const hasLectures = h.lectures_watched && Array.isArray(h.lectures_watched) && h.lectures_watched.length > 0;
+                    const lecturesText = hasLectures ? h.lectures_watched.join(', ') : 'کوئی لیکچر نہیں';
+                    
+                    return `
+                    <div class="p-4 bg-white border border-gray-200 rounded-xl mb-3 shadow-sm hover:border-brand-red transition-all duration-300 group">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold text-gray-800 text-sm flex items-center">
+                                <i data-lucide="calendar" class="w-4 h-4 mr-2 text-brand-red"></i>
+                                ${h.date}
+                            </h4>
+                            <span class="text-[10px] font-bold bg-red-50 text-brand-red px-2.5 py-1 rounded-full border border-red-100 group-hover:bg-brand-red group-hover:text-white transition-colors">
+                                ${h.active_minutes || 0} منٹ
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2 flex items-start space-x-2 bg-gray-50 p-2 rounded-lg">
+                            <i data-lucide="play-circle" class="w-4 h-4 ${hasLectures ? 'text-emerald-500' : 'text-gray-400'} shrink-0"></i>
+                            <span class="leading-relaxed">📚 دیکھے گئے لیکچرز: ${lecturesText}</span>
+                        </p>
+                    </div>
+                    `;
+                }).join('');
+                
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            } catch (err) {
+                console.error("History Render Error:", err);
+            }
         }
 
         async function trackActivity() {
