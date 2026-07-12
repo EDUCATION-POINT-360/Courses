@@ -28,7 +28,6 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Modern Glassmorphic Component UI Overlays */
         .glass-panel {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
@@ -46,7 +45,6 @@
             background: #DC2626;
             border-radius: 4px;
         }
-        /* Page Transition Animations */
         .page-layer {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -125,7 +123,6 @@
             </header>
 
             <div class="p-4 md:p-8 flex-1">
-                
                 <section id="student-dashboard" class="view-layer page-layer space-y-6">
                     <div class="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
                         <div class="relative z-10 space-y-2 max-w-xl">
@@ -189,35 +186,12 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                                <h3 class="text-lg font-bold text-gray-800 mb-4">Educational Programs Roadmap (Coming Soon)</h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div class="p-4 border border-dashed border-gray-200 rounded-xl bg-gray-50 opacity-70">
-                                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">Advanced Pipeline</span>
-                                        <h4 class="font-bold text-sm text-gray-700">🎨 UI/UX Graphic Designing Suite</h4>
-                                    </div>
-                                    <div class="p-4 border border-dashed border-gray-200 rounded-xl bg-gray-50 opacity-70">
-                                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">Fullstack Track</span>
-                                        <h4 class="font-bold text-sm text-gray-700">🌐 Web Development Masterclass</h4>
-                                    </div>
-                                    <div class="p-4 border border-dashed border-gray-200 rounded-xl bg-gray-50 opacity-70">
-                                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">AI Intelligence</span>
-                                        <h4 class="font-bold text-sm text-gray-700">🤖 AI & Generative ChatGPT Engineering</h4>
-                                    </div>
-                                    <div class="p-4 border border-dashed border-gray-200 rounded-xl bg-gray-50 opacity-70">
-                                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">Growth Engine</span>
-                                        <h4 class="font-bold text-sm text-gray-700">📈 Modern Digital Marketing Pipeline</h4>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="space-y-6">
                             <div class="bg-white p-6 rounded-2xl border border-brand-red/30 shadow-lg relative overflow-hidden">
-                                <div class="absolute top-0 right-0 w-16 h-16 bg-brand-red/5 rounded-bl-full pointer-events-none"></div>
                                 <h3 class="text-base font-bold text-gray-800 flex items-center space-x-2 mb-3">
-                                    <i data-lucide="alarm-clock" class="text-brand-red w-5 h-5 animate-pulse"></i>
+                                    <i data-lucide="alarm-clock" class="text-brand-red w-5 h-5"></i>
                                     <span>Assignment Submission Frame</span>
                                 </h3>
                                 <div class="bg-red-50 border border-red-100 rounded-xl p-4 text-center">
@@ -231,7 +205,6 @@
                                 <h3 class="text-base font-bold text-gray-800">Verified System Identity Credentials</h3>
                                 <div class="text-xs space-y-2 text-gray-600">
                                     <div class="flex justify-between"><span class="font-medium">Student UID:</span><span class="font-mono font-bold text-gray-800" id="meta-student-id">--</span></div>
-                                    <div class="flex justify-between"><span class="font-medium">Registration Date:</span><span class="font-bold text-gray-800" id="meta-enrollment-date">--</span></div>
                                 </div>
                             </div>
                         </div>
@@ -250,7 +223,7 @@
                                     <h2 id="player-lesson-title" class="text-xl font-bold tracking-tight text-gray-900">Loading Active Module Lesson...</h2>
                                     <span id="player-duration-badge" class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full whitespace-nowrap">Est. Duration: -- mins</span>
                                 </div>
-                                <p id="player-lesson-desc" class="text-sm text-gray-500 leading-relaxed">Please update or pull down records via database pipelines sync controllers.</p>
+                                <p id="player-lesson-desc" class="text-sm text-gray-500 leading-relaxed">Select a lesson from the list on the right.</p>
                                 
                                 <div class="pt-2 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                     <div class="flex-1">
@@ -262,12 +235,6 @@
                                             <div id="lesson-watch-progress-bar" class="bg-emerald-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
                                         </div>
                                     </div>
-                                    <div id="download-button-wrapper" class="hidden">
-                                        <a id="gdrive-download-link" href="#" target="_blank" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-xl flex items-center space-x-2 transition-all shadow-md">
-                                            <i data-lucide="download" class="w-4 h-4"></i>
-                                            <span>Download Material</span>
-                                        </a>
-                                    </div>
                                 </div>
                             </div>
 
@@ -277,7 +244,7 @@
                                     <span>Daily Course Assignment Module Pipeline</span>
                                 </h3>
                                 <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
-                                    <strong>Locked State Rule:</strong> Absolute access requires your active completion verification processing of today's lesson module to clear compliance parameters.
+                                    Please complete the video requirements first.
                                 </div>
                             </div>
                         </div>
@@ -287,8 +254,7 @@
                                 <i data-lucide="list-video" class="text-brand-red w-5 h-5"></i>
                                 <span>Course Matrix Tree</span>
                             </h3>
-                            <div id="classroom-lessons-stack" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 mt-3 pr-1">
-                                </div>
+                            <div id="classroom-lessons-stack" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 mt-3 pr-1"></div>
                         </div>
                     </div>
                 </section>
@@ -296,37 +262,10 @@
                 <section id="reports-center" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                         <h2 class="text-xl font-bold tracking-tight text-gray-900 mb-2">Academic Audit Reporting & Documentation Engine</h2>
-                        <p class="text-sm text-gray-500 mb-6">Compile, execute structural parsing data, and print or export formal digital copies across diverse file metrics layout extensions.</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="border border-gray-200 rounded-2xl p-5 space-y-4 shadow-sm flex flex-col justify-between">
-                                <div class="space-y-1">
-                                    <div class="p-2 bg-red-50 text-brand-red rounded-lg w-fit"><i data-lucide="file-spreadsheet" class="w-5 h-5"></i></div>
-                                    <h4 class="font-bold text-gray-800">Comprehensive Progress Sheet</h4>
-                                    <p class="text-xs text-gray-400">Compiles analytical insights, watch logs, timeline indicators and milestones.</p>
-                                </div>
-                                <div class="flex gap-2 pt-2">
-                                    <button onclick="reportsEngine.exportData('CSV')" class="flex-1 py-2 text-center bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all">CSV</button>
-                                    <button onclick="reportsEngine.exportData('Excel')" class="flex-1 py-2 text-center bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all">Excel</button>
-                                </div>
-                            </div>
-
-                            <div class="border border-gray-200 rounded-2xl p-5 space-y-4 shadow-sm flex flex-col justify-between">
-                                <div class="space-y-1">
-                                    <div class="p-2 bg-blue-50 text-blue-600 rounded-lg w-fit"><i data-lucide="calendar" class="w-5 h-5"></i></div>
-                                    <h4 class="font-bold text-gray-800">Attendance Log Ledger</h4>
-                                    <p class="text-xs text-gray-400">Verifiable logging of monthly checkins, dates sequence matrix and gaps tracking details.</p>
-                                </div>
-                                <button onclick="reportsEngine.exportData('PDF')" class="w-full py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-xl transition-all shadow">Export PDF Matrix</button>
-                            </div>
-
-                            <div class="border border-brand-red/30 rounded-2xl p-5 space-y-4 shadow-md bg-gradient-to-b from-white to-red-50/30 flex flex-col justify-between">
-                                <div class="space-y-1">
-                                    <div class="p-2 bg-red-100 text-brand-red rounded-lg w-fit"><i data-lucide="award" class="w-5 h-5"></i></div>
-                                    <h4 class="font-bold text-gray-800">Official Graduation Diploma</h4>
-                                    <p class="text-xs text-gray-400">A4 Premium Landscape Secure Credentials Document Framework with integrated verification parameters.</p>
-                                </div>
-                                <button id="download-cert-btn" disabled class="w-full py-2 bg-brand-red text-white opacity-40 cursor-not-allowed font-bold text-xs rounded-xl transition-all shadow-md">Locked (Incomplete Syllabus)</button>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                            <div class="border border-gray-200 rounded-2xl p-5 space-y-4 shadow-sm">
+                                <h4 class="font-bold text-gray-800">Export Report</h4>
+                                <button onclick="reportsEngine.exportData('CSV')" class="mt-2 w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl">Export CSV</button>
                             </div>
                         </div>
                     </div>
@@ -334,463 +273,385 @@
 
                 <section id="admin-console" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-gray-100">
-                            <div>
-                                <h2 class="text-xl font-bold tracking-tight text-red-700">Super Admin Configuration Node</h2>
-                                <p class="text-xs text-gray-400">Central core controls for managing operations, syllabus assets, validation states, and permissions.</p>
-                            </div>
-                        </div>
-
-                        <div class="flex space-x-2 my-4">
-                            <button class="px-4 py-2 bg-red-600 text-white text-xs font-bold rounded-lg shadow-sm">Manage Course Syllabi</button>
-                        </div>
-
-                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                            <h3 class="font-bold text-gray-800 text-sm mb-3">Inject/Append New Lesson Node Module</h3>
-                            <form id="admin-lesson-form" onsubmit="adminConsole.createLesson(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <input type="number" id="adm-les-num" placeholder="Lesson #" class="p-2 text-xs bg-white border border-gray-300 rounded-lg focus:outline-brand-red" required>
-                                <input type="text" id="adm-les-title" placeholder="Lesson Core Title" class="p-2 text-xs bg-white border border-gray-300 rounded-lg focus:outline-brand-red" required>
-                                <input type="text" id="adm-les-gdrive" placeholder="Google Drive Shareable ID Link" class="p-2 text-xs bg-white border border-gray-300 rounded-lg focus:outline-brand-red" required>
-                                <input type="number" id="adm-les-duration" placeholder="Duration (Seconds)" class="p-2 text-xs bg-white border border-gray-300 rounded-lg focus:outline-brand-red" required>
-                                <div class="sm:col-span-2 lg:col-span-4">
-                                    <textarea id="adm-les-desc" placeholder="Provide textual overview descriptions notes contextual summary details..." class="w-full p-2 text-xs bg-white border border-gray-300 rounded-lg focus:outline-brand-red" rows="2"></textarea>
-                                </div>
-                                <button type="submit" class="sm:col-span-2 lg:col-span-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg shadow transition-all">Publish Lesson Node to Core Tables</button>
+                        <h2 class="text-xl font-bold tracking-tight text-red-700">Super Admin Configuration Node</h2>
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-4">
+                            <form id="admin-lesson-form" onsubmit="adminConsole.createLesson(event)" class="grid grid-cols-1 gap-4">
+                                <input type="number" id="adm-les-num" placeholder="Lesson #" class="p-2 text-xs bg-white border border-gray-300 rounded-lg" required>
+                                <input type="text" id="adm-les-title" placeholder="Lesson Core Title" class="p-2 text-xs bg-white border border-gray-300 rounded-lg" required>
+                                <input type="text" id="adm-les-gdrive" placeholder="Google Drive Shareable ID Link" class="p-2 text-xs bg-white border border-gray-300 rounded-lg" required>
+                                <input type="number" id="adm-les-duration" placeholder="Duration (Seconds)" class="p-2 text-xs bg-white border border-gray-300 rounded-lg" required>
+                                <textarea id="adm-les-desc" placeholder="Overview notes..." class="w-full p-2 text-xs bg-white border border-gray-300 rounded-lg" rows="2"></textarea>
+                                <button type="submit" class="py-2 bg-red-600 text-white text-xs font-bold rounded-lg">Publish Lesson</button>
                             </form>
                         </div>
                     </div>
                 </section>
-
             </div>
         </main>
     </div>
 
     <div id="auth-shield-container" class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-red-50 to-neutral-100 p-4 hidden-layer page-layer">
-        <div class="w-full max-w-md bg-white rounded-3xl border border-gray-200 shadow-2xl overflow-hidden p-6 md:p-8 space-y-6">
+        <div class="w-full max-w-md bg-white rounded-3xl border border-gray-200 shadow-2xl p-6 md:p-8 space-y-6">
             <div class="text-center space-y-2">
-                <div class="mx-auto bg-brand-red p-3 rounded-2xl text-white w-fit shadow-lg shadow-red-600/20"><i data-lucide="lock" class="w-6 h-6"></i></div>
                 <h2 class="text-2xl font-black tracking-tight text-gray-900">Education Point LMS</h2>
-                <p class="text-xs text-gray-400 font-medium">Secure Operational Management Cloud Terminal Gateway</p>
+                <p class="text-xs text-gray-400">Secure Gateway</p>
             </div>
-            
             <form id="auth-form" onsubmit="appAuth.handlePrimarySubmission(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Email Address</label>
-                    <input type="email" id="auth-email" class="w-full p-3 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red/30 focus:border-brand-red transition-all" placeholder="name@domain.com" required>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Email Address</label>
+                    <input type="email" id="auth-email" class="w-full p-3 bg-gray-50 border border-gray-200 text-sm rounded-xl" placeholder="name@domain.com" required>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Password Credentials</label>
-                    <input type="password" id="auth-password" class="w-full p-3 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red/30 focus:border-brand-red transition-all" placeholder="••••••••••••" required>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Password Credentials</label>
+                    <input type="password" id="auth-password" class="w-full p-3 bg-gray-50 border border-gray-200 text-sm rounded-xl" placeholder="••••••••••••" required>
                 </div>
-                <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-hover text-white font-bold text-sm tracking-wide rounded-xl shadow-lg transition-all transform active:scale-[0.98]">
+                <button type="submit" class="w-full py-3 bg-brand-red text-white font-bold text-sm rounded-xl shadow-lg">
                     Authenticate Identity Terminal
                 </button>
             </form>
         </div>
     </div>
-<script>
-    // --- 1. CORE SUPABASE CONFIGURATION INITIALIZATION ---
-    const SUPABASE_URL = "https://sulgxyktyvngazgodvxf.supabase.co"; 
-    const SUPABASE_ANON_KEY = "sb_publishable_WXhdCUvVr1TNQhv9_24MBQ_0wdXy-VB";
-    
-    // سنٹیکس ایرر (::) کو فکس کر دیا گیا ہے
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // --- 2. LOGICAL APP GLOBAL CONFIG STATE STATES CONTROLLER ---
-    let globalState = {
-        sessionUser: null,
-        profileData: null,
-        lessonsCollection: [],
-        progressMatrix: [],
-        activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828" 
-    };
-
-    // --- 3. LIFECYCLE INITIALIZER SYSTEM BOOT ---
-    document.addEventListener("DOMContentLoaded", async () => {
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-        runClockEngine();
-        await evaluateSessionContextState();
-    });
-
-    async function evaluateSessionContextState() {
+    <script>
+        // --- 1. CORE SUPABASE CONFIGURATION INITIALIZATION ---
+        const SUPABASE_URL = "https://sulgxyktyvngazgodvxf.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_WXhdCUvVr1TNQhv9_24MBQ_0wdXy-VB";
+        
+        // فکس شدہ سنٹیکس
+        let supabaseClientInstance = null;
         try {
-            const { data: { session }, error } = await supabase.auth.getSession();
-            if (error) throw error;
-
-            if (session) {
-                globalState.sessionUser = session.user;
-                await pullProfileContextAndInitialize(session.user.id);
+            if (typeof supabase !== 'undefined' && supabase.createClient) {
+                supabaseClientInstance = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             } else {
+                console.error("Supabase CDN library not loaded properly.");
+            }
+        } catch(e) {
+            console.error("Failed to initialize Supabase client:", e);
+        }
+
+        let globalState = {
+            sessionUser: null,
+            profileData: null,
+            lessonsCollection: [],
+            progressMatrix: [],
+            activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828" 
+        };
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            runClockEngine();
+            await evaluateSessionContextState();
+        });
+
+        async function evaluateSessionContextState() {
+            try {
+                if (!supabaseClientInstance) {
+                    throw new Error("Supabase is missing or blocked by your browser/network.");
+                }
+
+                const { data: { session }, error } = await supabaseClientInstance.auth.getSession();
+                if (error) throw error;
+
+                if (session) {
+                    globalState.sessionUser = session.user;
+                    await pullProfileContextAndInitialize(session.user.id);
+                } else {
+                    displayScreenLayer("auth-shield-container");
+                }
+            } catch (err) {
+                console.error("Initialization Fault:", err);
+                alert("System Alert: " + err.message + "\n\nShow login screen anyway.");
+                // سیفٹی گیٹ: لوڈر کو روک کر لاگ ان اسکرین پر بھیجیں
+                displayScreenLayer("auth-shield-container");
+            } finally {
+                const loader = document.getElementById("global-loader");
+                if (loader) loader.classList.add("hidden");
+            }
+        }
+
+        async function pullProfileContextAndInitialize(uid) {
+            try {
+                let { data: profile, error } = await supabaseClientInstance.from('profiles').select('*').eq('id', uid).maybeSingle();
+                if (error) throw error;
+
+                if (!profile) {
+                    const { data: seededProfile, error: insErr } = await supabaseClientInstance.from('profiles').insert([{
+                        id: uid, full_name: "Premium Scholar Student", father_name: "Academic Mentor Root",
+                        mobile_number: "0300" + Math.floor(1000000 + Math.random() * 9000000), email: globalState.sessionUser.email,
+                        city: "Lahore", complete_address: "Education Point Campus Block-A",
+                        gender: "Male", date_of_birth: "2000-01-01", education_level: "Bachelors", role: "student"
+                    }]).select().single();
+                    if (insErr) throw insErr;
+                    profile = seededProfile;
+                }
+
+                globalState.profileData = profile;
+                syncProfileUILayoutRepresentations();
+                await syncClassroomSyllabusEngine();
+                establishRealtimeSubscriptions();
+                displayScreenLayer("app-container");
+                switchView("student-dashboard");
+            } catch(err) {
+                console.error(err);
+                alert("Profile Error: " + err.message);
                 displayScreenLayer("auth-shield-container");
             }
-        } catch (err) {
-            console.error("Initialization Error:", err);
-            // اگر کنکشن کا مسئلہ ہو تو یوزر کو لاگ ان اسکرین دکھائیں تاکہ ایپ لوڈر پر ہینگ نہ رہے
-            displayScreenLayer("auth-shield-container");
-        } finally {
-            const loader = document.getElementById("global-loader");
-            if (loader) loader.classList.add("hidden");
         }
-    }
 
-    async function pullProfileContextAndInitialize(uid) {
-        try {
-            let { data: profile, error } = await supabase.from('profiles').select('*').eq('id', uid).maybeSingle();
-            if (error) throw error;
+        function displayScreenLayer(targetId) {
+            ["global-loader", "app-container", "auth-shield-container"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add("hidden-layer");
+            });
+            const target = document.getElementById(targetId);
+            if (target) target.classList.remove("hidden-layer");
+        }
 
-            // اگر پروفائل موجود نہ ہو تو رئیل ٹائم ڈیٹا بیس ریکارڈ انسرٹ کریں
-            if (!profile) {
-                const { data: seededProfile, error: insertError } = await supabase.from('profiles').insert([{
-                    id: uid, 
-                    full_name: "Premium Scholar Student", 
-                    father_name: "Academic Mentor Root",
-                    mobile_number: "03001234567", 
-                    email: globalState.sessionUser.email,
-                    city: "Lahore", 
-                    complete_address: "Education Point Campus Complex Block-A",
-                    gender: "Male", 
-                    date_of_birth: "2000-01-01", 
-                    education_level: "Bachelors", 
-                    role: "student"
-                }]).select().single();
+        function toggleMobileSidebar() {
+            const sb = document.getElementById("main-sidebar");
+            if (sb) sb.classList.toggle("-translate-x-full");
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
+            const target = document.getElementById(viewId);
+            if (target) target.classList.remove("hidden-layer");
+            
+            document.querySelectorAll(".nav-link").forEach(btn => {
+                btn.classList.remove("text-white", "bg-brand-red");
+                btn.classList.add("text-gray-600", "hover:bg-gray-100");
+            });
+            const sb = document.getElementById("main-sidebar");
+            if (sb) sb.classList.add("-translate-x-full");
+        }
+
+        function syncProfileUILayoutRepresentations() {
+            if(!globalState.profileData) return;
+            const u = document.getElementById("sb-username");
+            const r = document.getElementById("sb-role");
+            const w = document.getElementById("dash-welcome-title");
+            const m = document.getElementById("meta-student-id");
+            const a = document.getElementById("admin-nav-item");
+
+            if(u) u.textContent = globalState.profileData.full_name;
+            if(r) r.textContent = globalState.profileData.role;
+            if(w) w.textContent = `Welcome back, ${globalState.profileData.full_name}!`;
+            if(m) m.textContent = globalState.profileData.id.substring(0,8).toUpperCase();
+            if(globalState.profileData.role === 'super_admin' && a) a.classList.remove("hidden");
+        }
+
+        const appAuth = {
+            handlePrimarySubmission: async (e) => {
+                e.preventDefault();
+                const email = document.getElementById("auth-email").value.trim();
+                const password = document.getElementById("auth-password").value;
                 
-                if (insertError) throw insertError;
-                profile = seededProfile;
+                try {
+                    const { data, error } = await supabaseClientInstance.auth.signInWithPassword({ email, password });
+                    if (error) {
+                        const { data: upData, error: upErr } = await supabaseClientInstance.auth.signUp({ email, password });
+                        if (upErr) throw upErr;
+                        if (upData) { alert("Registration Initialized! Please login now."); location.reload(); }
+                    } else if(data.user) {
+                        globalState.sessionUser = data.user;
+                        await pullProfileContextAndInitialize(data.user.id);
+                    }
+                } catch(err) {
+                    alert("Auth Error: " + err.message);
+                }
+            },
+            logout: async () => {
+                await supabaseClientInstance.auth.signOut();
+                location.reload();
+            }
+        };
+
+        async function syncClassroomSyllabusEngine() {
+            try {
+                let { data: lessons, error } = await supabaseClientInstance.from('lessons').select('*').order('lesson_number', { ascending: true });
+                if (error) throw error;
+                globalState.lessonsCollection = lessons || [];
+
+                if(globalState.sessionUser) {
+                    let { data: progress } = await supabaseClientInstance.from('lesson_progress').select('*').eq('student_id', globalState.sessionUser.id);
+                    globalState.progressMatrix = progress || [];
+                }
+                renderClassroomSyllabusTreeLayout();
+                await evaluateAnalyticsAggregatesMetricsContainers();
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function renderClassroomSyllabusTreeLayout() {
+            const container = document.getElementById("classroom-lessons-stack");
+            if(!container) return;
+            container.innerHTML = "";
+
+            if(globalState.lessonsCollection.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-8">No published lessons yet.</p>`;
+                return;
             }
 
-            globalState.profileData = profile;
-            syncProfileUILayoutRepresentations();
-            await syncClassroomSyllabusEngine();
-            establishRealtimeSubscriptions();
-            displayScreenLayer("app-container");
-            switchView("student-dashboard");
-        } catch(err) {
-            alert("Profile Sync Error: " + err.message);
-            displayScreenLayer("auth-shield-container");
+            let sequentialGateUnlocked = true;
+            globalState.lessonsCollection.forEach((lesson) => {
+                const log = globalState.progressMatrix.find(p => p.lesson_id === lesson.id);
+                const isCompleted = log ? log.is_completed : false;
+                const activeLockedState = !sequentialGateUnlocked;
+
+                const btn = document.createElement("button");
+                btn.disabled = activeLockedState;
+                btn.className = `w-full text-left p-3.5 rounded-xl border transition-all flex items-center justify-between gap-2 ${
+                    activeLockedState ? 'bg-gray-50 border-gray-200 opacity-50 cursor-not-allowed' :
+                    isCompleted ? 'bg-emerald-50/60 border-emerald-200 hover:bg-emerald-50' : 'bg-white border-gray-200 hover:border-brand-red'
+                }`;
+
+                btn.onclick = () => mountActiveLessonToStagePlayer(lesson, log);
+                btn.innerHTML = `
+                    <div class="overflow-hidden space-y-0.5">
+                        <span class="block text-[10px] font-bold tracking-widest uppercase ${isCompleted ? 'text-emerald-600' : 'text-brand-red'}">Lesson ${lesson.lesson_number}</span>
+                        <h4 class="font-bold text-xs text-gray-800 truncate">${lesson.title}</h4>
+                    </div>
+                    <div><i data-lucide="${activeLockedState ? 'lock' : isCompleted ? 'check-circle' : 'play-circle'}" class="w-4 h-4"></i></div>
+                `;
+                container.appendChild(btn);
+                if(!isCompleted) sequentialGateUnlocked = false;
+            });
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
-    }
 
-    function displayScreenLayer(targetId) {
-        ["global-loader", "app-container", "auth-shield-container"].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.classList.add("hidden-layer");
-        });
-        const target = document.getElementById(targetId);
-        if (target) target.classList.remove("hidden-layer");
-    }
-
-    function toggleMobileSidebar() {
-        const sidebar = document.getElementById("main-sidebar");
-        if (sidebar) sidebar.classList.toggle("-translate-x-full");
-    }
-
-    function switchView(viewId) {
-        document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
-        const targetView = document.getElementById(viewId);
-        if (targetView) targetView.classList.remove("hidden-layer");
-        
-        document.querySelectorAll(".nav-link").forEach(btn => {
-            btn.classList.remove("text-white", "bg-brand-red");
-            btn.classList.add("text-gray-600", "hover:bg-gray-100");
-        });
-        
-        const activeSidebar = document.getElementById("main-sidebar");
-        if (activeSidebar) activeSidebar.classList.add("-translate-x-full");
-    }
-
-    function syncProfileUILayoutRepresentations() {
-        if(!globalState.profileData) return;
-        
-        const usernameEl = document.getElementById("sb-username");
-        const roleEl = document.getElementById("sb-role");
-        const welcomeTitleEl = document.getElementById("dash-welcome-title");
-        const studentIdEl = document.getElementById("meta-student-id");
-        const adminNavItem = document.getElementById("admin-nav-item");
-
-        if (usernameEl) usernameEl.textContent = globalState.profileData.full_name;
-        if (roleEl) roleEl.textContent = globalState.profileData.role;
-        if (welcomeTitleEl) welcomeTitleEl.textContent = `Welcome back, ${globalState.profileData.full_name}!`;
-        if (studentIdEl) studentIdEl.textContent = globalState.profileData.id.substring(0,8).toUpperCase();
-        
-        if(globalState.profileData.role === 'super_admin' && adminNavItem) {
-            adminNavItem.classList.remove("hidden");
-        }
-    }
-
-    // --- 4. AUTHENTICATION TRANSACTION CONTROLLERS INTERFACES ---
-    const appAuth = {
-        handlePrimarySubmission: async (e) => {
-            e.preventDefault();
-            const email = document.getElementById("auth-email").value.trim();
-            const password = document.getElementById("auth-password").value;
+        function mountActiveLessonToStagePlayer(lesson, logContainer) {
+            document.getElementById("player-lesson-title").textContent = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
+            document.getElementById("player-lesson-desc").textContent = lesson.description || "";
+            document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
             
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) {
-                // سائن ان فیل ہونے پر خودکار رئیل ٹائم سائن اپ اکاؤنٹ کریشن رن کریں
-                const { data: upData, error: upErr } = await supabase.auth.signUp({ email, password });
-                if (upErr) { 
-                    alert("Authentication Pipeline Fault: " + upErr.message); 
-                    return; 
-                }
-                if (upData) { 
-                    alert("Account Registered Success! Re-enter credentials to log in."); 
-                    location.reload(); 
-                }
-            } else if(data.user) {
-                globalState.sessionUser = data.user;
-                await pullProfileContextAndInitialize(data.user.id);
-            }
-        },
-        logout: async () => {
-            await supabase.auth.signOut();
-            location.reload();
-        }
-    };
+            const videoFrame = document.getElementById("gdrive-video-player");
+            if (videoFrame) videoFrame.src = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/preview`;
 
-    // --- 5. CLASSROOM SYLLABUS ENGINE & CORE BUSINESS RULES ---
-    async function syncClassroomSyllabusEngine() {
-        try {
-            let { data: lessons, error } = await supabase.from('lessons').select('*').order('lesson_number', { ascending: true });
-            if (error) throw error;
-            globalState.lessonsCollection = lessons || [];
+            const percentage = logContainer ? logContainer.watch_percentage : 0;
+            updateWatchProgressBarUIState(percentage);
 
-            if(globalState.sessionUser) {
-                let { data: progress, error: progError } = await supabase.from('lesson_progress').select('*').eq('student_id', globalState.sessionUser.id);
-                if (progError) throw progError;
-                globalState.progressMatrix = progress || [];
-            }
-
-            renderClassroomSyllabusTreeLayout();
-            await evaluateAnalyticsAggregatesMetricsContainers();
-        } catch (err) {
-            console.error("Database Sync Error:", err);
-        }
-    }
-
-    function renderClassroomSyllabusTreeLayout() {
-        const container = document.getElementById("classroom-lessons-stack");
-        if(!container) return;
-        container.innerHTML = "";
-
-        if(globalState.lessonsCollection.length === 0) {
-            container.innerHTML = `<p class="text-xs text-gray-400 text-center py-8">No published lesson logs compiled yet inside core storage layers.</p>`;
-            return;
-        }
-
-        let sequentialGateUnlocked = true;
-
-        globalState.lessonsCollection.forEach((lesson) => {
-            const log = globalState.progressMatrix.find(p => p.lesson_id === lesson.id);
-            const isCompleted = log ? log.is_completed : false;
-            const activeLockedState = !sequentialGateUnlocked;
-
-            const btn = document.createElement("button");
-            btn.disabled = activeLockedState;
-            btn.className = `w-full text-left p-3.5 rounded-xl border transition-all flex items-center justify-between gap-2 ${
-                activeLockedState ? 'bg-gray-50 border-gray-200 opacity-50 cursor-not-allowed' :
-                isCompleted ? 'bg-emerald-50/60 border-emerald-200 hover:bg-emerald-50' : 'bg-white border-gray-200 hover:border-brand-red'
-            }`;
-
-            btn.onclick = () => mountActiveLessonToStagePlayer(lesson, log);
-
-            btn.innerHTML = `
-                <div class="overflow-hidden space-y-0.5">
-                    <span class="block text-[10px] font-bold tracking-widest uppercase ${isCompleted ? 'text-emerald-600' : 'text-brand-red'}">Lesson ${lesson.lesson_number}</span>
-                    <h4 class="font-bold text-xs text-gray-800 truncate">${lesson.title}</h4>
-                </div>
-                <div>
-                    <i data-lucide="${activeLockedState ? 'lock' : isCompleted ? 'check-circle' : 'play-circle'}" class="w-4 h-4 ${activeLockedState ? 'text-gray-400' : isCompleted ? 'text-emerald-500' : 'text-brand-red'}"></i>
-                </div>
-            `;
-
-            container.appendChild(btn);
-
-            if(!isCompleted) {
-                sequentialGateUnlocked = false;
-            }
-        });
-        
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-    }
-
-    function mountActiveLessonToStagePlayer(lesson, logContainer) {
-        document.getElementById("player-lesson-title").textContent = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
-        document.getElementById("player-lesson-desc").textContent = lesson.description || "No overview context details annotated for this index item resource.";
-        document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
-        
-        const videoFrame = document.getElementById("gdrive-video-player");
-        if (videoFrame) {
-            videoFrame.src = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/preview`;
-        }
-
-        const percentage = logContainer ? logContainer.watch_percentage : 0;
-        updateWatchProgressBarUIState(percentage);
-
-        const gateContainer = document.getElementById("assignment-gate-container");
-        if (gateContainer) {
-            if(percentage >= 90.00 || logContainer?.is_completed) {
-                gateContainer.innerHTML = `
-                    <div class="p-5 border border-emerald-200 bg-emerald-50/50 rounded-2xl space-y-3">
-                        <div class="flex items-center space-x-2 text-emerald-800"><i data-lucide="check-circle" class="w-5 h-5"></i><span class="font-bold text-sm">Syllabus Compliance Criteria Met!</span></div>
-                        <p class="text-xs text-gray-600">Congratulations! Today's class has been completed successfully. You have until 8:00 PM to complete and submit today's assignment. After today's learning requirements are completed, the next lesson will unlock according to the course schedule.</p>
-                        <div class="pt-2 flex flex-wrap gap-2">
-                            <a href="https://wa.me/923314220506?text=Assignment%20Submission%20Lesson%20${lesson.lesson_number}" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center space-x-2 shadow"><i data-lucide="message-square" class="w-4 h-4"></i><span>WhatsApp Submit</span></a>
-                            <a href="tel:+923314220506" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-xl flex items-center space-x-2 shadow"><i data-lucide="phone" class="w-4 h-4"></i><span>Call Office</span></a>
+            const gateContainer = document.getElementById("assignment-gate-container");
+            if(gateContainer) {
+                if(percentage >= 90.00 || logContainer?.is_completed) {
+                    gateContainer.innerHTML = `
+                        <div class="p-5 border border-emerald-200 bg-emerald-50/50 rounded-2xl space-y-3">
+                            <p class="text-xs text-gray-600">Congratulations! Today's class has been completed. Submit assignment before 8:00 PM.</p>
+                            <div class="pt-2 flex flex-wrap gap-2">
+                                <a href="https://wa.me/923314220506?text=Assignment%20Lesson%20${lesson.lesson_number}" target="_blank" class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl flex items-center space-x-2 shadow"><i data-lucide="message-square" class="w-4 h-4"></i><span>WhatsApp Submit</span></a>
+                            </div>
                         </div>
-                    </div>
-                `;
-            } else {
-                gateContainer.innerHTML = `
-                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 space-y-2">
-                        <p><strong>Assignment Interface Shielded:</strong> Stream the content module fully until your structural progression bar clears the 90% completion parameters to initialize interactive data channels.</p>
-                        <button onclick="simulationTriggers.simulateCompleteWatch('${lesson.id}')" class="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg transition-all">Simulate Completing 95% Video Stream</button>
-                    </div>
-                `;
+                    `;
+                } else {
+                    gateContainer.innerHTML = `
+                        <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 space-y-2">
+                            <p>Stream the content module fully to unlock assignments.</p>
+                            <button onclick="simulationTriggers.simulateCompleteWatch('${lesson.id}')" class="px-3 py-1 bg-amber-600 text-white font-bold rounded-lg">Simulate Completing 95% Video Stream</button>
+                        </div>
+                    `;
+                }
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function updateWatchProgressBarUIState(pct) {
+            const bar = document.getElementById("lesson-watch-progress-bar");
+            const text = document.getElementById("lesson-watch-percentage-text");
+            if(bar && text) {
+                bar.style.width = `${pct}%`;
+                text.textContent = `${pct}% Completed`;
             }
         }
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-    }
 
-    function updateWatchProgressBarUIState(pct) {
-        const bar = document.getElementById("lesson-watch-progress-bar");
-        const text = document.getElementById("lesson-watch-percentage-text");
-        if(bar && text) {
-            bar.style.width = `${pct}%`;
-            text.textContent = `${pct}% Completed`;
-        }
-    }
+        const simulationTriggers = {
+            simulateCompleteWatch: async (lessonId) => {
+                if(!globalState.sessionUser) return;
+                try {
+                    const { error } = await supabaseClientInstance.from('lesson_progress').upsert({
+                        student_id: globalState.sessionUser.id,
+                        lesson_id: lessonId,
+                        watch_percentage: 95.00,
+                        is_completed: true,
+                        completed_at: new Date().toISOString()
+                    });
+                    if(!error) {
+                        alert("Watch logs synchronized!");
+                        await syncClassroomSyllabusEngine();
+                    }
+                } catch(e) { console.error(e); }
+            }
+        };
 
-    // --- 6. SIMULATION MECHANICS & EVENT TRIGGERS ---
-    const simulationTriggers = {
-        simulateCompleteWatch: async (lessonId) => {
+        async function evaluateAnalyticsAggregatesMetricsContainers() {
             if(!globalState.sessionUser) return;
-            
-            const { data, error } = await supabase.from('lesson_progress').upsert({
-                student_id: globalState.sessionUser.id,
-                lesson_id: lessonId,
-                watch_percentage: 95.00,
-                is_completed: true,
-                completed_at: new Date().toISOString()
-            }).select();
+            const totalItemsCount = globalState.lessonsCollection.length || 47;
+            const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
+            const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
 
-            if(!error) {
-                alert("Watch session logs synchronized via real-time stream!");
-                await syncClassroomSyllabusEngine();
-            } else {
-                alert("Error updating watch history: " + error.message);
+            const pb = document.getElementById("dash-course-progress-badge");
+            const pbf = document.getElementById("dash-progress-bar-fill");
+            if (pb) pb.textContent = `${completedCount}/${totalItemsCount} Completed`;
+            if (pbf) pbf.style.width = `${completionRatio}%`;
+
+            let { data: enrollment } = await supabaseClientInstance.from('enrollments').select('*').eq('student_id', globalState.sessionUser.id).maybeSingle();
+            if(enrollment) {
+                if(document.getElementById("stat-current-streak")) document.getElementById("stat-current-streak").textContent = `${enrollment.current_streak} Days`;
+                if(document.getElementById("stat-longest-streak")) document.getElementById("stat-longest-streak").textContent = `${enrollment.longest_streak} Days`;
+                if(document.getElementById("stat-study-hours")) document.getElementById("stat-study-hours").textContent = `${Math.round(enrollment.total_study_seconds / 3600)}h`;
             }
         }
-    };
 
-    async function evaluateAnalyticsAggregatesMetricsContainers() {
-        if(!globalState.sessionUser) return;
-        
-        const totalItemsCount = globalState.lessonsCollection.length || 47;
-        const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
-        const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
-
-        const progressBadge = document.getElementById("dash-course-progress-badge");
-        const progressBarFill = document.getElementById("dash-progress-bar-fill");
-
-        if (progressBadge) progressBadge.textContent = `${completedCount}/${totalItemsCount} Completed`;
-        if (progressBarFill) progressBarFill.style.width = `${completionRatio}%`;
-
-        let { data: enrollment } = await supabase.from('enrollments').select('*').eq('student_id', globalState.sessionUser.id).maybeSingle();
-        if(enrollment) {
-            const curStreak = document.getElementById("stat-current-streak");
-            const lngStreak = document.getElementById("stat-longest-streak");
-            const stdHours = document.getElementById("stat-study-hours");
-
-            if (curStreak) curStreak.textContent = `${enrollment.current_streak} Days`;
-            if (lngStreak) lngStreak.textContent = `${enrollment.longest_streak} Days`;
-            if (stdHours) stdHours.textContent = `${Math.round(enrollment.total_study_seconds / 3600)}h`;
+        function establishRealtimeSubscriptions() {
+            if (!supabaseClientInstance) return;
+            supabaseClientInstance.channel('public:lesson_progress')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'lesson_progress' }, () => {
+                syncClassroomSyllabusEngine();
+            }).subscribe();
         }
 
-        let { data: attList } = await supabase.from('attendance').select('id').eq('student_id', globalState.sessionUser.id);
-        const attendancePct = completedCount > 0 ? Math.round(((attList?.length || 0) / completedCount) * 100) : 0;
-        
-        const attRateEl = document.getElementById("stat-attendance-rate");
-        if (attRateEl) attRateEl.textContent = `${attendancePct}%`;
+        const reportsEngine = { exportData: (f) => { alert("Compiling " + f); } };
 
-        if(completedCount >= totalItemsCount && totalItemsCount > 0) {
-            const certBtn = document.getElementById("download-cert-btn");
-            if(certBtn) {
-                certBtn.disabled = false;
-                certBtn.className = "w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md";
-                certBtn.textContent = "Download Verified Certificate Asset";
+        const adminConsole = {
+            createLesson: async (e) => {
+                e.preventDefault();
+                try {
+                    const num = document.getElementById("adm-les-num").value;
+                    const title = document.getElementById("adm-les-title").value.trim();
+                    const gdrive = document.getElementById("adm-les-gdrive").value.trim();
+                    const dur = document.getElementById("adm-les-duration").value;
+                    const desc = document.getElementById("adm-les-desc").value.trim();
+
+                    const { error } = await supabaseClientInstance.from('lessons').insert([{
+                        course_id: globalState.activeCourseId, lesson_number: num, title: title,
+                        google_drive_video_id: gdrive, estimated_duration: dur, description: desc
+                    }]);
+
+                    if(error) throw error;
+                    alert("Lesson published successfully!");
+                    document.getElementById("admin-lesson-form").reset();
+                    await syncClassroomSyllabusEngine();
+                } catch(err) { alert(err.message); }
             }
+        };
+
+        function runClockEngine() {
+            setInterval(() => {
+                const now = new Date();
+                const deadline = new Date();
+                deadline.setHours(20, 0, 0, 0); 
+                let diff = deadline - now;
+                const element = document.getElementById("assignment-countdown");
+                if (!element) return;
+                if (diff < 0) {
+                    element.textContent = "Locked.";
+                } else {
+                    const hrs = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+                    const mins = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+                    const secs = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+                    element.textContent = `${hrs}:${mins}:${secs} Remaining`;
+                }
+            }, 1000);
         }
-    }
-
-    // --- 7. REALTIME SYSTEM SUBSCRIPTION SYNCHRONIZER ENGINE ---
-    function establishRealtimeSubscriptions() {
-        supabase.channel('public:lesson_progress')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'lesson_progress' }, () => {
-            syncClassroomSyllabusEngine();
-        })
-        .subscribe();
-    }
-
-    // --- 8. REPORTS COMPILING EXPORT ENGINE CONSOLE ---
-    const reportsEngine = {
-        exportData: (format) => {
-            alert(`Compiling database layers... Exporting system metrics natively mapped into .${format.toLowerCase()} format.`);
-        }
-    };
-
-    // --- 9. SUPER ADMIN OPERATIONS SUITE CONTROLLERS ---
-    const adminConsole = {
-        createLesson: async (e) => {
-            e.preventDefault();
-            const num = document.getElementById("adm-les-num").value;
-            const title = document.getElementById("adm-les-title").value.trim();
-            const gdrive = document.getElementById("adm-les-gdrive").value.trim();
-            const dur = document.getElementById("adm-les-duration").value;
-            const desc = document.getElementById("adm-les-desc").value.trim();
-
-            const { data, error } = await supabase.from('lessons').insert([{
-                course_id: globalState.activeCourseId,
-                lesson_number: num,
-                title: title,
-                google_drive_video_id: gdrive,
-                estimated_duration: dur,
-                description: desc
-            }]);
-
-            if(error) {
-                alert("Database Write Refused: " + error.message);
-            } else {
-                alert("Lesson published successfully to production database matrix!");
-                document.getElementById("admin-lesson-form").reset();
-                await syncClassroomSyllabusEngine();
-            }
-        }
-    };
-
-    // --- 10. SYSTEM CLOCK & COUNTDOWN MATRIX CALCULATORS ---
-    function runClockEngine() {
-        setInterval(() => {
-            const now = new Date();
-            const deadline = new Date();
-            deadline.setHours(20, 0, 0, 0); 
-
-            let diff = deadline - now;
-            const element = document.getElementById("assignment-countdown");
-            
-            if (!element) return;
-
-            if (diff < 0) {
-                element.textContent = "Submission timeframe locked.";
-                element.className = "text-xs text-red-600 font-bold mt-1";
-            } else {
-                const hrs = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
-                const mins = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
-                const secs = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-                element.textContent = `${hrs}:${mins}:${secs} Remaining today`;
-            }
-        }, 1000);
-    }
-</script>
-
-    </body>
+    </script>
+</body>
 </html>
