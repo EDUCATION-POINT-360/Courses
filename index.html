@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education Point LMS | Premium Portal</title>
+    <!-- Tailwind CSS Engine -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff5f5',
+                            100: '#fed7d7',
+                            500: '#e53e3e',
+                            600: '#e53e3e',
+                            700: '#9b2c2c',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'apple': '18px',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Fonts & Supposing/Lucide Frameworks -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+        .apple-blur { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .premium-shadow { box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03); }
+        .bento-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bento-card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(229, 62, 62, 0.06); }
+        /* Custom Custom Scrollbar for Apple feel */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+    </style>
+</head>
+<body class="h-full text-slate-800 antialiased overflow-x-hidden">
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3"></div>
+
+    <!-- Main Platform Shell Container -->
+    <div id="app-container" class="hidden min-h-full flex flex-col md:flex-row">
+        
+        <!-- Apple Stripe Sidebar Menu -->
+        <aside id="sidebar-panel" class="fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-100 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:sticky md:h-screen">
+            <!-- Brand Logotype Block -->
+            <div class="p-6 border-b border-slate-50 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                    <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-slate-900 tracking-tight leading-none text-base">Education Point</h2>
+                    <span class="text-xs font-medium text-brand-600 mt-0.5 inline-block">By Muhammad Rizwan</span>
+                </div>
+            </div>
+
+            <!-- Scrollable Navigation Matrix -->
+            <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
+                <a href="#" class="nav-item group flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-apple bg-brand-50 text-brand-600 transition-all duration-200" data-target="dashboard-view">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item group flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-apple transition-all duration-200" data-target="classroom-view">
+                    <i data-lucide="monitor-play" class="w-4 h-4"></i> Classroom
+                </a>
+                <a href="#" class="nav-item group flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-apple transition-all duration-200" data-target="profile-view">
+                    <i data-lucide="user-cog" class="w-4 h-4"></i> Profile
+                </a>
+                <a href="#" class="nav-item group flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-apple transition-all duration-200" data-target="reports-view">
+                    <i data-lucide="file-text" class="w-4 h-4"></i> Reports
+                </a>
+                <a href="#" class="nav-item group hidden flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-700 bg-red-50 hover:bg-red-100 rounded-apple transition-all duration-200" id="admin-nav-item" data-target="admin-view">
+                    <i data-lucide="shield-alert" class="w-4 h-4"></i> Admin Console
+                </a>
+            </nav>
+
+            <!-- Bottom Interactive Identity Grid -->
+            <div class="p-4 border-t border-slate-50 bg-slate-50/50">
+                <div class="flex items-center gap-3 mb-4 p-2 rounded-xl bg-white border border-slate-100 premium-shadow">
+                    <img id="sidebar-avatar" class="w-10 h-10 rounded-full object-cover border border-slate-100" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Avatar">
+                    <div class="truncate">
+                        <h4 id="sidebar-username" class="text-sm font-bold text-slate-900 truncate">Student Name</h4>
+                        <span id="sidebar-role" class="text-xs font-medium text-slate-400 block truncate">Student ID: --</span>
+                    </div>
+                </div>
+                <button id="logout-btn" class="w-100 w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 active:bg-slate-100 rounded-apple premium-shadow transition-all duration-200">
+                    <i data-lucide="log-out" class="w-4 h-4 text-slate-400"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Fluid Application Canvas -->
+        <main class="flex-1 min-w-0 flex flex-col min-h-screen">
+            
+            <!-- Global Dashboard Structural Header -->
+            <header class="bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between sticky top-0 z-30 premium-shadow apple-blur bg-white/90">
+                <div class="flex items-center gap-4">
+                    <button id="sidebar-toggle" class="p-2 -ml-2 text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg md:hidden transition-all">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h1 id="greeting-title" class="text-xl font-extrabold tracking-tight text-slate-900">Assalam-o-Alaikum, Student!</h1>
+                        <p class="text-xs font-medium text-slate-400 hidden sm:block">Welcome back to your daily study routine.</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2.5">
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 rounded-full text-amber-700 text-xs font-bold border border-amber-100">
+                        <i data-lucide="flame" class="w-3.5 h-3.5 fill-amber-500 stroke-amber-600"></i> <span id="top-streak-count">0</span> Days
+                    </div>
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 rounded-full text-brand-600 text-xs font-bold border border-brand-100">
+                        <i data-lucide="zap" class="w-3.5 h-3.5 fill-brand-500 stroke-brand-500"></i> <span id="top-xp-count">0</span> XP
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dynamic Framework View Injection Window -->
+            <div class="flex-1 p-6 max-w-[1600px] w-full mx-auto space-y-6">
+                
+                <!-- SECTION 1: DASHBOARD VIEW -->
+                <section id="dashboard-view" class="view-section space-y-8 animate-fade-in">
+                    
+                    <!-- Apple Bento Content Framework Grid System -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        <!-- Premium Bento Accent Banner Hero -->
+                        <div class="lg:col-span-2 bento-card bg-gradient-to-br from-brand-600 to-red-700 rounded-apple p-6 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden shadow-xl shadow-brand-500/10">
+                            <div class="absolute -right-10 -bottom-10 text-white/5 pointer-events-none">
+                                <i data-lucide="graduation-cap" class="w-56 h-56"></i>
+                            </div>
+                            <div class="space-y-3 max-w-md z-10">
+                                <span class="text-xs font-extrabold tracking-widest text-brand-100 bg-white/10 px-2.5 py-1 rounded-full uppercase">Current Enrollment</span>
+                                <h2 class="text-2xl font-bold tracking-tight">💻 Computer Course (47 Lessons)</h2>
+                                <p id="dashboard-lesson-headline" class="text-sm font-medium text-brand-100/90 leading-relaxed">Next Up: Loading current lesson details...</p>
+                                <button class="mt-2 flex items-center gap-2 bg-white text-brand-600 px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-50 active:scale-95 transition-all shadow-md" onclick="switchView('classroom-view')">
+                                    Continue Learning <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                                </button>
+                            </div>
+                            <!-- Circular Vector Progress Component -->
+                            <div class="relative w-28 h-28 flex items-center justify-center self-center shrink-0 z-10 bg-white/5 rounded-full p-2">
+                                <svg class="transform -rotate-90 w-24 h-24" viewBox="0 0 120 120">
+                                    <circle class="text-white/10" stroke-width="8" stroke="currentColor" fill="transparent" r="48" cx="60" cy="60"/>
+                                    <circle id="course-progress-ring" class="text-white transition-all duration-500" stroke-width="8" stroke-dasharray="301.6" stroke-dashoffset="301.6" stroke-linecap="round" stroke="currentColor" fill="transparent" r="48" cx="60" cy="60"/>
+                                </svg>
+                                <div class="absolute text-xl font-black tracking-tight text-white" id="course-progress-percent">0%</div>
+                            </div>
+                        </div>
+
+                        <!-- Mini Bento Statistics Block -->
+                        <div class="bento-card bg-white border border-slate-100 rounded-apple p-6 premium-shadow flex flex-col justify-between">
+                            <h3 class="text-sm font-extrabold tracking-tight text-slate-400 uppercase">Course Performance</h3>
+                            <div class="grid grid-cols-2 gap-4 mt-4 my-auto">
+                                <div class="p-4 bg-slate-50 rounded-2xl text-center border border-slate-100">
+                                    <i data-lucide="calendar-check-2" class="w-5 h-5 text-brand-500 mx-auto mb-2"></i>
+                                    <span class="block text-xl font-bold tracking-tight text-slate-900" id="stat-attendance-pct">0%</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-0.5">Attendance</span>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-2xl text-center border border-slate-100">
+                                    <i data-lucide="award" class="w-5 h-5 text-emerald-500 mx-auto mb-2"></i>
+                                    <span class="block text-xl font-bold tracking-tight text-slate-900" id="stat-longest-streak">0</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-0.5">Max Streak</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Calendar Grid Component Container -->
+                        <div class="bento-card bg-white border border-slate-100 rounded-apple p-6 premium-shadow">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-brand-500"></i> Attendance Tracker</h3>
+                            </div>
+                            <div id="dashboard-mini-calendar" class="min-h-[140px] bg-slate-50 rounded-xl p-3 border border-slate-100 text-center text-xs text-slate-400 flex items-center justify-center">Calendar Data Engine Matrix</div>
+                        </div>
+
+                        <!-- Badge Rewards Bento Grid Box -->
+                        <div class="lg:col-span-2 bento-card bg-white border border-slate-100 rounded-apple p-6 premium-shadow">
+                            <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><i data-lucide="medal" class="w-4 h-4 text-brand-500"></i> Badges & Certifications</h3>
+                            <div id="badges-container" class="flex flex-wrap gap-3">
+                                <div class="text-xs font-semibold text-slate-400 italic py-4 w-full text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">Unlock your first lesson milestone to generate badges</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Apple Grid System Coming Soon Cards -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-extrabold tracking-tight text-slate-900">More Premium Programs Coming Soon</h3>
+                            <span class="w-12 h-0.5 bg-slate-100 flex-1 mx-4 hidden sm:block"></span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                            <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
+                                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="palette" class="w-4 h-4"></i></div>
+                                <h4 class="text-xs font-bold text-slate-800">Graphic Design</h4><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-1">Coming Soon</span>
+                            </div>
+                            <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
+                                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="code-2" class="w-4 h-4"></i></div>
+                                <h4 class="text-xs font-bold text-slate-800">Web Development</h4><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-1">Coming Soon</span>
+                            </div>
+                            <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
+                                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="cpu" class="w-4 h-4"></i></div>
+                                <h4 class="text-xs font-bold text-slate-800">AI & ChatGPT</h4><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-1">Coming Soon</span>
+                            </div>
+                            <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
+                                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="megaphone" class="w-4 h-4"></i></div>
+                                <h4 class="text-xs font-bold text-slate-800">Digital Marketing</h4><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-1">Coming Soon</span>
+                            </div>
+                            <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
+                                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="briefcase" class="w-4 h-4"></i></div>
+                                <h4 class="text-xs font-bold text-slate-800">Freelancing</h4><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-1">Coming Soon</span>
+                            </div>
+                            <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
+                                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="languages" class="w-4 h-4"></i></div>
+                                <h4 class="text-xs font-bold text-slate-800">Spoken English</h4><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-1">Coming Soon</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 2: CLASSROOM VIEW -->
+                <section id="classroom-view" class="view-section hidden grid grid-cols-1 xl:grid-cols-3 gap-6 animate-fade-in">
+                    <!-- Media Delivery Box Grid Left Column -->
+                    <div class="xl:col-span-2 space-y-4">
+                        <div class="bg-black aspect-video rounded-apple overflow-hidden border border-slate-200 shadow-inner relative flex items-center justify-center" id="video-wrapper-box">
+                            <div class="text-center p-6 text-slate-400 space-y-2">
+                                <i data-lucide="clapperboard" class="w-12 h-12 text-slate-600 mx-auto animate-pulse"></i>
+                                <p class="text-sm font-medium">Select or unlock a lesson from your playlist sequence to begin class.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-2">
+                            <h2 id="current-lesson-title" class="text-lg font-extrabold text-slate-900 tracking-tight">Lesson Title</h2>
+                            <p id="current-lesson-desc" class="text-sm font-medium text-slate-500 leading-relaxed">Lesson details and curriculum instructions will appear here automatically upon activation.</p>
+                            <div class="pt-4 border-t border-slate-50 flex flex-wrap gap-2" id="lesson-action-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column Document Assignment Matrix Panel -->
+                    <div class="space-y-6">
+                        <!-- Card: Assignment Panel -->
+                        <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-4">
+                            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i data-lucide="file-up" class="w-4 h-4 text-brand-500"></i> Today's Assignment</h3>
+                            <hr class="border-slate-50">
+                            <div id="assignment-content-area" class="text-xs font-medium text-slate-400 bg-slate-50 rounded-xl p-4 border border-slate-100">
+                                Complete the active streaming lecture sequence to safely trigger today's validation ledger submittal parameters.
+                            </div>
+                        </div>
+
+                        <!-- Card: Reference System Module -->
+                        <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-4">
+                            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4 text-brand-500"></i> Lesson Materials</h3>
+                            <hr class="border-slate-50">
+                            <div id="lesson-downloads-area" class="text-xs font-medium text-slate-400 bg-slate-50 rounded-xl p-4 border border-slate-100">
+                                No downloadable supplemental documentation attachments structural links mapped to this specific element step.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 3: STUDENT PROFILE VIEW -->
+                <section id="profile-view" class="view-section hidden max-w-3xl mx-auto animate-fade-in">
+                    <div class="bg-white border border-slate-100 rounded-apple p-6 sm:p-8 premium-shadow space-y-6">
+                        <div>
+                            <h2 class="text-xl font-extrabold tracking-tight text-slate-900">Configure Student Profile</h2>
+                            <p class="text-sm font-medium text-slate-400">Please provide complete verified info to satisfy credential requirements and qualify for certificates.</p>
+                        </div>
+
+                        <form id="profile-form" class="space-y-6">
+                            <!-- Image Avatar Upload Grid Component Block -->
+                            <div class="flex flex-col items-center justify-center space-y-2">
+                                <div class="relative w-28 h-28 rounded-full border-4 border-white shadow-md group overflow-hidden">
+                                    <img id="profile-avatar-preview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Preview">
+                                    <label for="profile-avatar-input" class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-all">
+                                        <i data-lucide="camera" class="w-5 h-5"></i>
+                                    </label>
+                                </div>
+                                <input type="file" id="profile-avatar-input" accept="image/*" class="hidden">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Upload Passport Image</span>
+                            </div>
+
+                            <!-- Standard Inputs Responsive Layout Grid Framework -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Full Name *</label><input type="text" id="prof-fullname" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Father's Name *</label><input type="text" id="prof-father" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Mobile Number *</label><input type="tel" id="prof-mobile" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">City *</label><input type="text" id="prof-city" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></div>
+                                <div class="sm:col-span-2 space-y-1"><label class="font-bold text-slate-700">Complete Physical Address *</label><textarea id="prof-address" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></textarea></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Date of Birth *</label><input type="date" id="prof-dob" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></div>
+                                <div class="space-y-1">
+                                    <label class="font-bold text-slate-700">Gender *</label>
+                                    <select id="prof-gender" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50 text-slate-600 font-medium h-[46px]" required>
+                                        <option value="">Select Gender</option><option value="Male">Male</option><option value="Female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Prior Education Level *</label><input type="text" id="prof-edu" placeholder="e.g. Matric / Intermediate" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">College / Institute (Optional)</label><input type="text" id="prof-college" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50"></div>
+                                <div class="sm:col-span-2 space-y-1"><label class="font-bold text-slate-700">Emergency Contact (Optional)</label><input type="text" id="prof-emergency" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50"></div>
+                            </div>
+                            <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-6 rounded-apple shadow-md shadow-brand-500/10 active:scale-[0.99] transition-all text-sm">
+                                Save Profile Configuration Matrix
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- SECTION 4: DATA REPORTS VIEW -->
+                <section id="reports-view" class="view-section hidden space-y-6 animate-fade-in">
+                    <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Academic Reports & Certifications</h2>
+                            <p class="text-sm font-medium text-slate-400">Track structural performance matrix analytics or pull flat file exports.</p>
+                        </div>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-xs font-bold border border-red-100 transition-all" onclick="exportReport('pdf')"><i data-lucide="file-text" class="w-4 h-4"></i> PDF Summary</button>
+                            <button class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-xl text-xs font-bold border border-emerald-100 transition-all" onclick="exportReport('csv')"><i data-lucide="sheet" class="w-4 h-4"></i> CSV Ledger</button>
+                        </div>
+                    </div>
+                    <div id="certificate-delivery-box" class="hidden border-2 border-amber-200 bg-amber-50/40 rounded-apple p-8 text-center space-y-3"></div>
+                </section>
+
+                <!-- SECTION 5: ADMINISTRATIVE VIEW CONSOLE -->
+                <section id="admin-view" class="view-section hidden space-y-6 animate-fade-in">
+                    <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-4">
+                        <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Administrative Control Hub</h2>
+                        <div class="flex flex-wrap border-b border-slate-100 gap-2">
+                            <button class="tab-link border-b-2 border-brand-500 px-4 py-2 text-sm font-bold text-brand-600" onclick="switchAdminTab('analytics-panel')">Live Statistics</button>
+                            <button class="tab-link border-b-2 border-transparent px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-900" onclick="switchAdminTab('lessons-panel')">Manage Curriculum</button>
+                            <button class="tab-link border-b-2 border-transparent px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-900" onclick="switchAdminTab('students-panel')">Approve Submissions</button>
+                        </div>
+                    </div>
+
+                    <!-- Admin: Live Analytics Sub-Panel -->
+                    <div id="analytics-panel" class="admin-tab-content grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-white border border-slate-100 p-5 rounded-apple premium-shadow flex items-center justify-between">
+                            <div><h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Registered Profiles</h4><p id="adm-stat-registered" class="text-2xl font-black text-slate-900 mt-1">0</p></div>
+                            <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center"><i data-lucide="users" class="w-5 h-5"></i></div>
+                        </div>
+                        <div class="bg-white border border-slate-100 p-5 rounded-apple premium-shadow flex items-center justify-between">
+                            <div><h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active (24h)</h4><p id="adm-stat-active" class="text-2xl font-black text-slate-900 mt-1">0</p></div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center"><i data-lucide="activity" class="w-5 h-5"></i></div>
+                        </div>
+                        <div class="bg-white border border-slate-100 p-5 rounded-apple premium-shadow flex items-center justify-between">
+                            <div><h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending Submissions</h4><p id="adm-stat-pending" class="text-2xl font-black text-slate-900 mt-1">0</p></div>
+                            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center"><i data-lucide="clock" class="w-5 h-5"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- Admin: Lesson Management Sub-Panel -->
+                    <div id="lessons-panel" class="admin-tab-content hidden animate-fade-in">
+                        <form id="lesson-management-form" class="bg-white border border-slate-100 p-6 rounded-apple premium-shadow space-y-4 text-sm">
+                            <h3 class="text-sm font-bold text-slate-900">Add or Modify Curriculum Step</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Lesson Rank Sequence *</label><input type="number" id="adm-les-num" required min="1" max="47" class="w-full px-4 py-2 rounded-xl border border-slate-200"></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Lesson Header Title *</label><input type="text" id="adm-les-title" required class="w-full px-4 py-2 rounded-xl border border-slate-200"></div>
+                                <div class="sm:col-span-2 space-y-1"><label class="font-bold text-slate-700">Description *</label><textarea id="adm-les-desc" rows="2" required class="w-full px-4 py-2 rounded-xl border border-slate-200"></textarea></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Estimated Watch Duration (Mins) *</label><input type="number" id="adm-les-duration" required class="w-full px-4 py-2 rounded-xl border border-slate-200"></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Google Drive Stream URL *</label><input type="url" id="adm-les-drive" required placeholder="https://drive.google.com/..." class="w-full px-4 py-2 rounded-xl border border-slate-200"></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Reference Material URL (Optional)</label><input type="url" id="adm-les-notes" class="w-full px-4 py-2 rounded-xl border border-slate-200"></div>
+                                <div class="space-y-1">
+                                    <label class="font-bold text-slate-700">Allow Offline Downloader Option</label>
+                                    <select id="adm-les-download" class="w-full px-4 py-2 rounded-xl border border-slate-200 h-[38px] bg-white"><option value="false">Disable Button</option><option value="true">Enable Button</option></select>
+                                </div>
+                            </div>
+                            <button type="submit" class="bg-brand-500 text-white font-bold px-5 py-2.5 rounded-xl hover:bg-brand-600 transition-all text-xs">Commit Lesson to Database</button>
+                        </form>
+                    </div>
+
+                    <!-- Admin: Submissions Evaluation Table -->
+                    <div id="students-panel" class="admin-tab-content hidden animate-fade-in">
+                        <div class="bg-white border border-slate-100 p-6 rounded-apple premium-shadow space-y-4">
+                            <h3 class="text-sm font-bold text-slate-900">Pending Evaluation Ledger</h3>
+                            <div class="overflow-x-auto rounded-xl border border-slate-100">
+                                <table class="w-full text-left text-xs text-slate-600 border-collapse">
+                                    <thead class="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
+                                        <tr>
+                                            <th class="p-4">Student Identity</th>
+                                            <th class="p-4">Lesson Target</th>
+                                            <th class="p-4 text-right">Evaluation Change Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-grading-table-body" class="divide-y divide-slate-50">
+                                        <tr>
+                                            <td colspan="3" class="p-8 text-center text-slate-400 italic">No submissions pending grading execution actions</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- PURE APPLE SECURE AUTHENTICATION CONTAINER WINDOW -->
+    <div id="auth-container" class="min-h-full flex items-center justify-center p-6 bg-slate-50">
+        <div class="w-full max-w-md bg-white border border-slate-100 p-6 sm:p-8 rounded-apple premium-shadow space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 rounded-xl bg-brand-500 flex items-center justify-center text-white mx-auto shadow-md shadow-brand-500/15">
+                    <i data-lucide="lock" class="w-5 h-5"></i>
+                </div>
+                <h2 class="text-xl font-extrabold tracking-tight text-slate-900">Education Point</h2>
+                <p class="text-xs font-medium text-slate-400">Premium Portal Secure Authentication Gate</p>
+            </div>
+            
+            <form id="auth-form" class="space-y-4 text-sm">
+                <div class="space-y-1">
+                    <label class="font-bold text-slate-700">Email Address</label>
+                    <input type="email" id="auth-email" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50">
+                </div>
+                <div class="space-y-1">
+                    <label class="font-bold text-slate-700">Account Password</label>
+                    <input type="password" id="auth-password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50">
+                </div>
+                <div class="flex items-center justify-between text-xs font-semibold pt-1">
+                    <label class="flex items-center gap-2 cursor-pointer text-slate-500 select-none">
+                        <input type="checkbox" id="auth-remember" class="accent-brand-500 rounded border-slate-300 w-4 h-4"> Remember Session
+                    </label>
+                    <a href="#" id="forgot-password-link" class="text-brand-600 hover:underline">Reset Password?</a>
+                </div>
+                <button type="submit" id="auth-submit-btn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-6 rounded-xl shadow-md shadow-brand-500/10 active:scale-[0.99] transition-all mt-2">
+                    Sign In to Platform
+                </button>
+            </form>
+
+            <div class="relative flex items-center justify-center my-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <span class="absolute w-full h-px bg-slate-100"></span>
+                <span class="relative bg-white px-3 z-10">Or Continue With</span>
+            </div>
+            
+            <button id="google-auth-btn" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 active:scale-[0.99] transition-all rounded-xl premium-shadow">
+                <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5.04c1.64 0 3.12.56 4.28 1.67l3.2-3.2C17.52 1.58 14.97 1 12 1 7.24 1 3.2 3.79 1.34 7.86l3.82 2.96C6.1 7.57 8.83 5.04 12 5.04z"/><path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.47h6.44c-.28 1.47-1.11 2.71-2.36 3.55l3.66 2.84c2.14-1.97 3.38-4.88 3.38-8.5z"/><path fill="#FBBC05" d="M5.16 14.82c-.24-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29L1.34 7.86C.49 9.55 0 11.43 0 13.4s.49 3.85 1.34 5.54l3.82-2.96z"/><path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.92l-3.66-2.84c-1.01.68-2.31 1.09-4.3 1.09-3.17 0-5.9-2.53-6.84-5.78L1.34 16.49C3.2 20.56 7.24 23 12 23z"/></svg> 
+                Google Identity Platform
+            </button>
+
+            <div class="text-center text-xs font-semibold text-slate-500">
+                <span id="auth-toggle-msg">New student?</span> 
+                <a href="#" id="auth-toggle-btn" class="text-brand-600 font-bold hover:underline ml-1">Create Account</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT INFRASTRUCTURE HANDLERS -->
+    <script>
+        // Init Lucide Vector Objects
+        lucide.createIcons();
+
+        // Responsive Sliding Mobile Drawer View Triggers
+        const sidebar = document.getElementById('sidebar-panel');
+        const toggle = document.getElementById('sidebar-toggle');
+        if(toggle && sidebar) {
+            toggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('-translate-x-full');
+            });
+            document.body.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+            });
+            sidebar.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        // Dummy Shell View Swapper Hook for Prototype Verification
+        function switchView(targetId) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
+            const destination = document.getElementById(targetId);
+            if(destination) destination.classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                if(nav.getAttribute('data-target') === targetId) {
+                    nav.classList.add('bg-brand-50', 'text-brand-600', 'font-semibold');
+                    nav.classList.remove('text-slate-500', 'font-medium');
+                } else {
+                    nav.classList.remove('bg-brand-50', 'text-brand-600', 'font-semibold');
+                    nav.classList.add('text-slate-500', 'font-medium');
+                }
+            });
+        }
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = this.getAttribute('data-target');
+                if(target) switchView(target);
+            });
+        });
+
+        function switchAdminTab(panelId) {
+            document.querySelectorAll('.admin-tab-content').forEach(p => p.classList.add('hidden'));
+            document.getElementById(panelId).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
