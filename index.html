@@ -776,54 +776,37 @@
             }
         }
 
-        async function evaluateAnalyticsAggregatesMetricsContainers() {
-    if(!globalState.sessionUser) return;
-    
-    // 47 کی جگہ اب ڈیٹا بیس سے آنے والے لیکچرز کی تعداد استعمال ہوگی
-    const totalItemsCount = globalState.lessonsCollection.length; 
-    const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
-    const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
-
-    if (document.getElementById("dash-course-progress-badge")) 
-        document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalItemsCount} Lessons`;
-    
-    if (document.getElementById("dash-progress-bar-fill")) 
-        document.getElementById("dash-progress-bar-fill").style.width = `${completionRatio}%`;
-
-    // سرٹیفکیٹ بٹن لاجک بھی اپڈیٹ کر دیں تاکہ وہ متحرک تعداد پر کام کرے
+        
     async function evaluateAnalyticsAggregatesMetricsContainers() {
     if (!globalState.sessionUser) return;
 
-    // ٹوٹل لیسنز اور کمپلیٹڈ لیسنز کی گنتی
     const totalItemsCount = globalState.lessonsCollection.length;
     const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
     const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
 
-    // ڈیش بورڈ پر پروگریس اپڈیٹ
     if (document.getElementById("dash-course-progress-badge")) 
         document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalItemsCount} Lessons`;
     
     if (document.getElementById("dash-progress-bar-fill")) 
         document.getElementById("dash-progress-bar-fill").style.width = `${completionRatio}%`;
 
-    // سرٹیفکیٹ ڈاؤنلوڈ بٹن کا اپڈیٹڈ لاجک
     const certWrapper = document.getElementById("certificate-delivery-wrapper");
     if (certWrapper) {
-        // شرط: ٹوٹل لیسنز 0 سے زیادہ ہوں اور کمپلیٹڈ لیسنز کی تعداد ٹوٹل کے برابر ہو
         if (totalItemsCount > 0 && completedCount === totalItemsCount) {
             certWrapper.innerHTML = `
                 <button onclick="generateAndDownloadCertificate()" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
                     <i data-lucide="award" class="inline w-4 h-4 mr-1"></i> Download Verified Certificate
                 </button>`;
         } else {
-            // کورس مکمل نہ ہونے کی صورت میں بٹن لاک رہے گا
             certWrapper.innerHTML = `
                 <button disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">
                     Certificate Locked (${completedCount}/${totalItemsCount} Completed)
                 </button>`;
         }
     }
-    
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
     // آئیکنز کو ریفریش کریں
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
