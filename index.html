@@ -684,7 +684,9 @@ let todayActiveMinutes = 0;
         };
 
         // --- BUSINESS LOGIC & CLASSROOM ---
-        async function syncClassroomSyllabusEngine() {
+
+ // --- 1. syncClassroomSyllabusEngine کا صحیح اختتام ---
+async function syncClassroomSyllabusEngine() {
     try {
         let { data: lessons, error: lessonError } = await supabaseClientInstance
             .from('lessons')
@@ -705,13 +707,19 @@ let todayActiveMinutes = 0;
         }
         
         renderClassroomSyllabusTreeLayout();
-        await evaluateAnalyticsAggregatesMetricsContainers();
+        await evaluateAnalyticsAggregatesMetricsContainers(); // یہ اب باہر کال ہو رہا ہے
                 
     } catch(e) { 
         console.error("Critical System Error:", e);
     }
-        }
-        
+} // <--- یہ بریکٹ یہاں بند ہونا چاہیے
+
+// --- 2. evaluateAnalyticsAggregatesMetricsContainers کو الگ فنکشن رکھیں ---
+async function evaluateAnalyticsAggregatesMetricsContainers() {
+    if (!globalState.sessionUser) return;
+    // ... باقی سارا کوڈ ...
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
         function renderClassroomSyllabusTreeLayout() {
             const container = document.getElementById("classroom-lessons-stack");
             if(!container) return;
