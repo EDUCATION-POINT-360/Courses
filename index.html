@@ -748,25 +748,20 @@
             updateWatchProgressBarUIState(percentage);
 
             const gateContainer = document.getElementById("assignment-gate-container");
-            if(gateContainer) {
-                if(percentage >= 90.00 || logContainer?.is_completed) {
-                    gateContainer.innerHTML = `
-                        <div class="p-5 border border-emerald-200 bg-emerald-50/50 rounded-2xl space-y-3">
-                            <div class="flex items-center space-x-2 text-emerald-800"><i data-lucide="check-circle" class="w-5 h-5"></i><span class="font-bold text-sm">Syllabus Compliance Criteria Met!</span></div>
-                            <p class="text-xs text-gray-600">آپ کا آج کا سبق مکمل ہو گیا ہے۔ اپنا اسائنمنٹ رات 10:00 بجے سے پہلے جمع کروائیں۔</p>
-                            <div class="pt-2 flex flex-wrap gap-2">
-                                <a href="https://wa.me/923314220506?text=Assignment%20Submission%20Lesson%20${lesson.lesson_number}" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center space-x-2 shadow"><i data-lucide="message-square" class="w-4 h-4"></i><span>WhatsApp Submit</span></a>
-                            </div>
+                        if(gateContainer) {
+                // Force Unlock بٹن والا نیا لاجک
+                gateContainer.innerHTML = `
+                    <div class="p-5 border border-emerald-200 bg-emerald-50/50 rounded-2xl space-y-3">
+                        <div class="flex items-center space-x-2 text-emerald-800"><i data-lucide="check-circle" class="w-5 h-5"></i><span class="font-bold text-sm">Assignment Gateway</span></div>
+                        <p class="text-xs text-gray-600">ویڈیو مکمل دیکھنے کے بعد نیچے بٹن سے اسائنمنٹ ان لاک کریں۔</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="unlockAssignmentManually('${lesson.id}')" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow">Force Unlock</button>
+                            <a href="https://wa.me/923314220506?text=Assignment%20Submission%20Lesson%20${lesson.lesson_number}" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow">WhatsApp Submit</a>
                         </div>
-                    `;
-                } else {
-                    gateContainer.innerHTML = `
-                        <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 space-y-2">
-                            <p><strong>اسائنمنٹ لاک ہے:</strong> اپ کے پاس رات 10:00 بجے تک کا وقت ہے۔ ویڈیو 90% دیکھیں تاکہ اسائنمنٹ سبمیشن کھل سکے۔</p>
-                        </div>
-                    `;
-                }
+                    </div>
+                `;
             }
+
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
@@ -780,29 +775,33 @@
         }
 
         async function evaluateAnalyticsAggregatesMetricsContainers() {
-            if(!globalState.sessionUser) return;
-            const totalItemsCount = 47; // Fixed to 47 for this course as requested
-            const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
-            const completionRatio = Math.round((completedCount / totalItemsCount) * 100);
+    if(!globalState.sessionUser) return;
+    
+    // 47 کی جگہ اب ڈیٹا بیس سے آنے والے لیکچرز کی تعداد استعمال ہوگی
+    const totalItemsCount = globalState.lessonsCollection.length; 
+    const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
+    const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
 
-            if (document.getElementById("dash-course-progress-badge")) document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalItemsCount} Lessons`;
-            if (document.getElementById("dash-progress-bar-fill")) document.getElementById("dash-progress-bar-fill").style.width = `${completionRatio}%`;
+    if (document.getElementById("dash-course-progress-badge")) 
+        document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalItemsCount} Lessons`;
+    
+    if (document.getElementById("dash-progress-bar-fill")) 
+        document.getElementById("dash-progress-bar-fill").style.width = `${completionRatio}%`;
 
-            // Display Certificate generation button ONLY if 47 modules completed
-            const certWrapper = document.getElementById("certificate-delivery-wrapper");
-            if (certWrapper) {
-                if(completedCount >= totalItemsCount) {
-                    certWrapper.innerHTML = `
-                        <button onclick="generateAndDownloadCertificate()" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
-                            <i data-lucide="award" class="inline w-4 h-4 mr-1"></i> Download Verified Certificate
-                        </button>
-                    `;
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
-                } else {
-                    certWrapper.innerHTML = `<button disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">Certificate Locked (${completedCount}/47 Completed)</button>`;
-                }
-            }
+    // سرٹیفکیٹ بٹن لاجک بھی اپڈیٹ کر دیں تاکہ وہ متحرک تعداد پر کام کرے
+    const certWrapper = document.getElementById("certificate-delivery-wrapper");
+    if (certWrapper) {
+        if(completedCount >= totalItemsCount && totalItemsCount > 0) {
+            certWrapper.innerHTML = `
+                <button onclick="generateAndDownloadCertificate()" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
+                    <i data-lucide="award" class="inline w-4 h-4 mr-1"></i> Download Verified Certificate
+                </button>`;
+        } else {
+            certWrapper.innerHTML = `<button disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">Certificate Locked (${completedCount}/${totalItemsCount} Completed)</button>`;
         }
+    }
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
 
         // --- REALTIME ACTIVITY TRACKING ---
         let currentDayStr = new Date().toISOString().split('T')[0];
@@ -944,6 +943,21 @@ const adminConsole = {
         }
     }
 };
+        async function unlockAssignmentManually(lessonId) {
+    if(!confirm("کیا آپ واقعی اسائنمنٹ ان لاک کرنا چاہتے ہیں؟")) return;
+    try {
+        await supabaseClientInstance.from('lesson_progress').upsert({
+            student_id: globalState.sessionUser.id,
+            lesson_id: lessonId,
+            is_completed: true
+        });
+        alert("کامیاب! اسائنمنٹ ان لاک ہو گئی ہے۔");
+        location.reload(); 
+    } catch(err) {
+        alert("ایرر: " + err.message);
+    }
+}
+
         
         // --- CLOCK CONTROLLER ---
         function runClockEngine() {
