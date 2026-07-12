@@ -29,7 +29,7 @@
             }
         }
     </script>
-    <!-- Fonts & Supposing/Lucide Frameworks -->
+    <!-- Fonts & Icons Frameworks -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -39,7 +39,6 @@
         .premium-shadow { box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03); }
         .bento-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .bento-card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(229, 62, 62, 0.06); }
-        /* Custom Custom Scrollbar for Apple feel */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
@@ -89,22 +88,22 @@
             <!-- Bottom Interactive Identity Grid -->
             <div class="p-4 border-t border-slate-50 bg-slate-50/50">
                 <div class="flex items-center gap-3 mb-4 p-2 rounded-xl bg-white border border-slate-100 premium-shadow">
-                    <img id="sidebar-avatar" class="w-10 h-10 rounded-full object-cover border border-slate-100" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Avatar">
+                    <img id="sidebar-avatar" class="w-10 h-10 rounded-full object-cover border border-slate-100" src="https://via.placeholder.com/100" alt="Avatar">
                     <div class="truncate">
                         <h4 id="sidebar-username" class="text-sm font-bold text-slate-900 truncate">Student Name</h4>
                         <span id="sidebar-role" class="text-xs font-medium text-slate-400 block truncate">Student ID: --</span>
                     </div>
                 </div>
-                <button id="logout-btn" class="w-100 w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 active:bg-slate-100 rounded-apple premium-shadow transition-all duration-200">
+                <button id="logout-btn" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 active:bg-slate-100 rounded-apple premium-shadow transition-all duration-200">
                     <i data-lucide="log-out" class="w-4 h-4 text-slate-400"></i> Logout
                 </button>
             </div>
         </aside>
 
-        <!-- Main Fluid Application Canvas -->
+        <!-- Main Fluid Canvas -->
         <main class="flex-1 min-w-0 flex flex-col min-h-screen">
             
-            <!-- Global Dashboard Structural Header -->
+            <!-- Global Structural Header -->
             <header class="bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between sticky top-0 z-30 premium-shadow apple-blur bg-white/90">
                 <div class="flex items-center gap-4">
                     <button id="sidebar-toggle" class="p-2 -ml-2 text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg md:hidden transition-all">
@@ -126,29 +125,22 @@
                 </div>
             </header>
 
-            <!-- Dynamic Framework View Injection Window -->
+            <!-- Dynamic View Window -->
             <div class="flex-1 p-6 max-w-[1600px] w-full mx-auto space-y-6">
                 
                 <!-- SECTION 1: DASHBOARD VIEW -->
-                <section id="dashboard-view" class="view-section space-y-8 animate-fade-in">
-                    
-                    <!-- Apple Bento Content Framework Grid System -->
+                <section id="dashboard-view" class="view-section space-y-8">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        
-                        <!-- Premium Bento Accent Banner Hero -->
+                        <!-- Hero Card Banner -->
                         <div class="lg:col-span-2 bento-card bg-gradient-to-br from-brand-600 to-red-700 rounded-apple p-6 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden shadow-xl shadow-brand-500/10">
-                            <div class="absolute -right-10 -bottom-10 text-white/5 pointer-events-none">
-                                <i data-lucide="graduation-cap" class="w-56 h-56"></i>
-                            </div>
                             <div class="space-y-3 max-w-md z-10">
                                 <span class="text-xs font-extrabold tracking-widest text-brand-100 bg-white/10 px-2.5 py-1 rounded-full uppercase">Current Enrollment</span>
                                 <h2 class="text-2xl font-bold tracking-tight">💻 Computer Course (47 Lessons)</h2>
-                                <p id="dashboard-lesson-headline" class="text-sm font-medium text-brand-100/90 leading-relaxed">Next Up: Loading current lesson details...</p>
-                                <button class="mt-2 flex items-center gap-2 bg-white text-brand-600 px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-50 active:scale-95 transition-all shadow-md" onclick="switchView('classroom-view')">
+                                <p id="dashboard-lesson-headline" class="text-sm font-medium text-brand-100/90 leading-relaxed">Next Up: Syncing schedule matrix parameters...</p>
+                                <button class="mt-2 flex items-center gap-2 bg-white text-brand-600 px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-50 transition-all shadow-md" onclick="switchView('classroom-view')">
                                     Continue Learning <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
                                 </button>
                             </div>
-                            <!-- Circular Vector Progress Component -->
                             <div class="relative w-28 h-28 flex items-center justify-center self-center shrink-0 z-10 bg-white/5 rounded-full p-2">
                                 <svg class="transform -rotate-90 w-24 h-24" viewBox="0 0 120 120">
                                     <circle class="text-white/10" stroke-width="8" stroke="currentColor" fill="transparent" r="48" cx="60" cy="60"/>
@@ -158,7 +150,7 @@
                             </div>
                         </div>
 
-                        <!-- Mini Bento Statistics Block -->
+                        <!-- Statistics Block -->
                         <div class="bento-card bg-white border border-slate-100 rounded-apple p-6 premium-shadow flex flex-col justify-between">
                             <h3 class="text-sm font-extrabold tracking-tight text-slate-400 uppercase">Course Performance</h3>
                             <div class="grid grid-cols-2 gap-4 mt-4 my-auto">
@@ -175,15 +167,15 @@
                             </div>
                         </div>
 
-                        <!-- Calendar Grid Component Container -->
+                        <!-- Attendance Summary Container -->
                         <div class="bento-card bg-white border border-slate-100 rounded-apple p-6 premium-shadow">
                             <div class="flex items-center justify-between mb-3">
                                 <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-brand-500"></i> Attendance Tracker</h3>
                             </div>
-                            <div id="dashboard-mini-calendar" class="min-h-[140px] bg-slate-50 rounded-xl p-3 border border-slate-100 text-center text-xs text-slate-400 flex items-center justify-center">Calendar Data Engine Matrix</div>
+                            <div id="dashboard-mini-calendar" class="min-h-[140px] bg-slate-50 rounded-xl p-3 border border-slate-100 text-center text-xs text-slate-500 flex flex-col items-center justify-center">Syncing activity records...</div>
                         </div>
 
-                        <!-- Badge Rewards Bento Grid Box -->
+                        <!-- Badges Container -->
                         <div class="lg:col-span-2 bento-card bg-white border border-slate-100 rounded-apple p-6 premium-shadow">
                             <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><i data-lucide="medal" class="w-4 h-4 text-brand-500"></i> Badges & Certifications</h3>
                             <div id="badges-container" class="flex flex-wrap gap-3">
@@ -192,12 +184,9 @@
                         </div>
                     </div>
 
-                    <!-- Apple Grid System Coming Soon Cards -->
+                    <!-- Programs Carousel -->
                     <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-base font-extrabold tracking-tight text-slate-900">More Premium Programs Coming Soon</h3>
-                            <span class="w-12 h-0.5 bg-slate-100 flex-1 mx-4 hidden sm:block"></span>
-                        </div>
+                        <h3 class="text-base font-extrabold tracking-tight text-slate-900">More Premium Programs Coming Soon</h3>
                         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                             <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
                                 <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="palette" class="w-4 h-4"></i></div>
@@ -228,8 +217,7 @@
                 </section>
 
                 <!-- SECTION 2: CLASSROOM VIEW -->
-                <section id="classroom-view" class="view-section hidden grid grid-cols-1 xl:grid-cols-3 gap-6 animate-fade-in">
-                    <!-- Media Delivery Box Grid Left Column -->
+                <section id="classroom-view" class="view-section hidden grid grid-cols-1 xl:grid-cols-3 gap-6">
                     <div class="xl:col-span-2 space-y-4">
                         <div class="bg-black aspect-video rounded-apple overflow-hidden border border-slate-200 shadow-inner relative flex items-center justify-center" id="video-wrapper-box">
                             <div class="text-center p-6 text-slate-400 space-y-2">
@@ -244,9 +232,8 @@
                         </div>
                     </div>
 
-                    <!-- Right Column Document Assignment Matrix Panel -->
+                    <!-- Side Panels -->
                     <div class="space-y-6">
-                        <!-- Card: Assignment Panel -->
                         <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-4">
                             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i data-lucide="file-up" class="w-4 h-4 text-brand-500"></i> Today's Assignment</h3>
                             <hr class="border-slate-50">
@@ -255,7 +242,6 @@
                             </div>
                         </div>
 
-                        <!-- Card: Reference System Module -->
                         <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-4">
                             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4 text-brand-500"></i> Lesson Materials</h3>
                             <hr class="border-slate-50">
@@ -267,7 +253,7 @@
                 </section>
 
                 <!-- SECTION 3: STUDENT PROFILE VIEW -->
-                <section id="profile-view" class="view-section hidden max-w-3xl mx-auto animate-fade-in">
+                <section id="profile-view" class="view-section hidden max-w-3xl mx-auto">
                     <div class="bg-white border border-slate-100 rounded-apple p-6 sm:p-8 premium-shadow space-y-6">
                         <div>
                             <h2 class="text-xl font-extrabold tracking-tight text-slate-900">Configure Student Profile</h2>
@@ -275,10 +261,9 @@
                         </div>
 
                         <form id="profile-form" class="space-y-6">
-                            <!-- Image Avatar Upload Grid Component Block -->
                             <div class="flex flex-col items-center justify-center space-y-2">
-                                <div class="relative w-28 h-28 rounded-full border-4 border-white shadow-md group overflow-hidden">
-                                    <img id="profile-avatar-preview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Preview">
+                                <div class="relative w-28 h-28 rounded-full border-4 border-white shadow-md group overflow-hidden bg-slate-100">
+                                    <img id="profile-avatar-preview" src="https://via.placeholder.com/200" class="w-full h-full object-cover" alt="Preview">
                                     <label for="profile-avatar-input" class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-all">
                                         <i data-lucide="camera" class="w-5 h-5"></i>
                                     </label>
@@ -287,25 +272,24 @@
                                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Upload Passport Image</span>
                             </div>
 
-                            <!-- Standard Inputs Responsive Layout Grid Framework -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Full Name *</label><input type="text" id="prof-fullname" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Father's Name *</label><input type="text" id="prof-father" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Mobile Number *</label><input type="tel" id="prof-mobile" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">City *</label><input type="text" id="prof-city" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></div>
-                                <div class="sm:col-span-2 space-y-1"><label class="font-bold text-slate-700">Complete Physical Address *</label><textarea id="prof-address" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></textarea></div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Date of Birth *</label><input type="date" id="prof-dob" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Full Name *</label><input type="text" id="prof-fullname" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Father's Name *</label><input type="text" id="prof-father" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Mobile Number *</label><input type="tel" id="prof-mobile" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">City *</label><input type="text" id="prof-city" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></div>
+                                <div class="sm:col-span-2 space-y-1"><label class="font-bold text-slate-700">Complete Physical Address *</label><textarea id="prof-address" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></textarea></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Date of Birth *</label><input type="date" id="prof-dob" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></div>
                                 <div class="space-y-1">
                                     <label class="font-bold text-slate-700">Gender *</label>
-                                    <select id="prof-gender" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50 text-slate-600 font-medium h-[46px]" required>
+                                    <select id="prof-gender" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50 text-slate-600 font-medium h-[46px]" required>
                                         <option value="">Select Gender</option><option value="Male">Male</option><option value="Female">Female</option>
                                     </select>
                                 </div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Prior Education Level *</label><input type="text" id="prof-edu" placeholder="e.g. Matric / Intermediate" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50" required></div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">College / Institute (Optional)</label><input type="text" id="prof-college" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50"></div>
-                                <div class="sm:col-span-2 space-y-1"><label class="font-bold text-slate-700">Emergency Contact (Optional)</label><input type="text" id="prof-emergency" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50"></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">Prior Education Level *</label><input type="text" id="prof-edu" placeholder="e.g. Matric / Intermediate" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></div>
+                                <div class="space-y-1"><label class="font-bold text-slate-700">College / Institute (Optional)</label><input type="text" id="prof-college" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50"></div>
+                                <div class="sm:col-span-2 space-y-1"><label class="font-bold text-slate-700">Emergency Contact (Optional)</label><input type="text" id="prof-emergency" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50"></div>
                             </div>
-                            <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-6 rounded-apple shadow-md shadow-brand-500/10 active:scale-[0.99] transition-all text-sm">
+                            <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-6 rounded-apple shadow-md active:scale-[0.99] transition-all text-sm">
                                 Save Profile Configuration Matrix
                             </button>
                         </form>
@@ -313,7 +297,7 @@
                 </section>
 
                 <!-- SECTION 4: DATA REPORTS VIEW -->
-                <section id="reports-view" class="view-section hidden space-y-6 animate-fade-in">
+                <section id="reports-view" class="view-section hidden space-y-6">
                     <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
                             <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Academic Reports & Certifications</h2>
@@ -328,17 +312,16 @@
                 </section>
 
                 <!-- SECTION 5: ADMINISTRATIVE VIEW CONSOLE -->
-                <section id="admin-view" class="view-section hidden space-y-6 animate-fade-in">
+                <section id="admin-view" class="view-section hidden space-y-6">
                     <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-4">
                         <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Administrative Control Hub</h2>
                         <div class="flex flex-wrap border-b border-slate-100 gap-2">
-                            <button class="tab-link border-b-2 border-brand-500 px-4 py-2 text-sm font-bold text-brand-600" onclick="switchAdminTab('analytics-panel')">Live Statistics</button>
-                            <button class="tab-link border-b-2 border-transparent px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-900" onclick="switchAdminTab('lessons-panel')">Manage Curriculum</button>
-                            <button class="tab-link border-b-2 border-transparent px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-900" onclick="switchAdminTab('students-panel')">Approve Submissions</button>
+                            <button class="tab-link border-b-2 border-brand-500 px-4 py-2 text-sm font-bold text-brand-600" onclick="switchAdminTab('analytics-panel', this)">Live Statistics</button>
+                            <button class="tab-link border-b-2 border-transparent px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-900" onclick="switchAdminTab('lessons-panel', this)">Manage Curriculum</button>
+                            <button class="tab-link border-b-2 border-transparent px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-900" onclick="switchAdminTab('students-panel', this)">Approve Submissions</button>
                         </div>
                     </div>
 
-                    <!-- Admin: Live Analytics Sub-Panel -->
                     <div id="analytics-panel" class="admin-tab-content grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="bg-white border border-slate-100 p-5 rounded-apple premium-shadow flex items-center justify-between">
                             <div><h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Registered Profiles</h4><p id="adm-stat-registered" class="text-2xl font-black text-slate-900 mt-1">0</p></div>
@@ -354,8 +337,7 @@
                         </div>
                     </div>
 
-                    <!-- Admin: Lesson Management Sub-Panel -->
-                    <div id="lessons-panel" class="admin-tab-content hidden animate-fade-in">
+                    <div id="lessons-panel" class="admin-tab-content hidden">
                         <form id="lesson-management-form" class="bg-white border border-slate-100 p-6 rounded-apple premium-shadow space-y-4 text-sm">
                             <h3 class="text-sm font-bold text-slate-900">Add or Modify Curriculum Step</h3>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -374,8 +356,7 @@
                         </form>
                     </div>
 
-                    <!-- Admin: Submissions Evaluation Table -->
-                    <div id="students-panel" class="admin-tab-content hidden animate-fade-in">
+                    <div id="students-panel" class="admin-tab-content hidden">
                         <div class="bg-white border border-slate-100 p-6 rounded-apple premium-shadow space-y-4">
                             <h3 class="text-sm font-bold text-slate-900">Pending Evaluation Ledger</h3>
                             <div class="overflow-x-auto rounded-xl border border-slate-100">
@@ -397,12 +378,11 @@
                         </div>
                     </div>
                 </section>
-
             </div>
         </main>
     </div>
 
-    <!-- PURE APPLE SECURE AUTHENTICATION CONTAINER WINDOW -->
+    <!-- SECURE AUTHENTICATION CONTAINER WINDOW -->
     <div id="auth-container" class="min-h-full flex items-center justify-center p-6 bg-slate-50">
         <div class="w-full max-w-md bg-white border border-slate-100 p-6 sm:p-8 rounded-apple premium-shadow space-y-6">
             <div class="text-center space-y-2">
@@ -416,11 +396,11 @@
             <form id="auth-form" class="space-y-4 text-sm">
                 <div class="space-y-1">
                     <label class="font-bold text-slate-700">Email Address</label>
-                    <input type="email" id="auth-email" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50">
+                    <input type="email" id="auth-email" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none bg-slate-50/50">
                 </div>
                 <div class="space-y-1">
                     <label class="font-bold text-slate-700">Account Password</label>
-                    <input type="password" id="auth-password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-50/50">
+                    <input type="password" id="auth-password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none bg-slate-50/50">
                 </div>
                 <div class="flex items-center justify-between text-xs font-semibold pt-1">
                     <label class="flex items-center gap-2 cursor-pointer text-slate-500 select-none">
@@ -428,7 +408,7 @@
                     </label>
                     <a href="#" id="forgot-password-link" class="text-brand-600 hover:underline">Reset Password?</a>
                 </div>
-                <button type="submit" id="auth-submit-btn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-6 rounded-xl shadow-md shadow-brand-500/10 active:scale-[0.99] transition-all mt-2">
+                <button type="submit" id="auth-submit-btn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all mt-2">
                     Sign In to Platform
                 </button>
             </form>
@@ -438,7 +418,7 @@
                 <span class="relative bg-white px-3 z-10">Or Continue With</span>
             </div>
             
-            <button id="google-auth-btn" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 active:scale-[0.99] transition-all rounded-xl premium-shadow">
+            <button id="google-auth-btn" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition-all rounded-xl premium-shadow">
                 <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5.04c1.64 0 3.12.56 4.28 1.67l3.2-3.2C17.52 1.58 14.97 1 12 1 7.24 1 3.2 3.79 1.34 7.86l3.82 2.96C6.1 7.57 8.83 5.04 12 5.04z"/><path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.47h6.44c-.28 1.47-1.11 2.71-2.36 3.55l3.66 2.84c2.14-1.97 3.38-4.88 3.38-8.5z"/><path fill="#FBBC05" d="M5.16 14.82c-.24-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29L1.34 7.86C.49 9.55 0 11.43 0 13.4s.49 3.85 1.34 5.54l3.82-2.96z"/><path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.92l-3.66-2.84c-1.01.68-2.31 1.09-4.3 1.09-3.17 0-5.9-2.53-6.84-5.78L1.34 16.49C3.2 20.56 7.24 23 12 23z"/></svg> 
                 Google Identity Platform
             </button>
@@ -450,26 +430,210 @@
         </div>
     </div>
 
-    <!-- SCRIPT INFRASTRUCTURE HANDLERS -->
+    <!-- MAIN ORCHESTRATION ENGINE ENGINE -->
     <script>
-        // Init Lucide Vector Objects
-        lucide.createIcons();
+        // REPLACE WITH ACTUAL CONFIGURATION PARAMETERS
+        const SUPABASE_URL = "https://your-project-id.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+        
+        // Initialize Core Supabase Engine Safely
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Responsive Sliding Mobile Drawer View Triggers
-        const sidebar = document.getElementById('sidebar-panel');
-        const toggle = document.getElementById('sidebar-toggle');
-        if(toggle && sidebar) {
-            toggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                sidebar.classList.toggle('-translate-x-full');
+        // Core App Runtime State Cache Variables
+        let currentSessionUser = null;
+        let profileDataCache = null;
+        let enrollmentState = null;
+        let activeLessonContext = null;
+        let videoTrackerTimer = null;
+        let isSignUpMode = false;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initAuthenticationEngine();
+            registerInterfaceUIListeners();
+            lucide.createIcons();
+        });
+
+        // ====================================================================
+        // AUTHENTICATION INFRASTRUCTURE ROUTINES (FIXED)
+        // ====================================================================
+        async function initAuthenticationEngine() {
+            // Check existing session state parameters safely
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) console.error("Session resolve issue:", error.message);
+            evaluateSessionState(session);
+
+            // Establish deep auth state change bindings
+            supabase.auth.onAuthStateChange((event, updatedSession) => {
+                console.log(`Auth lifecycle change event noticed: ${event}`);
+                evaluateSessionState(updatedSession);
             });
-            document.body.addEventListener('click', () => {
-                sidebar.classList.add('-translate-x-full');
-            });
-            sidebar.addEventListener('click', (e) => e.stopPropagation());
         }
 
-        // Dummy Shell View Swapper Hook for Prototype Verification
+        function evaluateSessionState(session) {
+            if (session && session.user) {
+                currentSessionUser = session.user;
+                fetchCoreUserMetadataAndSync();
+            } else {
+                currentSessionUser = null;
+                profileDataCache = null;
+                document.getElementById("app-container").classList.add("hidden");
+                document.getElementById("auth-container").classList.remove("hidden");
+            }
+        }
+
+        // Toggle handling between platform entry gates
+        document.getElementById("auth-toggle-btn").addEventListener("click", (e) => {
+            e.preventDefault();
+            isSignUpMode = !isSignUpMode;
+            document.getElementById("auth-submit-btn").innerText = isSignUpMode ? "Register New Account" : "Sign In to Platform";
+            document.getElementById("auth-toggle-msg").innerText = isSignUpMode ? "Already a student?" : "New student?";
+            document.getElementById("auth-toggle-btn").innerText = isSignUpMode ? "Sign In" : "Create Account";
+        });
+
+        // Form pipeline controller logic execution route handler
+        document.getElementById("auth-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("auth-email").value.trim();
+            const password = document.getElementById("auth-password").value;
+
+            if (isSignUpMode) {
+                const { data, error } = await supabase.auth.signUp({ email, password });
+                if (error) return emitAlertNotification(error.message, "danger");
+                emitAlertNotification("Verification email dispatched. Confirm your profile link!", "warning");
+            } else {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) return emitAlertNotification(error.message, "danger");
+                emitAlertNotification("Welcome back to Education Point!", "success");
+            }
+        });
+
+        // Fixed Native Google Redirect Call Integration Method
+        document.getElementById("google-auth-btn").addEventListener("click", async (e) => {
+            e.preventDefault();
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin
+                }
+            });
+            if (error) emitAlertNotification(error.message, "danger");
+        });
+
+        document.getElementById("forgot-password-link").addEventListener("click", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("auth-email").value.trim();
+            if (!email) return emitAlertNotification("Provide email first.", "warning");
+            const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+            if (error) emitAlertNotification(error.message, "danger");
+            else emitAlertNotification("Password reset email transmitted.", "success");
+        });
+
+        document.getElementById("logout-btn").addEventListener("click", async () => {
+            await supabase.auth.signOut();
+            emitAlertNotification("Session terminated.", "success");
+        });
+
+        // ====================================================================
+        // DATA ACCESS LAYER HANDLERS
+        // ====================================================================
+        async function fetchCoreUserMetadataAndSync() {
+            let { data: profile, error } = await supabase.from('profiles').select('*').eq('id', currentSessionUser.id).maybeSingle();
+            
+            if (!profile) {
+                switchView('profile-view');
+                document.getElementById("auth-container").classList.add("hidden");
+                document.getElementById("app-container").classList.remove("hidden");
+                emitAlertNotification("Please complete your profile details.", "warning");
+                return;
+            }
+            
+            profileDataCache = profile;
+            
+            let { data: enroll } = await supabase.from('enrollments').select('*').eq('student_id', currentSessionUser.id).maybeSingle();
+            if (!enroll) {
+                const { data: newEnroll } = await supabase.from('enrollments').insert([{ student_id: currentSessionUser.id }]).select().single();
+                enrollmentState = newEnroll;
+            } else {
+                enrollmentState = enroll;
+            }
+            
+            configureDynamicDashboardMetrics();
+            verifyAdministrativeCapabilities();
+            
+            document.getElementById("auth-container").classList.add("hidden");
+            document.getElementById("app-container").classList.remove("hidden");
+        }
+
+        function configureDynamicDashboardMetrics() {
+            document.getElementById("sidebar-username").innerText = profileDataCache.full_name || "Student Profile";
+            document.getElementById("sidebar-role").innerText = `Student ID: ${profileDataCache.student_id || '--'}`;
+            document.getElementById("top-streak-count").innerText = profileDataCache.current_streak || 0;
+            document.getElementById("top-xp-count").innerText = profileDataCache.total_xp || 0;
+            document.getElementById("greeting-title").innerText = `Assalam-o-Alaikum, ${(profileDataCache.full_name || 'Student').split(' ')[0]}!`;
+            
+            const pct = Math.round(((enrollmentState?.completed_lessons_count || 0) / 47) * 100);
+            document.getElementById("course-progress-percent").innerText = `${pct}%`;
+            document.getElementById("course-progress-ring").style.strokeDashoffset = 301.6 - (301.6 * pct) / 100;
+            document.getElementById("stat-attendance-pct").innerText = `${pct}%`;
+            document.getElementById("stat-longest-streak").innerText = profileDataCache.longest_streak || 0;
+            
+            document.getElementById("dashboard-lesson-headline").innerText = `Next Up: Lesson Sequence Number ${enrollmentState?.current_unlocked_lesson || 1} of 47`;
+            loadClassroomLessonContext(enrollmentState?.current_unlocked_lesson || 1);
+        }
+
+        async function loadClassroomLessonContext(lessonNumber) {
+            const { data: lesson } = await supabase.from('lessons').select('*').eq('lesson_number', lessonNumber).maybeSingle();
+            if (!lesson) return;
+            
+            activeLessonContext = lesson;
+            document.getElementById("current-lesson-title").innerText = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
+            document.getElementById("current-lesson-desc").innerText = lesson.description;
+            
+            const videoBox = document.getElementById("video-wrapper-box");
+            videoBox.innerHTML = `<iframe src="${lesson.video_url}" class="w-full h-full border-0 absolute inset-0" allow="autoplay; fullscreen"></iframe>`;
+            
+            initVideoProgressTracker();
+        }
+
+        function initVideoProgressTracker() {
+            if (videoTrackerTimer) clearInterval(videoTrackerTimer);
+            let simulatedPct = 0;
+            videoTrackerTimer = setInterval(async () => {
+                simulatedPct += 10;
+                if (simulatedPct >= 90) {
+                    clearInterval(videoTrackerTimer);
+                    await markLessonComplete();
+                }
+            }, 15000); // Heartbeat verification track updates
+        }
+
+        async function markLessonComplete() {
+            const { error } = await supabase.from('lesson_progress').upsert({
+                student_id: currentSessionUser.id,
+                lesson_number: activeLessonContext.lesson_number,
+                watch_percentage: 100,
+                is_completed: true,
+                completed_at: new Date().toISOString()
+            });
+            if (!error) {
+                emitAlertNotification("Lesson milestones tracked and saved successfully.", "success");
+                fetchCoreUserMetadataAndSync();
+            }
+        }
+
+        // ====================================================================
+        // UTILITIES & LAYOUT SWITCHERS
+        // ====================================================================
+        function emitAlertNotification(message, variation = "info") {
+            const box = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+            const bgClass = variation === "danger" ? "bg-red-600 text-white" : variation === "success" ? "bg-emerald-600 text-white" : "bg-slate-900 text-white";
+            toast.className = `p-4 rounded-xl text-xs font-bold shadow-lg ${bgClass} transition-all duration-300 transform translate-y-2 animate-fade-in`;
+            toast.innerText = message;
+            box.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
         function switchView(targetId) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
             const destination = document.getElementById(targetId);
@@ -486,17 +650,37 @@
             });
         }
 
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = this.getAttribute('data-target');
-                if(target) switchView(target);
-            });
-        });
-
-        function switchAdminTab(panelId) {
+        function switchAdminTab(panelId, element) {
             document.querySelectorAll('.admin-tab-content').forEach(p => p.classList.add('hidden'));
             document.getElementById(panelId).classList.remove('hidden');
+            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('border-brand-500', 'text-brand-600'));
+            element.classList.add('border-brand-500', 'text-brand-600');
+        }
+
+        function verifyAdministrativeCapabilities() {
+            if (profileDataCache && profileDataCache.role === 'admin') {
+                document.getElementById("admin-nav-item").classList.remove("hidden");
+            }
+        }
+
+        function registerInterfaceUIListeners() {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchView(this.getAttribute('data-target'));
+                });
+            });
+
+            const sidebar = document.getElementById('sidebar-panel');
+            const toggle = document.getElementById('sidebar-toggle');
+            if (toggle && sidebar) {
+                toggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('-translate-x-full');
+                });
+                document.body.addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
+                sidebar.addEventListener('click', (e) => e.stopPropagation());
+            }
         }
     </script>
 </body>
