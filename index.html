@@ -302,10 +302,12 @@
                                         <h2 id="player-lesson-title" class="text-xl font-bold tracking-tight text-gray-900">Select Scheduled Module Node</h2>
                                         <span id="player-duration-badge" class="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full whitespace-nowrap">Est. Duration: -- mins</span>
                                     </div>
-                                    <a id="drive-fullscreen-btn" href="#" target="_blank" class="shrink-0 hidden px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow flex items-center space-x-2 transition-all">
-                                        <i data-lucide="external-link" class="w-4 h-4"></i>
-                                        <span>Watch Full Video in Drive</span>
-                                    </a>
+                                    <a id="drive-fullscreen-btn" href="#" target="_blank" 
+   class="shrink-0 hidden px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-2xl text-xs font-bold shadow-lg shadow-red-500/20 flex items-center space-x-2 transition-all duration-300 transform hover:scale-[1.02] border border-white/10 backdrop-blur-sm">
+    <i data-lucide="external-link" class="w-4 h-4"></i>
+    <span class="tracking-wide">Watch Full Video in Drive</span>
+</a>
+
                                 </div>
                                 <p id="player-lesson-desc" class="text-sm text-gray-500 leading-relaxed">Launch an engineering stream sequence parameter from the right matrix map vector tree.</p>
                                 
@@ -789,19 +791,43 @@
         document.getElementById("dash-progress-bar-fill").style.width = `${completionRatio}%`;
 
     // سرٹیفکیٹ بٹن لاجک بھی اپڈیٹ کر دیں تاکہ وہ متحرک تعداد پر کام کرے
+    async function evaluateAnalyticsAggregatesMetricsContainers() {
+    if (!globalState.sessionUser) return;
+
+    // ٹوٹل لیسنز اور کمپلیٹڈ لیسنز کی گنتی
+    const totalItemsCount = globalState.lessonsCollection.length;
+    const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
+    const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
+
+    // ڈیش بورڈ پر پروگریس اپڈیٹ
+    if (document.getElementById("dash-course-progress-badge")) 
+        document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalItemsCount} Lessons`;
+    
+    if (document.getElementById("dash-progress-bar-fill")) 
+        document.getElementById("dash-progress-bar-fill").style.width = `${completionRatio}%`;
+
+    // سرٹیفکیٹ ڈاؤنلوڈ بٹن کا اپڈیٹڈ لاجک
     const certWrapper = document.getElementById("certificate-delivery-wrapper");
     if (certWrapper) {
-        if(completedCount >= totalItemsCount && totalItemsCount > 0) {
+        // شرط: ٹوٹل لیسنز 0 سے زیادہ ہوں اور کمپلیٹڈ لیسنز کی تعداد ٹوٹل کے برابر ہو
+        if (totalItemsCount > 0 && completedCount === totalItemsCount) {
             certWrapper.innerHTML = `
                 <button onclick="generateAndDownloadCertificate()" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
                     <i data-lucide="award" class="inline w-4 h-4 mr-1"></i> Download Verified Certificate
                 </button>`;
         } else {
-            certWrapper.innerHTML = `<button disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">Certificate Locked (${completedCount}/${totalItemsCount} Completed)</button>`;
+            // کورس مکمل نہ ہونے کی صورت میں بٹن لاک رہے گا
+            certWrapper.innerHTML = `
+                <button disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">
+                    Certificate Locked (${completedCount}/${totalItemsCount} Completed)
+                </button>`;
         }
     }
+    
+    // آئیکنز کو ریفریش کریں
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
+
 
         // --- REALTIME ACTIVITY TRACKING ---
         let currentDayStr = new Date().toISOString().split('T')[0];
