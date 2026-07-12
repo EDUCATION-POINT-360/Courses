@@ -29,11 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // AUTHENTICATION INFRASTRUCTURE ROUTINES
 // ====================================================================
 async function initAuthenticationEngine() {
-    // چیک کریں کہ کیا سیشن پہلے سے موجود ہے
     const { data: { session } } = await supabase.auth.getSession();
     evaluateSessionState(session);
 
-    // ریئل ٹائم آتھینٹیکیشن اسٹیٹ سنیں
     supabase.auth.onAuthStateChange((event, session) => {
         evaluateSessionState(session);
     });
@@ -55,7 +53,7 @@ function evaluateSessionState(session) {
 // INTERFACE UI LISTENERS & UTILITIES
 // ====================================================================
 function registerInterfaceUIListeners() {
-    // ٹوگل سائن ان / سائن اپ موڈ
+    // ٹوگل سائن ان اور سائن اپ موڈ (New Student link fix)
     document.getElementById("auth-toggle-btn")?.addEventListener("click", (e) => {
         e.preventDefault();
         isSignUpMode = !isSignUpMode;
@@ -65,27 +63,28 @@ function registerInterfaceUIListeners() {
         document.getElementById("auth-toggle-btn").innerText = isSignUpMode ? "Sign In" : "Create Account";
     });
 
-    // آتھینٹیکیشن فارم سبمٹ لاجک
+    // آتھینٹیکیشن سبمٹ لاجک (Sign up + Login Fix)
     document.getElementById("auth-form")?.addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = document.getElementById("auth-email").value.trim();
         const password = document.getElementById("auth-password").value;
         
         if (isSignUpMode) {
+            // اکاؤنٹ رجسٹریشن موڈ
             const { data, error } = await supabase.auth.signUp({ email, password });
             if (error) return emitAlertNotification(error.message, "danger");
             
             if (data?.user) {
-                // بلینک اسکرین سے بچنے کے لیے پروفائل ٹیبل میں اٹو ڈیٹا ڈالنا
                 const cleanName = email.split('@')[0];
-                const { error: profileError } = await supabase.from('profiles').insert([
+                // ڈیٹا بیس اٹو رو انسرٹ تاکہ ایرر ختم ہو
+                await supabase.from('profiles').insert([
                     { id: data.user.id, full_name: cleanName, role: 'student', current_streak: 0, total_xp: 0, longest_streak: 0 }
                 ]);
-                
-                if (profileError) console.error("Profile auto-creation error:", profileError.message);
-                emitAlertNotification("Account created successfully! Welcome.", "success");
+                emitAlertNotification("Account created! Logging into dashboard...", "success");
+                evaluateSessionState(data.session);
             }
         } else {
+            // لاگ ان موڈ
             const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) return emitAlertNotification(error.message, "danger");
             emitAlertNotification("Identity validated successfully.", "success");
@@ -99,7 +98,7 @@ function registerInterfaceUIListeners() {
         window.location.reload();
     });
 
-    // نیویگیشن مینو کلک ہینڈلرز
+    // سائیڈ بار نیویگیشن لنکس
     document.querySelectorAll(".nav-item").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.preventDefault();
@@ -107,7 +106,7 @@ function registerInterfaceUIListeners() {
         });
     });
     
-    // موبائل سائیڈ بار ٹوگلر
+    // موبائل سائیڈ بار مینو ٹوگل
     const sidebar = document.getElementById('sidebar-panel');
     const toggle = document.getElementById('sidebar-toggle');
     if (toggle && sidebar) {
@@ -119,16 +118,16 @@ function registerInterfaceUIListeners() {
         sidebar.addEventListener('click', (e) => e.stopPropagation());
     }
 
-    // ڈیش بورڈ کنٹینیو لرننگ بٹن
+    // کنٹینیو لرننگ بٹن لنک
     document.getElementById("continue-learning-btn")?.addEventListener("click", () => {
         switchView('classroom-view');
     });
 
-    // رپورٹس الرٹس
+    // رپورٹس کلک فکس
     document.getElementById("pdf-report-btn")?.addEventListener("click", () => emitAlertNotification('Generating PDF Summary...', 'info'));
     document.getElementById("csv-report-btn")?.addEventListener("click", () => emitAlertNotification('Exporting CSV Ledger...', 'info'));
 
-    // ایڈمن ٹیب کنٹرولز
+    // ایڈمن ٹیب ٹوگلنگ لنکس
     document.getElementById("tab-link-analytics")?.addEventListener("click", (e) => switchAdminTab('analytics-panel', e.target));
     document.getElementById("tab-link-lessons")?.addEventListener("click", (e) => switchAdminTab('lessons-panel', e.target));
 }
@@ -166,7 +165,6 @@ async function fetchCoreUserMetadataAndSync() {
     
     profileDataCache = profile;
     
-    // انرولمنٹ اسٹیٹ پل کریں
     let { data: enroll } = await supabase.from('enrollments').select('*').eq('student_id', currentSessionUser.id).maybeSingle();
     if (!enroll) {
         const { data: newEnroll } = await supabase.from('enrollments').insert([{ student_id: currentSessionUser.id, current_unlocked_lesson: 1, completed_lessons_count: 0 }]).select().single();
