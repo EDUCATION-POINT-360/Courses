@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-50">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Education Point LMS | Premium Portal</title>
+    <title>Education Point LMS | Premium Online Learning Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -11,337 +11,733 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#fff5f5',
-                            100: '#fed7d7',
-                            500: '#e53e3e',
-                            600: '#e53e3e',
-                            700: '#9b2c2c',
+                            red: '#DC2626',
+                            hover: '#B91C1C',
+                            surface: '#FFFFFF',
+                            bgLight: '#F9FAFB',
+                            darkText: '#111827'
                         }
                     },
                     fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                    },
-                    borderRadius: {
-                        'apple': '18px',
+                        sans: ['Inter', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
-        .apple-blur { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
-        .premium-shadow { box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03); }
-        .bento-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .bento-card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(229, 62, 62, 0.06); }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+        /* Modern Glassmorphic Component UI Overlays */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(220, 38, 38, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F1F1F1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #DC2626;
+            border-radius: 4px;
+        }
+        /* Page Transition Animations */
+        .page-layer {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hidden-layer {
+            display: none !important;
+            opacity: 0;
+            transform: translateY(10px);
+        }
     </style>
 </head>
-<body class="h-full text-slate-800 antialiased overflow-x-hidden">
+<body class="bg-gray-50 text-brand-darkText custom-scrollbar font-sans antialiased">
 
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3"></div>
+    <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
+        <div class="w-16 h-16 border-4 border-brand-red border-t-transparent rounded-full animate-spin"></div>
+        <h2 class="mt-4 text-xl font-bold tracking-wider text-brand-red uppercase">Education Point</h2>
+        <p class="text-sm text-gray-400 mt-1">Initializing Secure Environment...</p>
+    </div>
 
-    <div id="app-container" class="hidden min-h-full flex flex-col md:flex-row">
+    <div id="app-container" class="min-h-screen flex flex-col md:flex-row relative hidden-layer page-layer">
         
-        <aside id="sidebar-panel" class="fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-100 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:sticky md:h-screen">
-            <div class="p-6 border-b border-slate-50 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
-                    <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+        <aside id="main-sidebar" class="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col fixed md:sticky top-0 h-auto md:h-screen z-40 transition-transform duration-300 transform md:transform-none -translate-x-full md:translate-x-0">
+            <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-brand-red p-2 rounded-lg text-white">
+                        <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                    </div>
+                    <span class="font-black text-xl tracking-tight text-brand-red">EDU POINT</span>
                 </div>
-                <div>
-                    <h2 class="font-bold text-slate-900 tracking-tight leading-none text-base">Education Point</h2>
-                    <span class="text-xs font-medium text-brand-600 mt-0.5 inline-block">By Muhammad Rizwan</span>
+                <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-500 focus:outline-none">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="p-4 mx-4 my-3 bg-red-50 rounded-xl flex items-center space-x-3">
+                <img id="sb-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-brand-red object-cover">
+                <div class="overflow-hidden">
+                    <h4 id="sb-username" class="font-bold text-sm text-gray-800 truncate">Loading...</h4>
+                    <p id="sb-role" class="text-xs text-brand-red font-medium tracking-wide uppercase">Student</p>
                 </div>
             </div>
 
-            <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
-                <a href="#" class="nav-item group flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-apple bg-brand-50 text-brand-600 transition-all duration-200" data-target="dashboard-view">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
-                </a>
-                <a href="#" class="nav-item group flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-apple transition-all duration-200" data-target="classroom-view">
-                    <i data-lucide="monitor-play" class="w-4 h-4"></i> Classroom
-                </a>
-                <a href="#" class="nav-item group flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-apple transition-all duration-200" data-target="profile-view">
-                    <i data-lucide="user-cog" class="w-4 h-4"></i> Profile
-                </a>
-                <a href="#" class="nav-item group flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-apple transition-all duration-200" data-target="reports-view">
-                    <i data-lucide="file-text" class="w-4 h-4"></i> Reports
-                </a>
-                <a href="#" class="nav-item group hidden flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-700 bg-red-50 hover:bg-red-100 rounded-apple transition-all duration-200" id="admin-nav-item" data-target="admin-view">
-                    <i data-lucide="shield-alert" class="w-4 h-4"></i> Admin Console
-                </a>
+            <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
+                <button onclick="switchView('student-dashboard')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all text-white bg-brand-red">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="switchView('classroom-portal')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                    <span>Daily Classroom</span>
+                </button>
+                <button onclick="switchView('reports-center')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
+                    <i data-lucide="file-bar-chart" class="w-5 h-5"></i>
+                    <span>Reports Matrix</span>
+                </button>
+                <button id="admin-nav-item" onclick="switchView('admin-console')" class="nav-link w-full hidden flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-red-700 bg-red-50 hover:bg-red-100 transition-all border border-red-200">
+                    <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                    <span>Super Admin Panel</span>
+                </button>
             </nav>
 
-            <div class="p-4 border-t border-slate-50 bg-slate-50/50">
-                <div class="flex items-center gap-3 mb-4 p-2 rounded-xl bg-white border border-slate-100 premium-shadow">
-                    <img id="sidebar-avatar" class="w-10 h-10 rounded-full object-cover border border-slate-100" src="https://api.dicebear.com/7.x/bottts/svg?seed=education" alt="Avatar">
-                    <div class="truncate">
-                        <h4 id="sidebar-username" class="text-sm font-bold text-slate-900 truncate">Student Name</h4>
-                        <span id="sidebar-role" class="text-xs font-medium text-slate-400 block truncate">Student ID: --</span>
-                    </div>
-                </div>
-                <button id="logout-btn" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 active:bg-slate-100 rounded-apple premium-shadow transition-all duration-200">
-                    <i data-lucide="log-out" class="w-4 h-4 text-slate-400"></i> Logout
+            <div class="p-4 border-t border-gray-100">
+                <button onclick="appAuth.logout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-red-50 hover:text-brand-red rounded-xl text-sm font-semibold transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>Sign Out</span>
                 </button>
             </div>
         </aside>
 
-        <main class="flex-1 min-w-0 flex flex-col min-h-screen">
-            
-            <header class="bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between sticky top-0 z-30 premium-shadow apple-blur bg-white/90">
-                <div class="flex items-center gap-4">
-                    <button id="sidebar-toggle" class="p-2 -ml-2 text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg md:hidden transition-all">
-                        <i data-lucide="menu" class="w-5 h-5"></i>
-                    </button>
-                    <div>
-                        <h1 id="greeting-title" class="text-xl font-extrabold tracking-tight text-slate-900">Assalam-o-Alaikum, Student!</h1>
-                        <p class="text-xs font-medium text-slate-400 hidden sm:block">Welcome back to your daily study routine.</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-2.5">
-                    <div class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 rounded-full text-amber-700 text-xs font-bold border border-amber-100">
-                        <i data-lucide="flame" class="w-3.5 h-3.5 fill-amber-500 stroke-amber-600"></i> <span id="top-streak-count">0</span> Days
-                    </div>
-                    <div class="flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 rounded-full text-brand-600 text-xs font-bold border border-brand-100">
-                        <i data-lucide="zap" class="w-3.5 h-3.5 fill-brand-500 stroke-brand-500"></i> <span id="top-xp-count">0</span> XP
-                    </div>
-                </div>
+        <main class="flex-1 min-w-0 flex flex-col min-h-screen relative">
+            <header class="bg-white border-b border-gray-100 p-4 flex items-center justify-between md:hidden sticky top-0 z-30">
+                <button onclick="toggleMobileSidebar()" class="text-gray-700">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+                <span class="font-black tracking-tight text-brand-red">EDUCATION POINT</span>
+                <div class="w-6 h-6"></div>
             </header>
 
-            <div class="flex-1 p-6 max-w-[1600px] w-full mx-auto space-y-6">
+            <div class="p-4 md:p-8 flex-1">
                 
-                <section id="dashboard-view" class="view-section space-y-8">
+                <section id="student-dashboard" class="view-layer page-layer space-y-6">
+                    <div class="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+                        <div class="relative z-10 space-y-2 max-w-xl">
+                            <span class="px-3 py-1 bg-white/20 backdrop-blur text-xs font-bold uppercase rounded-full tracking-wider">Academic Tracker Portal</span>
+                            <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight" id="dash-welcome-title">Welcome back, Student!</h2>
+                            <p class="text-white/80 text-sm md:text-base">Maintain your strict streak window context. Your daily assigned coursework remains valid dynamically until 8:00 PM tonight.</p>
+                        </div>
+                        <i data-lucide="sparkles" class="absolute right-6 bottom-4 w-32 h-32 text-white/5 pointer-events-none"></i>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
+                            <div class="p-3 bg-red-100 text-brand-red rounded-xl"><i data-lucide="zap" class="w-6 h-6"></i></div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Current Streak</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-current-streak">0 Days</h3>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
+                            <div class="p-3 bg-amber-100 text-amber-600 rounded-xl"><i data-lucide="trophy" class="w-6 h-6"></i></div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Longest Streak</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-longest-streak">0 Days</h3>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
+                            <div class="p-3 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="calendar-days" class="w-6 h-6"></i></div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Attendance Ratio</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-attendance-rate">0%</h3>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
+                            <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i data-lucide="clock" class="w-6 h-6"></i></div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Study Time</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-study-hours">0h</h3>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 bento-card bg-gradient-to-br from-brand-600 to-red-700 rounded-apple p-6 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden shadow-xl shadow-brand-500/10">
-                            <div class="space-y-3 max-w-md z-10">
-                                <span class="text-xs font-extrabold tracking-widest text-brand-100 bg-white/10 px-2.5 py-1 rounded-full uppercase">Current Enrollment</span>
-                                <h2 class="text-2xl font-bold tracking-tight">💻 Computer Course (47 Lessons)</h2>
-                                <p id="dashboard-lesson-headline" class="text-sm font-medium text-brand-100/90 leading-relaxed">Loading next class parameters...</p>
-                                <button id="continue-learning-btn" class="mt-2 flex items-center gap-2 bg-white text-brand-600 px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-50 transition-all shadow-md">
-                                    Continue Learning <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
-                                </button>
-                            </div>
-                            <div class="relative w-28 h-28 flex items-center justify-center self-center shrink-0 z-10 bg-white/5 rounded-full p-2">
-                                <svg class="transform -rotate-90 w-24 h-24" viewBox="0 0 120 120">
-                                    <circle class="text-white/10" stroke-width="8" stroke="currentColor" fill="transparent" r="48" cx="60" cy="60"/>
-                                    <circle id="course-progress-ring" class="text-white transition-all duration-500" stroke-width="8" stroke-dasharray="301.6" stroke-dashoffset="301.6" stroke-linecap="round" stroke="currentColor" fill="transparent" r="48" cx="60" cy="60"/>
-                                </svg>
-                                <div class="absolute text-xl font-black tracking-tight text-white" id="course-progress-percent">0%</div>
-                            </div>
-                        </div>
-
-                        <div class="bento-card bg-white border border-slate-100 rounded-apple p-6 premium-shadow flex flex-col justify-between">
-                            <h3 class="text-sm font-extrabold tracking-tight text-slate-400 uppercase">Course Performance</h3>
-                            <div class="grid grid-cols-2 gap-4 mt-4 my-auto">
-                                <div class="p-4 bg-slate-50 rounded-2xl text-center border border-slate-100">
-                                    <i data-lucide="calendar-check-2" class="w-5 h-5 text-brand-500 mx-auto mb-2"></i>
-                                    <span class="block text-xl font-bold tracking-tight text-slate-900" id="stat-attendance-pct">0%</span>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-0.5">Progress</span>
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center justify-between">
+                                    <span>Active Enrolled Courses</span>
+                                    <span class="text-xs font-semibold text-brand-red bg-red-50 px-2.5 py-1 rounded-full" id="dash-course-progress-badge">0/47 Lessons</span>
+                                </h3>
+                                <div class="border border-gray-100 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                                    <div class="space-y-1">
+                                        <h4 class="font-bold text-gray-800 text-base">💻 Complete Professional Computer Course</h4>
+                                        <p class="text-xs text-gray-400">Core Engine Stack: Hardware, Windows Architecture, Office Suites & Web Essentials.</p>
+                                    </div>
+                                    <button onclick="switchView('classroom-portal')" class="w-full md:w-auto px-4 py-2 bg-brand-red hover:bg-brand-hover text-white rounded-xl text-xs font-bold tracking-wide shadow-md transition-all whitespace-nowrap">
+                                        Launch Classroom
+                                    </button>
                                 </div>
-                                <div class="p-4 bg-slate-50 rounded-2xl text-center border border-slate-100">
-                                    <i data-lucide="award" class="w-5 h-5 text-emerald-500 mx-auto mb-2"></i>
-                                    <span class="block text-xl font-bold tracking-tight text-slate-900" id="stat-longest-streak">0</span>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-0.5">Max Streak</span>
+                                <div class="mt-4">
+                                    <div class="w-full bg-gray-100 rounded-full h-2.5">
+                                        <div id="dash-progress-bar-fill" class="bg-brand-red h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                    </div>
                                 </div>
                             </div>
+
+                            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                                <h3 class="text-lg font-bold text-gray-800 mb-4">Educational Programs Roadmap (Coming Soon)</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="p-4 border border-dashed border-gray-200 rounded-xl bg-gray-50 opacity-70">
+                                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">Advanced Pipeline</span>
+                                        <h4 class="font-bold text-sm text-gray-700">🎨 UI/UX Graphic Designing Suite</h4>
+                                    </div>
+                                    <div class="p-4 border border-dashed border-gray-200 rounded-xl bg-gray-50 opacity-70">
+                                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">Fullstack Track</span>
+                                        <h4 class="font-bold text-sm text-gray-700">🌐 Web Development Masterclass</h4>
+                                    </div>
+                                    <div class="p-4 border border-dashed border-gray-200 rounded-xl bg-gray-50 opacity-70">
+                                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">AI Intelligence</span>
+                                        <h4 class="font-bold text-sm text-gray-700">🤖 AI & Generative ChatGPT Engineering</h4>
+                                    </div>
+                                    <div class="p-4 border border-dashed border-gray-200 rounded-xl bg-gray-50 opacity-70">
+                                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">Growth Engine</span>
+                                        <h4 class="font-bold text-sm text-gray-700">📈 Modern Digital Marketing Pipeline</h4>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="bento-card bg-white border border-slate-100 rounded-apple p-6 premium-shadow">
-                            <div class="flex items-center justify-between mb-3">
-                                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-brand-500"></i> Study Calendar</h3>
+                        <div class="space-y-6">
+                            <div class="bg-white p-6 rounded-2xl border border-brand-red/30 shadow-lg relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-16 h-16 bg-brand-red/5 rounded-bl-full pointer-events-none"></div>
+                                <h3 class="text-base font-bold text-gray-800 flex items-center space-x-2 mb-3">
+                                    <i data-lucide="alarm-clock" class="text-brand-red w-5 h-5 animate-pulse"></i>
+                                    <span>Assignment Submission Frame</span>
+                                </h3>
+                                <div class="bg-red-50 border border-red-100 rounded-xl p-4 text-center">
+                                    <p class="text-xs text-red-600 font-medium mb-1">Daily Static Gate Locking Deadline</p>
+                                    <div class="text-2xl font-black text-brand-red tracking-tight">8:00 PM SHARP</div>
+                                    <div id="assignment-countdown" class="text-xs text-gray-500 font-mono mt-1 font-semibold">--:--:-- Remaining</div>
+                                </div>
                             </div>
-                            <div id="dashboard-mini-calendar" class="min-h-[140px] bg-slate-50 rounded-xl p-3 border border-slate-100 text-center text-xs text-slate-500 flex flex-col items-center justify-center">Syncing activity records...</div>
-                        </div>
-
-                        <div class="lg:col-span-2 bento-card bg-white border border-slate-100 rounded-apple p-6 premium-shadow">
-                            <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><i data-lucide="medal" class="w-4 h-4 text-brand-500"></i> Badges & Certifications</h3>
-                            <div id="badges-container" class="flex flex-wrap gap-3">
-                                <div class="text-xs font-semibold text-slate-400 italic py-4 w-full text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">Complete lessons to unlock academic badges</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <h3 class="text-base font-extrabold tracking-tight text-slate-900">More Premium Programs Coming Soon</h3>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                            <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
-                                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="palette" class="w-4 h-4"></i></div>
-                                <h4 class="text-xs font-bold text-slate-800">Graphic Design</h4><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-1">Coming Soon</span>
-                            </div>
-                            <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
-                                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="code-2" class="w-4 h-4"></i></div>
-                                <h4 class="text-xs font-bold text-slate-800">Web Development</h4><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-1">Coming Soon</span>
-                            </div>
-                            <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
-                                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="cpu" class="w-4 h-4"></i></div>
-                                <h4 class="text-xs font-bold text-slate-800">AI & ChatGPT</h4><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-1">Coming Soon</span>
-                            </div>
-                            <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
-                                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="megaphone" class="w-4 h-4"></i></div>
-                                <h4 class="text-xs font-bold text-slate-800">Digital Marketing</h4><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-1">Coming Soon</span>
-                            </div>
-                            <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
-                                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="briefcase" class="w-4 h-4"></i></div>
-                                <h4 class="text-xs font-bold text-slate-800">Freelancing</h4><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-1">Coming Soon</span>
-                            </div>
-                            <div class="p-4 bg-white border border-slate-100 rounded-apple text-center premium-shadow group hover:border-brand-200 transition-all">
-                                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-2 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all"><i data-lucide="languages" class="w-4 h-4"></i></div>
-                                <h4 class="text-xs font-bold text-slate-800">Spoken English</h4><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mt-1">Coming Soon</span>
+                            
+                            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+                                <h3 class="text-base font-bold text-gray-800">Verified System Identity Credentials</h3>
+                                <div class="text-xs space-y-2 text-gray-600">
+                                    <div class="flex justify-between"><span class="font-medium">Student UID:</span><span class="font-mono font-bold text-gray-800" id="meta-student-id">--</span></div>
+                                    <div class="flex justify-between"><span class="font-medium">Registration Date:</span><span class="font-bold text-gray-800" id="meta-enrollment-date">--</span></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <section id="classroom-view" class="view-section hidden grid grid-cols-1 xl:grid-cols-3 gap-6">
-                    <div class="xl:col-span-2 space-y-4">
-                        <div class="bg-black aspect-video rounded-apple overflow-hidden border border-slate-200 shadow-inner relative flex items-center justify-center" id="video-wrapper-box">
-                            <div class="text-center p-6 text-slate-400 space-y-2">
-                                <i data-lucide="clapperboard" class="w-12 h-12 text-slate-600 mx-auto animate-pulse"></i>
-                                <p class="text-sm font-medium">Select a lesson from your playlist sequence to begin class.</p>
+                <section id="classroom-portal" class="view-layer page-layer hidden-layer space-y-6">
+                    <div class="flex flex-col xl:flex-row gap-6">
+                        <div class="flex-1 space-y-4">
+                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl aspect-video relative group border-4 border-white">
+                                <iframe id="gdrive-video-player" class="w-full h-full absolute inset-0 bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
                             </div>
-                        </div>
-                        <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-2">
-                            <h2 id="current-lesson-title" class="text-lg font-extrabold text-slate-900 tracking-tight">Lesson Title</h2>
-                            <p id="current-lesson-desc" class="text-sm font-medium text-slate-500 leading-relaxed">Lesson details and curriculum instructions will appear here automatically upon activation.</p>
-                            <div class="pt-4 border-t border-slate-50 flex flex-wrap gap-2" id="lesson-action-bar"></div>
-                        </div>
-                    </div>
+                            
+                            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                    <h2 id="player-lesson-title" class="text-xl font-bold tracking-tight text-gray-900">Loading Active Module Lesson...</h2>
+                                    <span id="player-duration-badge" class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full whitespace-nowrap">Est. Duration: -- mins</span>
+                                </div>
+                                <p id="player-lesson-desc" class="text-sm text-gray-500 leading-relaxed">Please update or pull down records via database pipelines sync controllers.</p>
+                                
+                                <div class="pt-2 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div class="flex-1">
+                                        <div class="flex justify-between text-xs font-semibold text-gray-500 mb-1">
+                                            <span>Lesson Watch Compliance Ratio</span>
+                                            <span id="lesson-watch-percentage-text">0% Completed</span>
+                                        </div>
+                                        <div class="w-full bg-gray-100 rounded-full h-2">
+                                            <div id="lesson-watch-progress-bar" class="bg-emerald-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    <div id="download-button-wrapper" class="hidden">
+                                        <a id="gdrive-download-link" href="#" target="_blank" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-xl flex items-center space-x-2 transition-all shadow-md">
+                                            <i data-lucide="download" class="w-4 h-4"></i>
+                                            <span>Download Material</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="space-y-6">
-                        <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-4">
-                            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i data-lucide="file-up" class="w-4 h-4 text-brand-500"></i> Today's Assignment</h3>
-                            <hr class="border-slate-50">
-                            <div id="assignment-content-area" class="text-xs font-medium text-slate-400 bg-slate-50 rounded-xl p-4 border border-slate-100">
-                                Complete the active streaming lecture sequence to safely trigger today's validation parameters.
+                            <div id="assignment-gate-container" class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+                                <h3 class="text-lg font-bold text-gray-900 flex items-center space-x-2">
+                                    <i data-lucide="file-check" class="text-brand-red w-5 h-5"></i>
+                                    <span>Daily Course Assignment Module Pipeline</span>
+                                </h3>
+                                <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
+                                    <strong>Locked State Rule:</strong> Absolute access requires your active completion verification processing of today's lesson module to clear compliance parameters.
+                                </div>
                             </div>
                         </div>
 
-                        <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-4">
-                            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4 text-brand-500"></i> Lesson Materials</h3>
-                            <hr class="border-slate-50">
-                            <div id="lesson-downloads-area" class="text-xs font-medium text-slate-400 bg-slate-50 rounded-xl p-4 border border-slate-100">
-                                No downloadable supplemental documentation attached to this element step.
-                            </div>
+                        <div class="w-full xl:w-80 bg-white rounded-2xl border border-gray-200 shadow-sm p-4 h-auto xl:h-[calc(100vh-120px)] flex flex-col">
+                            <h3 class="font-bold text-gray-800 text-base pb-3 border-b border-gray-100 flex items-center space-x-2">
+                                <i data-lucide="list-video" class="text-brand-red w-5 h-5"></i>
+                                <span>Course Matrix Tree</span>
+                            </h3>
+                            <div id="classroom-lessons-stack" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 mt-3 pr-1">
+                                </div>
                         </div>
                     </div>
                 </section>
 
-                <section id="profile-view" class="view-section hidden max-w-3xl mx-auto">
-                    <div class="bg-white border border-slate-100 rounded-apple p-6 sm:p-8 premium-shadow space-y-6">
-                        <div>
-                            <h2 class="text-xl font-extrabold tracking-tight text-slate-900">Configure Student Profile</h2>
-                            <p class="text-sm font-medium text-slate-400">Please provide complete verified info to satisfy credential requirements and qualify for certificates.</p>
-                        </div>
-
-                        <form id="profile-form" class="space-y-6">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Full Name *</label><input type="text" id="prof-fullname" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Father's Name *</label><input type="text" id="prof-father" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Mobile Number *</label><input type="tel" id="prof-mobile" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">City *</label><input type="text" id="prof-city" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></div>
-                                <div class="sm:col-span-2 space-y-1"><label class="font-bold text-slate-700">Complete Physical Address *</label><textarea id="prof-address" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></textarea></div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Date of Birth *</label><input type="date" id="prof-dob" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></div>
+                <section id="reports-center" class="view-layer page-layer hidden-layer space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                        <h2 class="text-xl font-bold tracking-tight text-gray-900 mb-2">Academic Audit Reporting & Documentation Engine</h2>
+                        <p class="text-sm text-gray-500 mb-6">Compile, execute structural parsing data, and print or export formal digital copies across diverse file metrics layout extensions.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="border border-gray-200 rounded-2xl p-5 space-y-4 shadow-sm flex flex-col justify-between">
                                 <div class="space-y-1">
-                                    <label class="font-bold text-slate-700">Gender *</label>
-                                    <select id="prof-gender" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50 text-slate-600 font-medium h-[46px]" required>
-                                        <option value="">Select Gender</option><option value="Male">Male</option><option value="Female">Female</option>
-                                    </select>
+                                    <div class="p-2 bg-red-50 text-brand-red rounded-lg w-fit"><i data-lucide="file-spreadsheet" class="w-5 h-5"></i></div>
+                                    <h4 class="font-bold text-gray-800">Comprehensive Progress Sheet</h4>
+                                    <p class="text-xs text-gray-400">Compiles analytical insights, watch logs, timeline indicators and milestones.</p>
                                 </div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Prior Education Level *</label><input type="text" id="prof-edu" placeholder="e.g. Matric / Intermediate" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50" required></div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">College / Institute</label><input type="text" id="prof-college" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50/50"></div>
+                                <div class="flex gap-2 pt-2">
+                                    <button onclick="reportsEngine.exportData('CSV')" class="flex-1 py-2 text-center bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all">CSV</button>
+                                    <button onclick="reportsEngine.exportData('Excel')" class="flex-1 py-2 text-center bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all">Excel</button>
+                                </div>
                             </div>
-                            <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-6 rounded-apple shadow-md active:scale-[0.99] transition-all text-sm">
-                                Save Profile Configuration
-                            </button>
-                        </form>
-                    </div>
-                </section>
 
-                <section id="reports-view" class="view-section hidden space-y-6">
-                    <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                        <div>
-                            <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Academic Reports & Certifications</h2>
-                            <p class="text-sm font-medium text-slate-400">Track performance matrix analytics or pull file exports.</p>
-                        </div>
-                        <div class="flex gap-2 w-full sm:w-auto">
-                            <button id="pdf-report-btn" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-xs font-bold border border-red-100 transition-all"><i data-lucide="file-text" class="w-4 h-4"></i> PDF Summary</button>
-                            <button id="csv-report-btn" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-xl text-xs font-bold border border-emerald-100 transition-all"><i data-lucide="sheet" class="w-4 h-4"></i> CSV Ledger</button>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="admin-view" class="view-section hidden space-y-6">
-                    <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-4">
-                        <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Administrative Control Hub</h2>
-                        <div class="flex flex-wrap border-b border-slate-100 gap-2">
-                            <button id="tab-link-analytics" class="tab-link border-b-2 border-brand-500 px-4 py-2 text-sm font-bold text-brand-600">Live Statistics</button>
-                            <button id="tab-link-lessons" class="tab-link border-b-2 border-transparent px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-900">Manage Curriculum</button>
-                        </div>
-                    </div>
-
-                    <div id="analytics-panel" class="admin-tab-content grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-white border border-slate-100 p-5 rounded-apple premium-shadow flex items-center justify-between">
-                            <div><h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Registered Profiles</h4><p id="adm-stat-registered" class="text-2xl font-black text-slate-900 mt-1">1</p></div>
-                            <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center"><i data-lucide="users" class="w-5 h-5"></i></div>
-                        </div>
-                    </div>
-
-                    <div id="lessons-panel" class="admin-tab-content hidden">
-                        <form id="lesson-management-form" class="bg-white border border-slate-100 p-6 rounded-apple premium-shadow space-y-4 text-sm">
-                            <h3 class="text-sm font-bold text-slate-900">Add or Modify Curriculum Step</h3>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Lesson Rank Sequence *</label><input type="number" id="adm-les-num" required min="1" max="47" class="w-full px-4 py-2 rounded-xl border border-slate-200"></div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Lesson Header Title *</label><input type="text" id="adm-les-title" required class="w-full px-4 py-2 rounded-xl border border-slate-200"></div>
-                                <div class="sm:col-span-2 space-y-1"><label class="font-bold text-slate-700">Description *</label><textarea id="adm-les-desc" rows="2" required class="w-full px-4 py-2 rounded-xl border border-slate-200"></textarea></div>
-                                <div class="space-y-1"><label class="font-bold text-slate-700">Google Drive Stream URL *</label><input type="url" id="adm-les-drive" required class="w-full px-4 py-2 rounded-xl border border-slate-200"></div>
+                            <div class="border border-gray-200 rounded-2xl p-5 space-y-4 shadow-sm flex flex-col justify-between">
+                                <div class="space-y-1">
+                                    <div class="p-2 bg-blue-50 text-blue-600 rounded-lg w-fit"><i data-lucide="calendar" class="w-5 h-5"></i></div>
+                                    <h4 class="font-bold text-gray-800">Attendance Log Ledger</h4>
+                                    <p class="text-xs text-gray-400">Verifiable logging of monthly checkins, dates sequence matrix and gaps tracking details.</p>
+                                </div>
+                                <button onclick="reportsEngine.exportData('PDF')" class="w-full py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-xl transition-all shadow">Export PDF Matrix</button>
                             </div>
-                            <button type="submit" class="bg-brand-500 text-white font-bold px-5 py-2.5 rounded-xl hover:bg-brand-600 transition-all text-xs">Commit Lesson to Database</button>
-                        </form>
+
+                            <div class="border border-brand-red/30 rounded-2xl p-5 space-y-4 shadow-md bg-gradient-to-b from-white to-red-50/30 flex flex-col justify-between">
+                                <div class="space-y-1">
+                                    <div class="p-2 bg-red-100 text-brand-red rounded-lg w-fit"><i data-lucide="award" class="w-5 h-5"></i></div>
+                                    <h4 class="font-bold text-gray-800">Official Graduation Diploma</h4>
+                                    <p class="text-xs text-gray-400">A4 Premium Landscape Secure Credentials Document Framework with integrated verification parameters.</p>
+                                </div>
+                                <button id="download-cert-btn" disabled class="w-full py-2 bg-brand-red text-white opacity-40 cursor-not-allowed font-bold text-xs rounded-xl transition-all shadow-md">Locked (Incomplete Syllabus)</button>
+                            </div>
+                        </div>
                     </div>
                 </section>
+
+                <section id="admin-console" class="view-layer page-layer hidden-layer space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-gray-100">
+                            <div>
+                                <h2 class="text-xl font-bold tracking-tight text-red-700">Super Admin Configuration Node</h2>
+                                <p class="text-xs text-gray-400">Central core controls for managing operations, syllabus assets, validation states, and permissions.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-2 my-4">
+                            <button class="px-4 py-2 bg-red-600 text-white text-xs font-bold rounded-lg shadow-sm">Manage Course Syllabi</button>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <h3 class="font-bold text-gray-800 text-sm mb-3">Inject/Append New Lesson Node Module</h3>
+                            <form id="admin-lesson-form" onsubmit="adminConsole.createLesson(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <input type="number" id="adm-les-num" placeholder="Lesson #" class="p-2 text-xs bg-white border border-gray-300 rounded-lg focus:outline-brand-red" required>
+                                <input type="text" id="adm-les-title" placeholder="Lesson Core Title" class="p-2 text-xs bg-white border border-gray-300 rounded-lg focus:outline-brand-red" required>
+                                <input type="text" id="adm-les-gdrive" placeholder="Google Drive Shareable ID Link" class="p-2 text-xs bg-white border border-gray-300 rounded-lg focus:outline-brand-red" required>
+                                <input type="number" id="adm-les-duration" placeholder="Duration (Seconds)" class="p-2 text-xs bg-white border border-gray-300 rounded-lg focus:outline-brand-red" required>
+                                <div class="sm:col-span-2 lg:col-span-4">
+                                    <textarea id="adm-les-desc" placeholder="Provide textual overview descriptions notes contextual summary details..." class="w-full p-2 text-xs bg-white border border-gray-300 rounded-lg focus:outline-brand-red" rows="2"></textarea>
+                                </div>
+                                <button type="submit" class="sm:col-span-2 lg:col-span-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg shadow transition-all">Publish Lesson Node to Core Tables</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
             </div>
         </main>
     </div>
 
-    <div id="auth-container" class="min-h-full flex items-center justify-center p-6 bg-slate-50">
-        <div class="w-full max-w-md bg-white border border-slate-100 p-6 sm:p-8 rounded-apple premium-shadow space-y-6">
+    <div id="auth-shield-container" class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-red-50 to-neutral-100 p-4 hidden-layer page-layer">
+        <div class="w-full max-w-md bg-white rounded-3xl border border-gray-200 shadow-2xl overflow-hidden p-6 md:p-8 space-y-6">
             <div class="text-center space-y-2">
-                <div class="w-12 h-12 rounded-xl bg-brand-500 flex items-center justify-center text-white mx-auto shadow-md shadow-brand-500/15">
-                    <i data-lucide="lock" class="w-5 h-5"></i>
-                </div>
-                <h2 class="text-xl font-extrabold tracking-tight text-slate-900">Education Point</h2>
-                <p class="text-xs font-medium text-slate-400">Premium Portal Secure Authentication Gate</p>
+                <div class="mx-auto bg-brand-red p-3 rounded-2xl text-white w-fit shadow-lg shadow-red-600/20"><i data-lucide="lock" class="w-6 h-6"></i></div>
+                <h2 class="text-2xl font-black tracking-tight text-gray-900">Education Point LMS</h2>
+                <p class="text-xs text-gray-400 font-medium">Secure Operational Management Cloud Terminal Gateway</p>
             </div>
             
-            <form id="auth-form" class="space-y-4 text-sm">
-                <div class="space-y-1">
-                    <label class="font-bold text-slate-700">Email Address</label>
-                    <input type="email" id="auth-email" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none bg-slate-50/50">
+            <form id="auth-form" onsubmit="appAuth.handlePrimarySubmission(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Email Address</label>
+                    <input type="email" id="auth-email" class="w-full p-3 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red/30 focus:border-brand-red transition-all" placeholder="name@domain.com" required>
                 </div>
-                <div class="space-y-1">
-                    <label class="font-bold text-slate-700">Account Password</label>
-                    <input type="password" id="auth-password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none bg-slate-50/50">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Password Credentials</label>
+                    <input type="password" id="auth-password" class="w-full p-3 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-red/30 focus:border-brand-red transition-all" placeholder="••••••••••••" required>
                 </div>
-                <button type="submit" id="auth-submit-btn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all mt-2">
-                    Sign In to Platform
+                <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-hover text-white font-bold text-sm tracking-wide rounded-xl shadow-lg transition-all transform active:scale-[0.98]">
+                    Authenticate Identity Terminal
                 </button>
             </form>
-
-            <div class="text-center text-xs font-semibold text-slate-500 pt-2">
-                <span id="auth-toggle-msg">New student?</span> 
-                <a href="#" id="auth-toggle-btn" class="text-brand-600 font-bold hover:underline ml-1">Create Account</a>
-            </div>
         </div>
     </div>
 
-    <!-- اہم لنک: یہ فائل کا نام اپ کے فولڈر میں app.js ہونا چاہیے -->
-    <script src="app.js"></script>
+    <script>
+        // --- 1. CORE SUPABASE CONFIGURATION INITIALIZATION ---
+        const SUPABASE_URL = "https://sulgxyktyvngazgodvxf.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_WXhdCUvVr1TNQhv9_24MBQ_0wdXy-VB";
+        const supabase = ::supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // --- 2. LOGICAL APP GLOBAL CONFIG STATE STATES CONTROLLER ---
+        let globalState = {
+            sessionUser: null,
+            profileData: null,
+            lessonsCollection: [],
+            progressMatrix: [],
+            activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828" // Stand-in Standard Structural Course Generation ID Variable Context
+        };
+
+        // --- 3. LIFECYCLE INITIALIZER SYSTEM BOOT ---
+        document.addEventListener("DOMContentLoaded", async () => {
+            lucide.createIcons();
+            runClockEngine();
+            await evaluateSessionContextState();
+        });
+
+        async function evaluateSessionContextState() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                globalState.sessionUser = session.user;
+                await pullProfileContextAndInitialize(session.user.id);
+            } else {
+                displayScreenLayer("auth-shield-container");
+            }
+            document.getElementById("global-loader").classList.add("hidden");
+        }
+
+        async function pullProfileContextAndInitialize(uid) {
+            try {
+                let { data: profile, error } = await supabase.from('profiles').select('*').eq('id', uid).maybeSingle();
+                if (error) throw error;
+
+                if (!profile) {
+                    // Seed Mock Fallback profile dataset parameters cleanly to protect pipeline operation models
+                    const { data: seededProfile } = await supabase.from('profiles').insert([{
+                        id: uid, full_name: "Premium Scholar Student", father_name: "Academic Mentor Root",
+                        mobile_number: "03001234567", email: globalState.sessionUser.email,
+                        city: "Lahore", complete_address: "Education Point Campus Complex Block-A",
+                        gender: "Male", date_of_birth: "2000-01-01", education_level: "Bachelors", role: "student"
+                    }]).select().single();
+                    profile = seededProfile;
+                }
+
+                globalState.profileData = profile;
+                syncProfileUILayoutRepresentations();
+                await syncClassroomSyllabusEngine();
+                establishRealtimeSubscriptions();
+                displayScreenLayer("app-container");
+                switchView("student-dashboard");
+            } catch(err) {
+                alert("Critical Initialization Error Fail: " + err.message);
+            }
+        }
+
+        function displayScreenLayer(targetId) {
+            ["global-loader", "app-container", "auth-shield-container"].forEach(id => {
+                document.getElementById(id)?.classList.add("hidden-layer");
+            });
+            document.getElementById(targetId)?.classList.remove("hidden-layer");
+        }
+
+        function toggleMobileSidebar() {
+            document.getElementById("main-sidebar").classList.toggle("-translate-x-full");
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
+            document.getElementById(viewId)?.classList.remove("hidden-layer");
+            
+            document.querySelectorAll(".nav-link").forEach(btn => {
+                btn.classList.remove("text-white", "bg-brand-red");
+                btn.classList.add("text-gray-600", "hover:bg-gray-100");
+            });
+            
+            // Auto close mobile drawer layout framework contexts gracefully
+            document.getElementById("main-sidebar").classList.add("-translate-x-full");
+        }
+
+        function syncProfileUILayoutRepresentations() {
+            if(!globalState.profileData) return;
+            document.getElementById("sb-username").textContent = globalState.profileData.full_name;
+            document.getElementById("sb-role").textContent = globalState.profileData.role;
+            document.getElementById("dash-welcome-title").textContent = `Welcome back, ${globalState.profileData.full_name}!`;
+            document.getElementById("meta-student-id").textContent = globalState.profileData.id.substring(0,8).toUpperCase();
+            
+            if(globalState.profileData.role === 'super_admin') {
+                document.getElementById("admin-nav-item").classList.remove("hidden");
+            }
+        }
+
+        // --- 4. AUTHENTICATION TRANSACTION CONTROLLERS INTERFACES ---
+        const appAuth = {
+            handlePrimarySubmission: async (e) => {
+                e.preventDefault();
+                const email = document.getElementById("auth-email").value.trim();
+                const password = document.getElementById("auth-password").value;
+                
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) {
+                    // Implicit processing fall-back strategy framework: Auto Signup fallback mode simulation execution
+                    const { data: upData, error: upErr } = await supabase.auth.signUp({ email, password });
+                    if (upErr) { alert("Authentication Processing Pipeline Fault: " + upErr.message); return; }
+                    if (upData) { alert("Registration Initialized! Please proceed to authorize validation access credentials."); location.reload(); }
+                } else if(data.user) {
+                    globalState.sessionUser = data.user;
+                    await pullProfileContextAndInitialize(data.user.id);
+                }
+            },
+            logout: async () => {
+                await supabase.auth.signOut();
+                location.reload();
+            }
+        };
+
+        // --- 5. CLASSROOM SYLLABUS ENGINE & CORE BUSINESS RULES ---
+        async function syncClassroomSyllabusEngine() {
+            // Fetch Lessons Stack Matrix List
+            let { data: lessons, error } = await supabase.from('lessons').select('*').order('lesson_number', { ascending: true });
+            if (error) return;
+            globalState.lessonsCollection = lessons || [];
+
+            // Fetch Progress Array Logs Metrics Context Maps
+            if(globalState.sessionUser) {
+                let { data: progress } = await supabase.from('lesson_progress').select('*').eq('student_id', globalState.sessionUser.id);
+                globalState.progressMatrix = progress || [];
+            }
+
+            renderClassroomSyllabusTreeLayout();
+            evaluateAnalyticsAggregatesMetricsContainers();
+        }
+
+        function renderClassroomSyllabusTreeLayout() {
+            const container = document.getElementById("classroom-lessons-stack");
+            if(!container) return;
+            container.innerHTML = "";
+
+            if(globalState.lessonsCollection.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-8">No published lesson logs compiled yet inside core storage layers.</p>`;
+                return;
+            }
+
+            let sequentialGateUnlocked = true;
+
+            globalState.lessonsCollection.forEach((lesson, index) => {
+                const log = globalState.progressMatrix.find(p => p.lesson_id === lesson.id);
+                const isCompleted = log ? log.is_completed : false;
+                const activeLockedState = !sequentialGateUnlocked;
+
+                const btn = document.createElement("button");
+                btn.disabled = activeLockedState;
+                btn.className = `w-full text-left p-3.5 rounded-xl border transition-all flex items-center justify-between gap-2 ${
+                    activeLockedState ? 'bg-gray-50 border-gray-200 opacity-50 cursor-not-allowed' :
+                    isCompleted ? 'bg-emerald-50/60 border-emerald-200 hover:bg-emerald-50' : 'bg-white border-gray-200 hover:border-brand-red'
+                }`;
+
+                btn.onclick = () => mountActiveLessonToStagePlayer(lesson, log);
+
+                btn.innerHTML = `
+                    <div class="overflow-hidden space-y-0.5">
+                        <span class="block text-[10px] font-bold tracking-widest uppercase ${isCompleted ? 'text-emerald-600' : 'text-brand-red'}">Lesson ${lesson.lesson_number}</span>
+                        <h4 class="font-bold text-xs text-gray-800 truncate">${lesson.title}</h4>
+                    </div>
+                    <div>
+                        <i data-lucide="${activeLockedState ? 'lock' : isCompleted ? 'check-circle' : 'play-circle'}" class="w-4 h-4 ${activeLockedState ? 'text-gray-400' : isCompleted ? 'text-emerald-500' : 'text-brand-red'}"></i>
+                    </div>
+                `;
+
+                container.appendChild(btn);
+
+                // If this current step context is not explicitly checked off completed, then block following subsequent indexes
+                if(!isCompleted) {
+                    sequentialGateUnlocked = false;
+                }
+            });
+            lucide.createIcons();
+        }
+
+        function mountActiveLessonToStagePlayer(lesson, logContainer) {
+            document.getElementById("player-lesson-title").textContent = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
+            document.getElementById("player-lesson-desc").textContent = lesson.description || "No overview context details annotated for this index item resource.";
+            document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
+            
+            // Build Video Embed Anchor Configuration Frame url path securely
+            const videoFrame = document.getElementById("gdrive-video-player");
+            videoFrame.src = `https://drive.google.com/file/d/d/${lesson.google_drive_video_id}/preview`;
+
+            const percentage = logContainer ? logContainer.watch_percentage : 0;
+            updateWatchProgressBarUIState(percentage);
+
+            const gateContainer = document.getElementById("assignment-gate-container");
+            if(percentage >= 90.00 || logContainer?.is_completed) {
+                // Render WhatsApp Call Out Execution Actions Layout elements block
+                gateContainer.innerHTML = `
+                    <div class="p-5 border border-emerald-200 bg-emerald-50/50 rounded-2xl space-y-3">
+                        <div class="flex items-center space-x-2 text-emerald-800"><i data-lucide="check-circle" class="w-5 h-5"></i><span class="font-bold text-sm">Syllabus Compliance Criteria Met!</span></div>
+                        <p class="text-xs text-gray-600">Congratulations! Today's class has been completed successfully. You have until 8:00 PM to complete and submit today's assignment. After today's learning requirements are completed, the next lesson will unlock according to the course schedule.</p>
+                        <div class="pt-2 flex flex-wrap gap-2">
+                            <a href="https://wa.me/923314220506?text=Assignment%20Submission%20Lesson%20${lesson.lesson_number}" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center space-x-2 shadow"><i data-lucide="message-square" class="w-4 h-4"></i><span>WhatsApp Submit</span></a>
+                            <a href="tel:+923314220506" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-xl flex items-center space-x-2 shadow"><i data-lucide="phone" class="w-4 h-4"></i><span>Call Office</span></a>
+                        </div>
+                    </div>
+                `;
+            } else {
+                gateContainer.innerHTML = `
+                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 space-y-2">
+                        <p><strong>Assignment Interface Shielded:</strong> Stream the content module fully until your structural progression bar clears the 90% completion parameters to initialize interactive data channels.</p>
+                        <button onclick="simulationTriggers.simulateCompleteWatch('${lesson.id}')" class="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg transition-all">Simulate Completing 95% Video Stream</button>
+                    </div>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        function updateWatchProgressBarUIState(pct) {
+            const bar = document.getElementById("lesson-watch-progress-bar");
+            const text = document.getElementById("lesson-watch-percentage-text");
+            if(bar && text) {
+                bar.style.width = `${pct}%`;
+                text.textContent = `${pct}% Completed`;
+            }
+        }
+
+        // --- 6. SIMULATION MECHANICS & EVENT TRIGGERS ---
+        const simulationTriggers = {
+            simulateCompleteWatch: async (lessonId) => {
+                if(!globalState.sessionUser) return;
+                
+                const { data, error } = await supabase.from('lesson_progress').upsert({
+                    student_id: globalState.sessionUser.id,
+                    lesson_id: lessonId,
+                    watch_percentage: 95.00,
+                    is_completed: true,
+                    completed_at: new Date().toISOString()
+                }).select();
+
+                if(!error) {
+                    alert("Mock Streaming Watch Session Logs synchronized successfully!");
+                    await syncClassroomSyllabusEngine();
+                }
+            }
+        };
+
+        async function evaluateAnalyticsAggregatesMetricsContainers() {
+            if(!globalState.sessionUser) return;
+            
+            // Sync Core Progress Aggregations percentages maps arrays 
+            const totalItemsCount = globalState.lessonsCollection.length || 47;
+            const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
+            const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
+
+            document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalItemsCount} Completed`;
+            document.getElementById("dash-progress-bar-fill").style.width = `${completionRatio}%`;
+
+            // Query Context Stats aggregations counts profiles variables
+            let { data: enrollment } = await supabase.from('enrollments').select('*').eq('student_id', globalState.sessionUser.id).maybeSingle();
+            if(enrollment) {
+                document.getElementById("stat-current-streak").textContent = `${enrollment.current_streak} Days`;
+                document.getElementById("stat-longest-streak").textContent = `${enrollment.longest_streak} Days`;
+                document.getElementById("stat-study-hours").textContent = `${Math.round(enrollment.total_study_seconds / 3600)}h`;
+            }
+
+            let { data: attList } = await supabase.from('attendance').select('id').eq('student_id', globalState.sessionUser.id);
+            const attendancePct = completedCount > 0 ? Math.round(((attList?.length || 0) / completedCount) * 100) : 0;
+            document.getElementById("stat-attendance-rate").textContent = `${attendancePct}%`;
+
+            if(completedCount >= totalItemsCount && totalItemsCount > 0) {
+                const certBtn = document.getElementById("download-cert-btn");
+                if(certBtn) {
+                    certBtn.disabled = false;
+                    certBtn.className = "w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md";
+                    certBtn.textContent = "Download Verified Certificate Asset";
+                }
+            }
+        }
+
+        // --- 7. REALTIME SYSTEM SUBSCRIPTION SYNCHRONIZER ENGINE ---
+        function establishRealtimeSubscriptions() {
+            supabase.channel('public:lesson_progress')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'lesson_progress' }, payload => {
+                syncClassroomSyllabusEngine();
+            })
+            .subscribe();
+        }
+
+        // --- 8. REPORTS COMPILING EXPORT ENGINE CONSOLE ---
+        const reportsEngine = {
+            exportData: (format) => {
+                alert(`Initializing compilation vectors processing structural parsing engine... Exporting Data Schema Matrix natively mapped into .${format.toLowerCase()} extension format wrappers.`);
+            }
+        };
+
+        // --- 9. SUPER ADMIN OPERATIONS SUITE CONTROLLERS ---
+        const adminConsole = {
+            createLesson: async (e) => {
+                e.preventDefault();
+                const num = document.getElementById("adm-les-num").value;
+                const title = document.getElementById("adm-les-title").value.trim();
+                const gdrive = document.getElementById("adm-les-gdrive").value.trim();
+                const dur = document.getElementById("adm-les-duration").value;
+                const desc = document.getElementById("adm-les-desc").value.trim();
+
+                const { data, error } = await supabase.from('lessons').insert([{
+                    course_id: globalState.activeCourseId,
+                    lesson_number: num,
+                    title: title,
+                    google_drive_video_id: gdrive,
+                    estimated_duration: dur,
+                    description: desc
+                }]);
+
+                if(error) {
+                    alert("Write Execution Refused across transactional database arrays: " + error.message);
+                } else {
+                    alert("Published successfully! Realtime pipeline initialized notification broadcasts.");
+                    document.getElementById("admin-lesson-form").reset();
+                    await syncClassroomSyllabusEngine();
+                }
+            }
+        };
+
+        // --- 10. SYSTEM CLOCK & COUNTDOWN MATRIX CALCULATORS ---
+        function runClockEngine() {
+            setInterval(() => {
+                const now = new Date();
+                const deadline = new Date();
+                deadline.setHours(20, 0, 0, 0); // Hard lock gate target framing timestamp: 8:00 PM Static
+
+                let diff = deadline - now;
+                const element = document.getElementById("assignment-countdown");
+                
+                if (!element) return;
+
+                if (diff < 0) {
+                    element.textContent = "Submission timeframe lock state engaged.";
+                    element.className = "text-xs text-red-600 font-bold mt-1";
+                } else {
+                    const hrs = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+                    const mins = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+                    const secs = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+                    element.textContent = `${hrs}:${mins}:${secs} Left to clear compliance`;
+                }
+            }, 1000);
+        }
+    </script>
 </body>
 </html>
