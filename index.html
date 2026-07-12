@@ -694,7 +694,6 @@ async function syncClassroomSyllabusEngine() {
             .order('lesson_number', { ascending: true });
 
         if (lessonError) throw lessonError;
-
         globalState.lessonsCollection = lessons || [];
 
         if(globalState.sessionUser) {
@@ -712,7 +711,16 @@ async function syncClassroomSyllabusEngine() {
     } catch(e) { 
         console.error("Critical System Error:", e);
     }
-} 
+} // This closes the first function
+
+async function evaluateAnalyticsAggregatesMetricsContainers() {
+    if (!globalState.sessionUser) return;
+    
+    // ... [Your existing logic for updating DOM elements] ...
+    
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+} // This closes the second function
+        
         
         function renderClassroomSyllabusTreeLayout() {
             const container = document.getElementById("classroom-lessons-stack");
