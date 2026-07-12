@@ -56,6 +56,29 @@
             background-repeat: repeat;
             pointer-events: none;
         }
+        /* The container maintains a 16:9 aspect ratio */
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    overflow: hidden;
+    background: #000;
+    border-radius: 16px;
+    border: 4px solid #fff;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+}
+
+/* Forces the iframe to fill the container entirely */
+#gdrive-video-player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+        }
+        
     </style>
 </head>
 <body class="bg-gray-50 text-brand-darkText custom-scrollbar font-sans antialiased">
@@ -321,18 +344,14 @@
                     <div class="flex flex-col xl:flex-row gap-6">
                         <div class="flex-1 space-y-4">
                             <!-- GOOGLE DRIVE IFRAME COMPLIANT RESPONSIVE HEIGHT CONTAINER -->
-                            <div style="width: 100%; border: 4px solid #fff; border-radius: 16px; overflow: hidden; background: #000; box-shadow: 0 10px 15px rgba(0,0,0,0.3); position: relative; padding-top: 56.25%;">
-    <!-- Video Player -->
+                            <div class="video-wrapper">
     <iframe 
         id="gdrive-video-player" 
         src="" 
-        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" 
         allow="autoplay; fullscreen" 
         allowfullscreen>
     </iframe>
                             </div>
-
-                            
                             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                     <h2 id="player-lesson-title" class="text-xl font-bold tracking-tight text-gray-900">Select Scheduled Module Node</h2>
@@ -758,9 +777,15 @@
             document.getElementById("player-lesson-desc").textContent = lesson.description || "";
             document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
             
-            const videoFrame = document.getElementById("gdrive-video-player");
-            if (videoFrame) videoFrame.src = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/preview`;
-
+            document.addEventListener("DOMContentLoaded", () => {
+    const videoFrame = document.getElementById("gdrive-video-player");
+    
+    // Check if the element exists and the video ID is available
+    if (videoFrame && typeof lesson !== 'undefined' && lesson.google_drive_video_id) {
+        videoFrame.src = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/preview`;
+    }
+});
+            
             const percentage = logContainer ? logContainer.watch_percentage : 0;
             updateWatchProgressBarUIState(percentage);
 
