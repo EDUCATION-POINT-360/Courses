@@ -797,18 +797,26 @@
     async function evaluateAnalyticsAggregatesMetricsContainers() {
     if (!globalState.sessionUser) return;
 
+    // ڈیٹا بیس سے موجود کل لیسنز کی تعداد
     const totalItemsCount = globalState.lessonsCollection.length;
+    
+    // کمپلیٹ شدہ لیسنز کی تعداد گننا
     const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
+    
+    // پروگریس فیصد نکالنا
     const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
 
+    // UI اپ ڈیٹ کرنا
     if (document.getElementById("dash-course-progress-badge")) 
-        document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalItemsCount} Lessons`;
+        document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalItemsCount} Modules`;
     
     if (document.getElementById("dash-progress-bar-fill")) 
         document.getElementById("dash-progress-bar-fill").style.width = `${completionRatio}%`;
 
+    // سرٹیفکیٹ کا لاجک: صرف تب ان لاک ہوگا جب سارے لیکچرز مکمل ہوں
     const certWrapper = document.getElementById("certificate-delivery-wrapper");
     if (certWrapper) {
+        // یہاں شرط ہے کہ کم از کم ایک لیسن ہو اور سارے مکمل ہوں
         if (totalItemsCount > 0 && completedCount === totalItemsCount) {
             certWrapper.innerHTML = `
                 <button onclick="generateAndDownloadCertificate()" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
@@ -823,6 +831,7 @@
     }
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
+
 
     // آئیکنز کو ریفریش کریں
     if (typeof lucide !== 'undefined') lucide.createIcons();
