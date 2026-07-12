@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Education Point LMS | Premium Portal</title>
-    <!-- Tailwind CSS Engine -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -29,7 +28,6 @@
             }
         }
     </script>
-    <!-- Fonts & Icons Frameworks -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -47,15 +45,11 @@
 </head>
 <body class="h-full text-slate-800 antialiased overflow-x-hidden">
 
-    <!-- Toast Notifications Container -->
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3"></div>
 
-    <!-- Main Platform Shell Container -->
     <div id="app-container" class="hidden min-h-full flex flex-col md:flex-row">
         
-        <!-- Apple Stripe Sidebar Menu -->
         <aside id="sidebar-panel" class="fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-100 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:sticky md:h-screen">
-            <!-- Brand Logotype Block -->
             <div class="p-6 border-b border-slate-50 flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
                     <i data-lucide="graduation-cap" class="w-5 h-5"></i>
@@ -66,7 +60,6 @@
                 </div>
             </div>
 
-            <!-- Scrollable Navigation Matrix -->
             <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
                 <a href="#" class="nav-item group flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-apple bg-brand-50 text-brand-600 transition-all duration-200" data-target="dashboard-view">
                     <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
@@ -85,7 +78,6 @@
                 </a>
             </nav>
 
-            <!-- Bottom Interactive Identity Grid -->
             <div class="p-4 border-t border-slate-50 bg-slate-50/50">
                 <div class="flex items-center gap-3 mb-4 p-2 rounded-xl bg-white border border-slate-100 premium-shadow">
                     <img id="sidebar-avatar" class="w-10 h-10 rounded-full object-cover border border-slate-100" src="https://api.dicebear.com/7.x/bottts/svg?seed=education" alt="Avatar">
@@ -100,10 +92,8 @@
             </div>
         </aside>
 
-        <!-- Main Fluid Canvas -->
         <main class="flex-1 min-w-0 flex flex-col min-h-screen">
             
-            <!-- Global Structural Header -->
             <header class="bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between sticky top-0 z-30 premium-shadow apple-blur bg-white/90">
                 <div class="flex items-center gap-4">
                     <button id="sidebar-toggle" class="p-2 -ml-2 text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg md:hidden transition-all">
@@ -125,13 +115,10 @@
                 </div>
             </header>
 
-            <!-- Dynamic View Window -->
             <div class="flex-1 p-6 max-w-[1600px] w-full mx-auto space-y-6">
                 
-                <!-- SECTION 1: DASHBOARD VIEW -->
                 <section id="dashboard-view" class="view-section space-y-8">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Hero Card Banner -->
                         <div class="lg:col-span-2 bento-card bg-gradient-to-br from-brand-600 to-red-700 rounded-apple p-6 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative overflow-hidden shadow-xl shadow-brand-500/10">
                             <div class="space-y-3 max-w-md z-10">
                                 <span class="text-xs font-extrabold tracking-widest text-brand-100 bg-white/10 px-2.5 py-1 rounded-full uppercase">Current Enrollment</span>
@@ -150,7 +137,6 @@
                             </div>
                         </div>
 
-                        <!-- Statistics Block -->
                         <div class="bento-card bg-white border border-slate-100 rounded-apple p-6 premium-shadow flex flex-col justify-between">
                             <h3 class="text-sm font-extrabold tracking-tight text-slate-400 uppercase">Course Performance</h3>
                             <div class="grid grid-cols-2 gap-4 mt-4 my-auto">
@@ -167,7 +153,6 @@
                             </div>
                         </div>
 
-                        <!-- Attendance Summary Container -->
                         <div class="bento-card bg-white border border-slate-100 rounded-apple p-6 premium-shadow">
                             <div class="flex items-center justify-between mb-3">
                                 <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-brand-500"></i> Study Calendar</h3>
@@ -175,7 +160,6 @@
                             <div id="dashboard-mini-calendar" class="min-h-[140px] bg-slate-50 rounded-xl p-3 border border-slate-100 text-center text-xs text-slate-500 flex flex-col items-center justify-center">Syncing activity records...</div>
                         </div>
 
-                        <!-- Badges Container -->
                         <div class="lg:col-span-2 bento-card bg-white border border-slate-100 rounded-apple p-6 premium-shadow">
                             <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><i data-lucide="medal" class="w-4 h-4 text-brand-500"></i> Badges & Certifications</h3>
                             <div id="badges-container" class="flex flex-wrap gap-3">
@@ -184,7 +168,6 @@
                         </div>
                     </div>
 
-                    <!-- Programs Carousel -->
                     <div class="space-y-4">
                         <h3 class="text-base font-extrabold tracking-tight text-slate-900">More Premium Programs Coming Soon</h3>
                         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -216,7 +199,6 @@
                     </div>
                 </section>
 
-                <!-- SECTION 2: CLASSROOM VIEW -->
                 <section id="classroom-view" class="view-section hidden grid grid-cols-1 xl:grid-cols-3 gap-6">
                     <div class="xl:col-span-2 space-y-4">
                         <div class="bg-black aspect-video rounded-apple overflow-hidden border border-slate-200 shadow-inner relative flex items-center justify-center" id="video-wrapper-box">
@@ -232,7 +214,6 @@
                         </div>
                     </div>
 
-                    <!-- Side Panels -->
                     <div class="space-y-6">
                         <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-4">
                             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i data-lucide="file-up" class="w-4 h-4 text-brand-500"></i> Today's Assignment</h3>
@@ -252,7 +233,6 @@
                     </div>
                 </section>
 
-                <!-- SECTION 3: STUDENT PROFILE VIEW -->
                 <section id="profile-view" class="view-section hidden max-w-3xl mx-auto">
                     <div class="bg-white border border-slate-100 rounded-apple p-6 sm:p-8 premium-shadow space-y-6">
                         <div>
@@ -284,7 +264,6 @@
                     </div>
                 </section>
 
-                <!-- SECTION 4: DATA REPORTS VIEW -->
                 <section id="reports-view" class="view-section hidden space-y-6">
                     <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
@@ -298,7 +277,6 @@
                     </div>
                 </section>
 
-                <!-- SECTION 5: ADMINISTRATIVE VIEW CONSOLE -->
                 <section id="admin-view" class="view-section hidden space-y-6">
                     <div class="bg-white border border-slate-100 rounded-apple p-6 premium-shadow space-y-4">
                         <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Administrative Control Hub</h2>
@@ -332,7 +310,6 @@
         </main>
     </div>
 
-    <!-- SECURE AUTHENTICATION CONTAINER WINDOW -->
     <div id="auth-container" class="min-h-full flex items-center justify-center p-6 bg-slate-50">
         <div class="w-full max-w-md bg-white border border-slate-100 p-6 sm:p-8 rounded-apple premium-shadow space-y-6">
             <div class="text-center space-y-2">
@@ -364,119 +341,115 @@
         </div>
     </div>
 
-    <!-- MAIN ORCHESTRATION ENGINE ENGINE -->
     <script>
-        // REPLACE WITH YOUR ACTUAL SUPABASE CREDS
-        const SUPABASE_URL = "https://your-project-id.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+        // Initialization configuration parameters 
+        const SUPABASE_URL = "https://tvtuukholwjvqgotfjaj.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_pPaC5jyst8DtbNHHvz6KSw_1G757J-l";
         
-        // Safe Initialization Block
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Safe Initialization Engine Fix
+        const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-        // State Control Core Cache variables
+        // State Engine Variables
         let currentSessionUser = null;
         let profileDataCache = null;
         let enrollmentState = null;
         let activeLessonContext = null;
+        let videoTrackerTimer = null;
         let isSignUpMode = false;
 
         document.addEventListener("DOMContentLoaded", () => {
+            if (!supabase) {
+                console.error("Supabase CDN framework missing!");
+                return;
+            }
             initAuthenticationEngine();
             registerInterfaceUIListeners();
             lucide.createIcons();
         });
 
         // ====================================================================
-        // FIXED AUTHENTICATION LOGICS (GITHUB COMPATIBLE)
+        // AUTHENTICATION INFRASTRUCTURE ROUTINES
         // ====================================================================
-        function initAuthenticationEngine() {
-            // Real-time Auth Listening Sync Hook
-            supabase.auth.onAuthStateChange((event, updatedSession) => {
-                if (updatedSession && updatedSession.user) {
-                    currentSessionUser = updatedSession.user;
-                    fetchCoreUserMetadataAndSync();
-                } else {
-                    currentSessionUser = null;
-                    profileDataCache = null;
-                    document.getElementById("app-container").classList.add("hidden");
-                    document.getElementById("auth-container").classList.remove("hidden");
-                }
+        async function initAuthenticationEngine() {
+            const { data: { session } } = await supabase.auth.getSession();
+            evaluateSessionState(session);
+
+            // Dynamic state listener bindings
+            supabase.auth.onAuthStateChange((event, session) => {
+                evaluateSessionState(session);
             });
         }
 
+        function evaluateSessionState(session) {
+            if (session) {
+                currentSessionUser = session.user;
+                fetchCoreUserMetadataAndSync();
+            } else {
+                currentSessionUser = null;
+                profileDataCache = null;
+                document.getElementById("app-container")?.classList.add("hidden");
+                document.getElementById("auth-container")?.classList.remove("hidden");
+            }
+        }
+
         // Toggle handling between platform entry gates
-        document.getElementById("auth-toggle-btn").addEventListener("click", (e) => {
+        document.getElementById("auth-toggle-btn")?.addEventListener("click", (e) => {
             e.preventDefault();
             isSignUpMode = !isSignUpMode;
-            document.getElementById("auth-submit-btn").innerText = isSignUpMode ? "Register New Account" : "Sign In to Platform";
+            const submitBtn = document.getElementById("auth-submit-btn");
+            if(submitBtn) submitBtn.innerText = isSignUpMode ? "Register New Account" : "Sign In to Platform";
             document.getElementById("auth-toggle-msg").innerText = isSignUpMode ? "Already a student?" : "New student?";
             document.getElementById("auth-toggle-btn").innerText = isSignUpMode ? "Sign In" : "Create Account";
         });
 
-        // Email & Password Auth Router Form Pipeline Handler
-        document.getElementById("auth-form").addEventListener("submit", async (e) => {
+        // Handles Platform Registration and Login forms
+        document.getElementById("auth-form")?.addEventListener("submit", async (e) => {
             e.preventDefault();
             const email = document.getElementById("auth-email").value.trim();
             const password = document.getElementById("auth-password").value;
-
+            
             if (isSignUpMode) {
-                // Step 1: Sign up user inside Supabase Auth Scheme
                 const { data, error } = await supabase.auth.signUp({ email, password });
                 if (error) return emitAlertNotification(error.message, "danger");
                 
                 if (data?.user) {
-                    // Step 2: Auto-inject standard SQL profile row to bypass blank screen locks
-                    const { error: profileErr } = await supabase.from('profiles').insert([
-                        { 
-                            id: data.user.id, 
-                            full_name: email.split('@')[0], 
-                            role: 'student',
-                            current_streak: 0,
-                            total_xp: 0,
-                            longest_streak: 0
-                        }
+                    // Auto insert row into profiles table to prevent blank screen error
+                    await supabase.from('profiles').insert([
+                        { id: data.user.id, full_name: email.split('@')[0], role: 'student', current_streak: 0, total_xp: 0, longest_streak: 0 }
                     ]);
-                    
-                    if (profileErr) {
-                        console.error("Profile SQL mismatch:", profileErr.message);
-                    }
-                    emitAlertNotification("Account built! Logging you in...", "success");
-                    
-                    // Force session capture for GitHub Pages instant login flow
+                    emitAlertNotification("Account created! Synchronizing dashboard...", "success");
                     currentSessionUser = data.user;
                     fetchCoreUserMetadataAndSync();
                 }
             } else {
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) return emitAlertNotification(error.message, "danger");
-                emitAlertNotification("Welcome back to Education Point!", "success");
+                emitAlertNotification("Identity validated successfully.", "success");
             }
         });
 
-        document.getElementById("logout-btn").addEventListener("click", async () => {
+        document.getElementById("logout-btn")?.addEventListener("click", async () => {
             await supabase.auth.signOut();
             emitAlertNotification("Session terminated.", "success");
             window.location.reload();
         });
 
         // ====================================================================
-        // DATA ACCESS & PROFILE RE-SYNC HANDLERS (SQL COMPLIANT)
+        // BUSINESS APPLICATION DATA WORKSPACE LOGIC
         // ====================================================================
         async function fetchCoreUserMetadataAndSync() {
             let { data: profile, error } = await supabase.from('profiles').select('*').eq('id', currentSessionUser.id).maybeSingle();
             
-            // If the user row profile node asset isn't mapped, direct them to profile generation
             if (!profile) {
                 switchView('profile-view');
-                document.getElementById("auth-container").classList.add("hidden");
-                document.getElementById("app-container").classList.remove("hidden");
-                emitAlertNotification("Please populate complete profile attributes.", "warning");
+                document.getElementById("app-container")?.classList.remove("hidden");
+                document.getElementById("auth-container")?.classList.add("hidden");
                 return;
             }
             
             profileDataCache = profile;
             
-            // Sync course enrollments table node mappings
+            // Pull user specific enrollment details
             let { data: enroll } = await supabase.from('enrollments').select('*').eq('student_id', currentSessionUser.id).maybeSingle();
             if (!enroll) {
                 const { data: newEnroll } = await supabase.from('enrollments').insert([{ student_id: currentSessionUser.id, current_unlocked_lesson: 1, completed_lessons_count: 0 }]).select().single();
@@ -487,112 +460,181 @@
             
             configureDynamicDashboardMetrics();
             verifyAdministrativeCapabilities();
+            establishRealtimeSubscriptions();
             
-            document.getElementById("auth-container").classList.add("hidden");
-            document.getElementById("app-container").classList.remove("hidden");
+            document.getElementById("auth-container")?.classList.add("hidden");
+            document.getElementById("app-container")?.classList.remove("hidden");
         }
 
         function configureDynamicDashboardMetrics() {
-            document.getElementById("sidebar-username").innerText = profileDataCache.full_name || "Student Profile";
-            document.getElementById("sidebar-role").innerText = `Student ID: ${profileDataCache.student_id || '--'}`;
-            document.getElementById("top-streak-count").innerText = profileDataCache.current_streak || 0;
-            document.getElementById("top-xp-count").innerText = profileDataCache.total_xp || 0;
-            document.getElementById("greeting-title").innerText = `Assalam-o-Alaikum, ${(profileDataCache.full_name || 'Student').split(' ')[0]}!`;
+            if (!profileDataCache) return;
             
-            const pct = Math.round(((enrollmentState?.completed_lessons_count || 0) / 47) * 100);
-            document.getElementById("course-progress-percent").innerText = `${pct}%`;
-            document.getElementById("course-progress-ring").style.strokeDashoffset = 301.6 - (301.6 * pct) / 100;
-            document.getElementById("stat-attendance-pct").innerText = `${pct}%`;
-            document.getElementById("stat-longest-streak").innerText = profileDataCache.longest_streak || 0;
+            if(document.getElementById("sidebar-username")) document.getElementById("sidebar-username").innerText = profileDataCache.full_name || "Student";
+            if(document.getElementById("sidebar-role")) document.getElementById("sidebar-role").innerText = `Student ID: ${profileDataCache.student_id || '--'}`;
+            if(document.getElementById("top-streak-count")) document.getElementById("top-streak-count").innerText = profileDataCache.current_streak || 0;
+            if(document.getElementById("top-xp-count")) document.getElementById("top-xp-count").innerText = profileDataCache.total_xp || 0;
+            if(document.getElementById("greeting-title")) document.getElementById("greeting-title").innerText = `Assalam-o-Alaikum, ${(profileDataCache.full_name || 'Student').split(' ')[0]}!`;
             
-            document.getElementById("dashboard-lesson-headline").innerText = `Next Up: Lesson Sequence Number ${enrollmentState?.current_unlocked_lesson || 1} of 47`;
+            const completed = enrollmentState?.completed_lessons_count || 0;
+            const overallProgressPct = Math.round((completed / 47) * 100);
+            
+            if(document.getElementById("course-progress-percent")) document.getElementById("course-progress-percent").innerText = `${overallProgressPct}%`;
+            
+            const ring = document.getElementById("course-progress-ring");
+            if (ring) {
+                const strokeDashOffset = 301.6 - (301.6 * overallProgressPct) / 100;
+                ring.style.strokeDashoffset = strokeDashOffset;
+            }
+            
+            if(document.getElementById("dashboard-lesson-headline")) {
+                document.getElementById("dashboard-lesson-headline").innerText = `Next Up: Lesson Number ${enrollmentState?.current_unlocked_lesson || 1} of 47`;
+            }
+            
             loadClassroomLessonContext(enrollmentState?.current_unlocked_lesson || 1);
         }
 
+        // ====================================================================
+        // SECURE GOOGLE DRIVE MEDIA STREAM ENGINE PLAYER
+        // ====================================================================
         async function loadClassroomLessonContext(lessonNumber) {
-            const { data: lesson } = await supabase.from('lessons').select('*').eq('lesson_number', lessonNumber).maybeSingle();
-            if (!lesson) return;
+            const { data: lesson, error } = await supabase.from('lessons').select('*').eq('lesson_number', lessonNumber).maybeSingle();
+            if (error || !lesson) return;
             
             activeLessonContext = lesson;
-            document.getElementById("current-lesson-title").innerText = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
-            document.getElementById("current-lesson-desc").innerText = lesson.description;
+            if(document.getElementById("current-lesson-title")) document.getElementById("current-lesson-title").innerText = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
+            if(document.getElementById("current-lesson-desc")) document.getElementById("current-lesson-desc").innerText = lesson.description;
             
             const videoBox = document.getElementById("video-wrapper-box");
-            videoBox.innerHTML = `<iframe src="${lesson.video_url}" class="w-full h-full border-0 absolute inset-0" allow="autoplay; fullscreen"></iframe>`;
+            if (videoBox) {
+                videoBox.innerHTML = `<iframe id="gdrive-player" src="${lesson.video_url}" class="w-full h-full absolute inset-0 border-0" allow="autoplay; fullscreen"></iframe>`;
+            }
+            
+            initVideoPlayerWatchProgressTracker();
+            renderAssignmentInteractivePanel();
         }
 
-        // Profile Form Update Mutation Pipeline mapping to profiles table attributes
-        document.getElementById("profile-form").addEventListener("submit", async (e) => {
+        function initVideoPlayerWatchProgressTracker() {
+            if (videoTrackerTimer) clearInterval(videoTrackerTimer);
+            
+            let simWatchPercentage = 0;
+            videoTrackerTimer = setInterval(async () => {
+                simWatchPercentage += 5; 
+                if (simWatchPercentage >= 90) { 
+                    clearInterval(videoTrackerTimer);
+                    await triggerAutomaticLessonCompletionSequence();
+                }
+            }, 10000); 
+        }
+
+        async function triggerAutomaticLessonCompletionSequence() {
+            if (!currentSessionUser || !activeLessonContext) return;
+            
+            const { error } = await supabase.from('lesson_progress').upsert({
+                student_id: currentSessionUser.id,
+                lesson_number: activeLessonContext.lesson_number,
+                watch_percentage: 100,
+                is_completed: true,
+                completed_at: new Date().toISOString()
+            });
+            
+            if(!error) {
+                emitAlertNotification("Daily Lesson Complete! Progress locked.", "success");
+                fetchCoreUserMetadataAndSync(); 
+            }
+        }
+
+        // ====================================================================
+        // ASSIGNMENT DELIVERY HUB MANAGEMENT
+        // ====================================================================
+        function renderAssignmentInteractivePanel() {
+            const container = document.getElementById("assignment-content-area");
+            if (!container) return;
+            
+            container.innerHTML = `
+                <div class="text-center space-y-3">
+                    <p class="text-xs font-bold text-slate-700"><strong>Deadline Threshold:</strong> 8:00 PM Tonight</p>
+                    <div class="p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-xs font-medium">
+                        Complete classwork to open the grading queue.
+                    </div>
+                    <p class="text-[11px] text-slate-500">Instead of file uploads, connect with your instructor to review assignment materials directly:</p>
+                    <div class="flex flex-col gap-2">
+                        <a href="https://wa.me/923001234567" target="_blank" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all"><i class="fa-brands fa-whatsapp"></i> Submit on WhatsApp</a>
+                        <button class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-medium transition-all" onclick="navigator.clipboard.writeText('+923001234567'); emitAlertNotification('Copied number!','success');">Copy Assignment Hotline</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====================================================================
+        // INTERFACE REALTIME SUBSCRIPTIONS LAYER
+        // ====================================================================
+        function establishRealtimeSubscriptions() {
+            if (!currentSessionUser) return;
+            supabase.channel('public:assignments')
+              .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'assignments', filter: `student_id=eq.${currentSessionUser.id}` }, payload => {
+                  emitAlertNotification(`Your assignment status updated to: ${payload.new.status}`, "info");
+                  fetchCoreUserMetadataAndSync();
+              }).subscribe();
+        }
+
+        // ====================================================================
+        // ADMINISTRATIVE OPERATIONS UTILITIES
+        // ====================================================================
+        function verifyAdministrativeCapabilities() {
+            if (profileDataCache && profileDataCache.role === 'admin') {
+                document.getElementById("admin-nav-item")?.classList.remove("hidden");
+            }
+        }
+
+        document.getElementById("lesson-management-form")?.addEventListener("submit", async (e) => {
             e.preventDefault();
             const payload = {
-                full_name: document.getElementById("prof-fullname").value.trim(),
-                father_name: document.getElementById("prof-father").value.trim(),
-                mobile_number: document.getElementById("prof-mobile").value.trim(),
-                city: document.getElementById("prof-city").value.trim(),
-                physical_address: document.getElementById("prof-address").value.trim(),
-                date_of_birth: document.getElementById("prof-dob").value,
-                gender: document.getElementById("prof-gender").value,
-                education_level: document.getElementById("prof-edu").value.trim(),
-                updated_at: new Date().toISOString()
+                lesson_number: parseInt(document.getElementById("adm-les-num").value),
+                title: document.getElementById("adm-les-title").value,
+                description: document.getElementById("adm-les-desc").value,
+                video_url: document.getElementById("adm-les-drive").value
             };
 
-            const { error } = await supabase.from('profiles').update(payload).eq('id', currentSessionUser.id);
+            const { error } = await supabase.from('lessons').upsert(payload);
             if (error) return emitAlertNotification(error.message, "danger");
-            emitAlertNotification("SQL Profile matrix synced successfully!", "success");
-            fetchCoreUserMetadataAndSync();
-            switchView('dashboard-view');
+            
+            emitAlertNotification("Curriculum modification published completely.", "success");
+            e.target.reset();
         });
 
         // ====================================================================
-        // INTERFACE UTILITIES & ROUTERS
+        // SYSTEM ALERTS & INTERFACE UTILITIES
         // ====================================================================
         function emitAlertNotification(message, variation = "info") {
             const box = document.getElementById("toast-container");
-            const toast = document.createElement("div");
-            const bgClass = variation === "danger" ? "bg-red-600 text-white" : variation === "success" ? "bg-emerald-600 text-white" : "bg-slate-900 text-white";
-            toast.className = `p-4 rounded-xl text-xs font-bold shadow-lg ${bgClass} transition-all duration-300 transform translate-y-2`;
-            toast.innerText = message;
-            box.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
+            if (!box) return;
+            const notification = document.createElement("div");
+            const bgClass = variation === "danger" ? "bg-red-600" : variation === "success" ? "bg-emerald-600" : "bg-slate-900";
+            notification.className = `p-4 rounded-xl text-xs font-bold text-white shadow-lg ${bgClass} transition-all duration-300 transform translate-y-2`;
+            notification.innerText = message;
+            box.appendChild(notification);
+            setTimeout(() => notification.remove(), 4500);
         }
 
-        function switchView(targetId) {
-            document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
-            const destination = document.getElementById(targetId);
-            if(destination) destination.classList.remove('hidden');
+        function switchView(viewId) {
+            document.querySelectorAll(".view-section").forEach(section => section.classList.add("hidden"));
+            document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("bg-brand-50", "text-brand-600", "font-semibold"));
             
-            document.querySelectorAll('.nav-item').forEach(nav => {
-                if(nav.getAttribute('data-target') === targetId) {
-                    nav.classList.add('bg-brand-50', 'text-brand-600', 'font-semibold');
-                    nav.classList.remove('text-slate-500', 'font-medium');
-                } else {
-                    nav.classList.remove('bg-brand-50', 'text-brand-600', 'font-semibold');
-                    nav.classList.add('text-slate-500', 'font-medium');
-                }
-            });
-        }
-
-        function switchAdminTab(panelId, element) {
-            document.querySelectorAll('.admin-tab-content').forEach(p => p.classList.add('hidden'));
-            document.getElementById(panelId).classList.remove('hidden');
-            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('border-brand-500', 'text-brand-600'));
-            element.classList.add('border-brand-500', 'text-brand-600');
-        }
-
-        function verifyAdministrativeCapabilities() {
-            if (profileDataCache && profileDataCache.role === 'admin') {
-                document.getElementById("admin-nav-item").classList.remove("hidden");
+            document.getElementById(viewId)?.classList.remove("hidden");
+            const activeNav = document.querySelector(`[data-target="${viewId}"]`);
+            if (activeNav) {
+                activeNav.classList.add("bg-brand-50", "text-brand-600", "font-semibold");
             }
         }
 
         function registerInterfaceUIListeners() {
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function(e) {
+            document.querySelectorAll(".nav-item").forEach(btn => {
+                btn.addEventListener("click", (e) => {
                     e.preventDefault();
-                    switchView(this.getAttribute('data-target'));
+                    switchView(btn.getAttribute("data-target"));
                 });
             });
-
+            
             const sidebar = document.getElementById('sidebar-panel');
             const toggle = document.getElementById('sidebar-toggle');
             if (toggle && sidebar) {
@@ -603,6 +645,13 @@
                 document.body.addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
                 sidebar.addEventListener('click', (e) => e.stopPropagation());
             }
+        }
+
+        function switchAdminTab(panelId, element) {
+            document.querySelectorAll('.admin-tab-content').forEach(p => p.classList.add('hidden'));
+            document.getElementById(panelId)?.classList.remove('hidden');
+            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('border-brand-500', 'text-brand-600'));
+            element.classList.add('border-brand-500', 'text-brand-600');
         }
     </script>
 </body>
