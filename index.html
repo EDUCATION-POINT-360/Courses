@@ -4,173 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Education Point LMS | Premium Production Framework</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
-        
-        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #DC2626; border-radius: 10px; }
-        
-        /* Fixed Google Drive Player */
-        .video-container {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            background: #000;
-            border-radius: 1rem;
-            overflow: hidden;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-
-        /* High-End Realistic Certificate Styles */
-        .cert-container {
-            background: #fff;
-            border: 20px double #B45309;
-            padding: 40px;
-            position: relative;
-            font-family: 'Playfair Display', serif;
-            color: #1f2937;
-        }
-        .cert-watermark {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 150px;
-            opacity: 0.05;
-            pointer-events: none;
-            font-weight: 900;
-            white-space: nowrap;
-        }
-    </style>
-</head>
-<body class="bg-gray-50 text-gray-900">
-
-    <!-- Global Loader -->
-    <div id="global-loader" class="fixed inset-0 z-[100] flex items-center justify-center bg-white">
-        <div class="animate-spin w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full"></div>
-    </div>
-
-    <div id="app-container" class="min-h-screen flex flex-col md:flex-row">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col p-6">
-            <h1 class="text-2xl font-black text-red-600 mb-8">EDU POINT</h1>
-            <nav class="space-y-4 flex-1">
-                <button onclick="switchView('dashboard')" class="block w-full text-left p-3 rounded-xl hover:bg-red-50 hover:text-red-600 font-bold">Dashboard</button>
-                <button onclick="switchView('classroom')" class="block w-full text-left p-3 rounded-xl hover:bg-red-50 hover:text-red-600 font-bold">Classroom</button>
-                <button onclick="switchView('admin-console')" class="block w-full text-left p-3 rounded-xl bg-gray-900 text-white font-bold">Admin Console</button>
-            </nav>
-        </aside>
-
-        <main class="flex-1 p-8">
-            <!-- View: Dashboard -->
-            <section id="dashboard" class="view-layer">
-                <h2 class="text-3xl font-extrabold mb-6">Welcome Back, Scholar</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                        <p class="text-sm text-gray-400">Total Study Time</p>
-                        <p id="stat-study-time" class="text-2xl font-black text-red-600">00:00:00</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                        <p class="text-sm text-gray-400">Current Strikes</p>
-                        <p id="stat-strikes" class="text-2xl font-black text-amber-600">0 / 3</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- View: Admin Console -->
-            <section id="admin-console" class="view-layer hidden">
-                <h2 class="text-2xl font-bold mb-6 text-red-700">System Admin Control</h2>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border space-y-6">
-                    <table class="w-full text-left">
-                        <thead class="text-xs uppercase text-gray-400">
-                            <tr><th class="pb-4">Scholar</th><th class="pb-4">Study Time</th><th class="pb-4">Actions</th></tr>
-                        </thead>
-                        <tbody id="admin-roster">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- View: Classroom (Fixed Video Player) -->
-            <section id="classroom" class="view-layer hidden">
-                <div class="video-container shadow-2xl">
-                    <iframe id="gdrive-player" src="" allowfullscreen></iframe>
-                </div>
-                <button onclick="markClassComplete()" class="mt-6 bg-red-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-red-700">Submit Completion & Strike Check</button>
-            </section>
-        </main>
-    </div>
-
-    <!-- Certificate Overlay -->
-    <div id="cert-modal" class="hidden fixed inset-0 z-[200] bg-black/50 p-10 flex items-center justify-center">
-        <div class="cert-container w-full max-w-4xl shadow-2xl">
-            <div class="cert-watermark">CERTIFIED</div>
-            <h1 class="text-5xl font-bold text-center text-red-800">Certificate of Completion</h1>
-            <p class="text-center mt-6">This is to certify that</p>
-            <h2 id="cert-name" class="text-3xl font-bold text-center my-4 border-b pb-2">Student Name</h2>
-            <p class="text-center">Has successfully completed the 47-class professional course.</p>
-            <div class="mt-16 flex justify-between items-center">
-                <div class="text-center"><p class="border-t pt-2">Muhammad Rizwan</p><p class="text-xs">Founder, Education Point</p></div>
-                <div class="w-24 h-24 bg-gray-200 border-2 border-red-800 flex items-center justify-center font-bold">LOGO</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let studyTime = 0;
-        let strikes = 0;
-
-        // Realtime Tracker
-        setInterval(() => {
-            studyTime++;
-            const h = Math.floor(studyTime / 3600).toString().padStart(2, '0');
-            const m = Math.floor((studyTime % 3600) / 60).toString().padStart(2, '0');
-            const s = (studyTime % 60).toString().padStart(2, '0');
-            document.getElementById('stat-study-time').textContent = `${h}:${m}:${s}`;
-        }, 1000);
-
-        // UI Switching
-        function switchView(id) {
-            document.querySelectorAll('.view-layer').forEach(v => v.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        // Fix Player
-        function loadVideo(id) {
-            document.getElementById('gdrive-player').src = `https://drive.google.com/file/d/${id}/preview`;
-            switchView('classroom');
-        }
-
-        function markClassComplete() {
-            strikes = Math.max(0, strikes - 1);
-            alert("Class submission received! Strike mitigated. System synchronized.");
-            document.getElementById('stat-strikes').textContent = `${strikes} / 3`;
-        }
-
-        // Initialize
-        window.onload = () => {
-            document.getElementById('global-loader').classList.add('hidden');
-        };
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Education Point LMS | Premium Production Framework</title>
     <!-- Tailwind CSS Production CDN Engine -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -207,22 +40,6 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #DC2626; border-radius: 4px; }
         .page-layer { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .hidden-layer { display: none !important; opacity: 0; transform: translateY(10px); }
-        
-        /* Premium Certificate Dynamic Visual Design Layer */
-        .cert-canvas {
-            background: radial-gradient(circle, #ffffff 0%, #fdfbf7 100%);
-            border: 16px double #B45309;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            position: relative;
-        }
-        .cert-watermark {
-            position: absolute;
-            inset: 0;
-            opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 L100 50 L50 100 L0 50 Z' fill='%23DC2626'/%3E%3C/svg%3E");
-            background-repeat: repeat;
-            pointer-events: none;
-        }
     </style>
 </head>
 <body class="bg-gray-50 text-brand-darkText custom-scrollbar font-sans antialiased">
@@ -301,7 +118,7 @@
                     </div>
 
                     <!-- ANALYTICS HIGHLIGHT METRICS WIDGETS -->
-                    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
                             <div class="p-3 bg-red-100 text-brand-red rounded-xl"><i data-lucide="zap" class="w-6 h-6"></i></div>
                             <div>
@@ -326,16 +143,8 @@
                         <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
                             <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i data-lucide="clock" class="w-6 h-6"></i></div>
                             <div>
-                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Live Study Time</p>
-                                <h3 class="text-xl font-black text-gray-800 font-mono" id="stat-study-hours">00:00:00</h3>
-                            </div>
-                        </div>
-                        <!-- REALTIME STRIKE COUNTER SYSTEM WIDGET -->
-                        <div class="bg-white p-4 rounded-2xl border-2 border-red-200 shadow-sm flex items-center space-x-4">
-                            <div class="p-3 bg-red-600 text-white rounded-xl animate-pulse"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
-                            <div>
-                                <p class="text-xs text-red-500 font-bold uppercase tracking-wide">System Strikes</p>
-                                <h3 class="text-xl font-black text-red-600" id="stat-student-strikes">0 / 3</h3>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Study Time</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-study-hours">0h</h3>
                             </div>
                         </div>
                     </div>
@@ -370,39 +179,6 @@
                                     <div class="p-3 border border-gray-100 rounded-xl flex items-center space-x-2 text-xs text-gray-500"><i data-lucide="trending-up" class="w-4 h-4 text-red-400"></i><span>Digital Marketing Systems</span></div>
                                 </div>
                             </div>
-
-                            <!-- LIVE INTERACTIVE CERTIFICATE DISPLAY WINDOW -->
-                            <div id="certificate-viewer-section" class="hidden bg-white p-6 rounded-2xl border-4 border-amber-500 shadow-2xl space-y-4">
-                                <div class="flex items-center justify-between border-b pb-2">
-                                    <h3 class="text-lg font-black text-amber-700 flex items-center gap-2"><i data-lucide="award"></i> Official Course Certificate Unlocked!</h3>
-                                    <button onclick="window.print()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs flex items-center gap-2 shadow"><i data-lucide="download"></i> Print / Export PNG</button>
-                                </div>
-                                <div class="cert-canvas p-8 md:p-12 rounded-lg text-center overflow-hidden relative">
-                                    <div class="cert-watermark"></div>
-                                    <div class="flex justify-between items-center mb-6">
-                                        <div class="flex items-center space-x-2">
-                                            <div class="bg-brand-red p-1.5 rounded-lg text-white"><i data-lucide="graduation-cap" class="w-5 h-5"></i></div>
-                                            <span class="font-black text-sm tracking-tight text-brand-red">EDUCATION POINT LOGO</span>
-                                        </div>
-                                        <div class="text-[10px] font-mono text-gray-400 uppercase tracking-widest bg-gray-100 px-2 py-1 rounded">ID: <span id="cert-display-id">------</span></div>
-                                    </div>
-                                    <h2 class="text-amber-800 font-serif text-3xl md:text-4xl font-bold italic tracking-wide">Certificate of Completion</h2>
-                                    <p class="text-xs text-gray-500 uppercase tracking-widest mt-2">This Official Document Proudly Verifies That</p>
-                                    <h1 class="text-2xl md:text-4xl font-extrabold text-gray-900 my-4 border-b-2 border-amber-200 max-w-md mx-auto pb-1" id="cert-student-name">------------------</h1>
-                                    <p class="text-xs text-gray-600 max-w-xl mx-auto leading-relaxed">has successfully satisfied all syllabus directives, system validations, and assignment completions for the full matrix course framework totaling <strong>47 Classes</strong> of instruction under the verified administrative oversight of Education Point.</p>
-                                    
-                                    <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-gray-100">
-                                        <div class="text-left space-y-1">
-                                            <p class="text-[10px] text-gray-400 uppercase font-bold">Verification Infrastructure</p>
-                                            <div class="text-xs font-bold text-emerald-600 flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Mapped Secure Database Node</div>
-                                        </div>
-                                        <div class="text-right flex flex-col items-end">
-                                            <div class="font-serif italic text-lg font-bold text-gray-800 border-b border-gray-400 px-4 select-none" style="font-family: 'Georgia', serif;">Muhammad Rizwan</div>
-                                            <p class="text-[9px] text-gray-400 uppercase font-bold tracking-wider mt-1">Authorized Signature | Education Point</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="space-y-6">
@@ -414,6 +190,7 @@
                                     <p class="text-xs text-red-600 font-medium mb-1">Static Daily Closing Parameter</p>
                                     <div class="text-2xl font-black text-brand-red tracking-tight">8:00 PM SHARP</div>
                                     <div id="assignment-countdown" class="text-xs text-gray-500 font-mono mt-1 font-semibold">--:--:-- Left</div>
+                                }
                                 </div>
                             </div>
 
@@ -467,6 +244,7 @@
                                 <label class="text-xs font-bold text-gray-500 uppercase">Date of Birth *</label>
                                 <input type="date" id="prof-dob" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
                             </div>
+                            <!-- FIXED OPTION ENUM COMPLIANCE DROP-DOWN -->
                             <div class="sm:col-span-2 space-y-1">
                                 <label class="text-xs font-bold text-gray-500 uppercase">Education Level *</label>
                                 <select id="prof-education" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
@@ -487,9 +265,8 @@
                 <section id="classroom-portal" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="flex flex-col xl:flex-row gap-6">
                         <div class="flex-1 space-y-4">
-                            <!-- GOOGLE DRIVE IFRAME COMPLIANT RESPONSIVE HEIGHT CONTAINER -->
-                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl relative border-4 border-white w-full shadow-2xl" style="padding-top: 56.25%;">
-                                <iframe id="gdrive-video-player" class="w-full h-full absolute inset-0 bg-neutral-900 block" src="" allow="autoplay; fullscreen" allowfullscreen style="border: none;"></iframe>
+                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl aspect-video relative border-4 border-white">
+                                <iframe id="gdrive-video-player" class="w-full h-full absolute inset-0 bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
                             </div>
                             
                             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
@@ -547,61 +324,12 @@
 
                 <!-- VIEW 5: SUPER ADMIN ADMINISTRATIVE CONSOLE CONTROL NODE -->
                 <section id="admin-console" class="view-layer page-layer hidden-layer space-y-6">
-                    <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
                         <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
                             <h2 class="text-xl font-bold text-red-700">Super Admin Production Console</h2>
                             <span class="px-3 py-1 bg-red-50 text-brand-red text-xs font-bold rounded-full border border-red-100 uppercase tracking-widest animate-pulse">Root Configuration Access</span>
                         </div>
-
-                        <!-- REALTIME ADMIN ANALYSIS & ANALYTICS INTERFACE PANEL -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-4 rounded-xl shadow border border-gray-700">
-                                <div class="flex items-center justify-between">
-                                    <h4 class="text-xs uppercase font-bold tracking-wider text-gray-400">Total Live Study Logging</h4>
-                                    <i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i>
-                                </div>
-                                <h3 class="text-2xl font-black mt-2 font-mono text-emerald-400" id="admin-total-study-time">00:00:00</h3>
-                                <p class="text-[10px] text-gray-400 mt-1">Aggregated real-time calculation vector</p>
-                            </div>
-                            <div class="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-4 rounded-xl shadow border border-gray-700">
-                                <div class="flex items-center justify-between">
-                                    <h4 class="text-xs uppercase font-bold tracking-wider text-gray-400">Active System Strikes Flagged</h4>
-                                    <i data-lucide="shield-alert" class="w-4 h-4 text-red-400"></i>
-                                </div>
-                                <h3 class="text-2xl font-black mt-2 font-mono text-red-400" id="admin-total-strikes">0 Strikes</h3>
-                                <p class="text-[10px] text-gray-400 mt-1">Live active restriction state logs</p>
-                            </div>
-                            <div class="bg-gradient-to-br from-gray-800 to-gray-900 text-white p-4 rounded-xl shadow border border-gray-700">
-                                <div class="flex items-center justify-between">
-                                    <h4 class="text-xs uppercase font-bold tracking-wider text-gray-400">System Verified Attendances</h4>
-                                    <i data-lucide="user-check" class="w-4 h-4 text-blue-400"></i>
-                                </div>
-                                <h3 class="text-2xl font-black mt-2 font-mono text-blue-400" id="admin-total-attendance">0 Logs</h3>
-                                <p class="text-[10px] text-gray-400 mt-1">Real-time attendance checklist</p>
-                            </div>
-                        </div>
-
-                        <!-- COMPLETE STUDENT ENGINE MANAGEMENT ROSTER INTERFACE -->
-                        <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
-                            <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider flex items-center gap-2"><i data-lucide="users" class="w-4 h-4 text-red-600"></i> Active Core Student Management & Attendance</h3>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left border-collapse text-xs">
-                                    <thead>
-                                        <tr class="bg-gray-200 text-gray-700 uppercase tracking-wider font-bold">
-                                            <th class="p-2.5 border border-gray-300">Scholar Profile Data</th>
-                                            <th class="p-2.5 border border-gray-300">Real-time Study Log</th>
-                                            <th class="p-2.5 border border-gray-300">Attendance State</th>
-                                            <th class="p-2.5 border border-gray-300">Strike Management</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="admin-student-roster">
-                                        <!-- Realtime Managed Student Roster Triggers -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-4">
                             <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Publish New Classroom Module Node Target</h3>
                             <form id="admin-lesson-form" onsubmit="adminConsole.createLesson(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="space-y-1">
@@ -684,16 +412,13 @@
             profileData: null,
             lessonsCollection: [],
             progressMatrix: [],
-            activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828",
-            realtimeStudySeconds: 0,
-            strikesCount: 0
+            activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828" 
         };
 
         // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
         document.addEventListener("DOMContentLoaded", async () => {
             if (typeof lucide !== 'undefined') lucide.createIcons();
             runClockEngine();
-            runLiveStudyTimeTracker();
             await evaluateSessionContextState();
         });
 
@@ -736,17 +461,6 @@
                 }
 
                 globalState.profileData = profile;
-                
-                // Initialize Local Mock Real-time Strike and Study Trackers
-                if (!localStorage.getItem(`study_seconds_${uid}`)) {
-                    localStorage.setItem(`study_seconds_${uid}`, "14400");
-                }
-                if (!localStorage.getItem(`strikes_${uid}`)) {
-                    localStorage.setItem(`strikes_${uid}`, "0");
-                }
-                globalState.realtimeStudySeconds = parseInt(localStorage.getItem(`study_seconds_${uid}`));
-                globalState.strikesCount = parseInt(localStorage.getItem(`strikes_${uid}`));
-
                 syncProfileUILayoutRepresentations();
                 populateProfileInputsUIFields();
                 await syncClassroomSyllabusEngine();
@@ -871,7 +585,6 @@
                 }
                 renderClassroomSyllabusTreeLayout();
                 await evaluateAnalyticsAggregatesMetricsContainers();
-                renderAdminStudentRosterLayout();
             } catch(e) { console.error(e); }
         }
 
@@ -930,12 +643,6 @@
                         <div class="p-5 border border-emerald-200 bg-emerald-50/50 rounded-2xl space-y-3">
                             <div class="flex items-center space-x-2 text-emerald-800"><i data-lucide="check-circle" class="w-5 h-5"></i><span class="font-bold text-sm">Syllabus Compliance Criteria Met!</span></div>
                             <p class="text-xs text-gray-600">Congratulations! Today's class has been completed successfully. You have until 8:00 PM to complete and submit today's assignment. After today's learning requirements are completed, the next lesson will unlock according to the course schedule.</p>
-                            
-                            <!-- AUTOMATED REALTIME STRIKE MITIGATION MESSAGE NOTIFICATION -->
-                            <div class="p-2 bg-emerald-600 text-white font-bold rounded-lg text-[11px] uppercase tracking-wide">
-                                Realtime Auto-Strike Safe Check Triggered: Attendance Flag Cleared Natively.
-                            </div>
-
                             <div class="pt-2 flex flex-wrap gap-2">
                                 <a href="https://wa.me/923314220506?text=Assignment%20Submission%20Lesson%20${lesson.lesson_number}" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center space-x-2 shadow"><i data-lucide="message-square" class="w-4 h-4"></i><span>WhatsApp Submit</span></a>
                                 <a href="tel:+923314220506" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-xl flex items-center space-x-2 shadow"><i data-lucide="phone" class="w-4 h-4"></i><span>Call Office</span></a>
@@ -974,20 +681,16 @@
                         is_completed: true,
                         completed_at: new Date().toISOString()
                     });
-                    if(!error) {
-                        // After completing a class, execute secure real-time verification processing checks
-                        alert("Class stream verified! Real-time progress synchronized.");
-                        await syncClassroomSyllabusEngine();
-                    }
+                    if(!error) await syncClassroomSyllabusEngine();
                 } catch(e) { console.error(e); }
             }
         };
 
         async function evaluateAnalyticsAggregatesMetricsContainers() {
             if(!globalState.sessionUser) return;
-            const totalItemsCount = 47; // Enforce strict 47 core structural course threshold bounds
+            const totalItemsCount = globalState.lessonsCollection.length || 47;
             const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
-            const completionRatio = Math.min(100, Math.round((completedCount / totalItemsCount) * 100));
+            const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
 
             if (document.getElementById("dash-course-progress-badge")) document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalItemsCount} Lessons`;
             if (document.getElementById("dash-progress-bar-fill")) document.getElementById("dash-progress-bar-fill").style.width = `${completionRatio}%`;
@@ -996,102 +699,23 @@
             if(enrollment) {
                 if(document.getElementById("stat-current-streak")) document.getElementById("stat-current-streak").textContent = `${enrollment.current_streak} Days`;
                 if(document.getElementById("stat-longest-streak")) document.getElementById("stat-longest-streak").textContent = `${enrollment.longest_streak} Days`;
+                if(document.getElementById("stat-study-hours")) document.getElementById("stat-study-hours").textContent = `${Math.round(enrollment.total_study_seconds / 3600)}h`;
             }
 
             let { data: attList } = await supabaseClientInstance.from('attendance').select('id').eq('student_id', globalState.sessionUser.id);
-            const attendancePct = completedCount > 0 ? Math.round(((attList?.length || 1) / completedCount) * 100) : 100;
-            if (document.getElementById("stat-attendance-rate")) document.getElementById("stat-attendance-rate").textContent = `${Math.min(100, attendancePct)}%`;
+            const attendancePct = completedCount > 0 ? Math.round(((attList?.length || 0) / completedCount) * 100) : 0;
+            if (document.getElementById("stat-attendance-rate")) document.getElementById("stat-attendance-rate").textContent = `${attendancePct || 100}%`;
 
-            // Render Dynamic System Strike Counter Layout View
-            if (document.getElementById("stat-student-strikes")) {
-                document.getElementById("stat-student-strikes").textContent = `${globalState.strikesCount} / 3`;
-            }
-
-            // UNLOCK VERIFIED A4 FLAWLESS CERTIFICATE ONLY AT 47 COMPLETIONS 
-            if(completedCount >= 47) {
+            if(completedCount >= totalItemsCount && totalItemsCount > 0) {
                 const certWrapper = document.getElementById("certificate-delivery-wrapper");
                 if (certWrapper) {
                     certWrapper.innerHTML = `
-                        <button onclick="document.getElementById('certificate-viewer-section').classList.remove('hidden'); window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
-                            View Official Verified Certificate
-                        </button>
+                        <a href="https://wa.me/923314220506?text=Verify%20My%20LMS%20Computer%20Course%20Certificate%20ID:%20${globalState.sessionUser.id.substring(0,8).toUpperCase()}" target="_blank" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
+                            Download Official Verified A4 Certificate
+                        </a>
                     `;
                 }
-                
-                // Populate structural elements in certificate
-                if(document.getElementById("cert-student-name")) document.getElementById("cert-student-name").textContent = globalState.profileData.full_name.toUpperCase();
-                if(document.getElementById("cert-display-id")) document.getElementById("cert-display-id").textContent = globalState.profileData.id.substring(0,12).toUpperCase();
             }
-        }
-
-        // --- REALTIME ADMINISTRATIVE FULL FEATURE CONTROLLER ENGINE LAYER ---
-        function renderAdminStudentRosterLayout() {
-            const roster = document.getElementById("admin-student-roster");
-            const totalStudyText = document.getElementById("admin-total-study-time");
-            const totalStrikesText = document.getElementById("admin-total-strikes");
-            const totalAttendanceText = document.getElementById("admin-total-attendance");
-            if (!roster) return;
-
-            // Generate realistic dynamic metrics from state data variables
-            const mockName = globalState.profileData ? globalState.profileData.full_name : "Premium Scholar";
-            const mockEmail = globalState.profileData ? globalState.profileData.email : "student@domain.com";
-            
-            // Format time accurately
-            const hours = String(Math.floor(globalState.realtimeStudySeconds / 3600)).padStart(2, '0');
-            const minutes = String(Math.floor((globalState.realtimeStudySeconds % 3600) / 60)).padStart(2, '0');
-            const seconds = String(globalState.realtimeStudySeconds % 60).padStart(2, '0');
-            const timeString = `${hours}:${minutes}:${seconds}`;
-
-            if(totalStudyText) totalStudyText.textContent = timeString;
-            if(totalStrikesText) totalStrikesText.textContent = `${globalState.strikesCount} Active`;
-            if(totalAttendanceText) totalAttendanceText.textContent = `${globalState.progressMatrix.filter(p=>p.is_completed).length + 1} Present`;
-
-            roster.innerHTML = `
-                <tr class="border-b border-gray-200 bg-white hover:bg-gray-50 font-medium">
-                    <td class="p-3">
-                        <div class="font-bold text-gray-900">${mockName}</div>
-                        <div class="text-[10px] text-gray-400 font-mono">${mockEmail}</div>
-                    </td>
-                    <td class="p-3 font-mono font-bold text-emerald-600">${timeString}</td>
-                    <td class="p-3">
-                        <span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full font-bold text-[10px]">Verified Present</span>
-                    </td>
-                    <td class="p-3 flex items-center space-x-2">
-                        <button onclick="adminModifyStrikes(1)" class="px-2 py-1 bg-red-600 text-white rounded font-bold text-[10px] hover:bg-red-700">+ Issue Strike</button>
-                        <button onclick="adminModifyStrikes(-1)" class="px-2 py-1 bg-gray-600 text-white rounded font-bold text-[10px] hover:bg-gray-700">Clear</button>
-                    </td>
-                </tr>
-            `;
-        }
-
-        function adminModifyStrikes(amount) {
-            if(!globalState.sessionUser) return;
-            let current = parseInt(localStorage.getItem(`strikes_${globalState.sessionUser.id}`)) || 0;
-            current = Math.max(0, current + amount);
-            localStorage.setItem(`strikes_${globalState.sessionUser.id}`, current.toString());
-            globalState.strikesCount = current;
-            alert(`Realtime Administrative Control: Strike profile metrics shifted to ${current}.`);
-            syncClassroomSyllabusEngine();
-        }
-
-        function runLiveStudyTimeTracker() {
-            setInterval(() => {
-                if(globalState.sessionUser && document.getElementById("classroom-portal").classList.contains("hidden-layer") === false) {
-                    globalState.realtimeStudySeconds += 1;
-                    localStorage.setItem(`study_seconds_${globalState.sessionUser.id}`, globalState.realtimeStudySeconds.toString());
-                    
-                    // Direct dynamic UI interface inject mappings
-                    const h = String(Math.floor(globalState.realtimeStudySeconds / 3600)).padStart(2, '0');
-                    const m = String(Math.floor((globalState.realtimeStudySeconds % 3600) / 60)).padStart(2, '0');
-                    const s = String(Math.floor(globalState.realtimeStudySeconds % 60)).padStart(2, '0');
-                    
-                    const timeContainer = document.getElementById("stat-study-hours");
-                    if (timeContainer) timeContainer.textContent = `${h}:${m}:${s}`;
-                    
-                    const adminTotalTime = document.getElementById("admin-total-study-time");
-                    if (adminTotalTime) adminTotalTime.textContent = `${h}:${m}:${s}`;
-                }
-            }, 1000);
         }
 
         // --- FIXED SYNTAX REALTIME ENGINE ---
