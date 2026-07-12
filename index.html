@@ -681,18 +681,38 @@
 
         // --- BUSINESS LOGIC & CLASSROOM ---
         async function syncClassroomSyllabusEngine() {
-            try {
-                let { data: lessons } = await supabaseClientInstance.from('lessons').select('*').order('lesson_number', { ascending: true });
-                globalState.lessonsCollection = lessons || [];
-
-                if(globalState.sessionUser) {
-                    let { data: progress } = await supabaseClientInstance.from('lesson_progress').select('*').eq('student_id', globalState.sessionUser.id);
-                    globalState.progressMatrix = progress || [];
-                }
-                renderClassroomSyllabusTreeLayout();
-                
-            } catch(e) { console.error(e); }
+    try {
+        if (!supabaseClientInstance) {
+            console.error("Supabase Client is not initialized!");
+            return;
         }
+
+        let { data: lessons, error: lessonError } = await supabaseClientInstance
+            .from('lessons')
+            .select('*')
+            .order('lesson_number', { ascending: true });
+
+        if (lessonError) throw lessonError; // یہاں پتہ چلے گا کہ ٹیبل کا نام غلط ہے یا کالم کا
+
+        globalState.lessonsCollection = lessons || [];
+
+        if(globalState.sessionUser) {
+            let { data: progress, error: progError } = await supabaseClientInstance
+                .from('lesson_progress')
+                .select('*')
+                .eq('student_id', globalState.sessionUser.id);
+            
+            if (progError) throw progError;
+            globalState.progressMatrix = progress || [];
+        }
+        
+        renderClassroomSyllabusTreeLayout();
+        
+    } catch(e) { 
+        console.error("Critical System Error:", e); // یہ کنسول میں اصلی غلطی دکھائے گا
+    }
+}
+
 
         function renderClassroomSyllabusTreeLayout() {
             const container = document.getElementById("classroom-lessons-stack");
