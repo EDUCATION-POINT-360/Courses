@@ -25,7 +25,17 @@
     </script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <style>
+        /* SECURITY CLASSES */
+        .secure-shield {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
         .glass-panel {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
@@ -37,9 +47,12 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #DC2626; border-radius: 4px; }
         .page-layer { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .hidden-layer { display: none !important; opacity: 0; transform: translateY(10px); }
+        
+        /* Certificate Print Font */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Great+Vibes&display=swap');
     </style>
 </head>
-<body class="bg-gray-50 text-brand-darkText custom-scrollbar font-sans antialiased">
+<body class="bg-gray-50 text-brand-darkText custom-scrollbar font-sans antialiased secure-shield" oncontextmenu="return false;">
 
     <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
         <div class="w-16 h-16 border-4 border-brand-red border-t-transparent rounded-full animate-spin"></div>
@@ -58,7 +71,7 @@
                 <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-500"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
             
-            <div class="p-4 mx-4 my-3 bg-red-50 rounded-xl flex items-center space-x-3 relative group">
+            <div class="p-4 mx-4 my-3 bg-red-50 rounded-xl flex items-center space-x-3">
                 <img id="sb-avatar" src="https://ui-avatars.com/api/?name=Student&background=DC2626&color=fff" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-brand-red object-cover">
                 <div class="overflow-hidden">
                     <h4 id="sb-username" class="font-bold text-sm text-gray-800 truncate">Loading...</h4>
@@ -74,7 +87,10 @@
                     <i data-lucide="book-open" class="w-5 h-5"></i><span>Daily Classroom</span>
                 </button>
                 <button onclick="switchView('profile-completion-view')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
-                    <i data-lucide="user-cog" class="w-5 h-5"></i><span>My Profile</span>
+                    <i data-lucide="user-cog" class="w-5 h-5"></i><span>My Profile & History</span>
+                </button>
+                <button onclick="switchView('reports-center')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
+                    <i data-lucide="file-bar-chart" class="w-5 h-5"></i><span>Reports Engine</span>
                 </button>
                 <button id="admin-nav-item" onclick="switchView('admin-console')" class="nav-link w-full hidden flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-red-700 bg-red-50 hover:bg-red-100 transition-all border border-red-200">
                     <i data-lucide="shield-alert" class="w-5 h-5"></i><span>Super Admin Panel</span>
@@ -95,7 +111,7 @@
                 <div class="w-6 h-6"></div>
             </header>
 
-            <div class="p-4 md:p-8 flex-1">
+            <div class="p-4 md:p-8 flex-1 overflow-y-auto">
                 <section id="student-dashboard" class="view-layer page-layer space-y-6">
                     <div class="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
                         <div class="relative z-10 space-y-2 max-w-xl">
@@ -131,8 +147,8 @@
                         <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
                             <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i data-lucide="clock" class="w-6 h-6"></i></div>
                             <div>
-                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Study Time</p>
-                                <h3 class="text-xl font-black text-gray-800" id="stat-study-hours">0h</h3>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Active Time (Today)</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-study-hours">0 mins</h3>
                             </div>
                         </div>
                     </div>
@@ -195,22 +211,25 @@
                 </section>
 
                 <section id="profile-completion-view" class="view-layer page-layer hidden-layer space-y-6">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
                         <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                             <h2 class="text-xl font-bold text-gray-800 border-b border-gray-100 pb-3">Complete System Identity Profile</h2>
-                            
-                            <div class="pt-4 pb-2 flex items-center space-x-4">
-                                <img id="prof-avatar-preview" src="https://ui-avatars.com/api/?name=Student&background=DC2626&color=fff" class="w-16 h-16 rounded-full border-2 border-gray-200 object-cover">
-                                <div>
-                                    <label class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl cursor-pointer transition-all">
-                                        Upload Profile Picture
-                                        <input type="file" id="prof-avatar-upload" class="hidden" accept="image/*" onchange="handleAvatarUpload(event)">
-                                    </label>
-                                    <p class="text-[10px] text-gray-400 mt-1">Real-time DB synchronization.</p>
-                                </div>
-                            </div>
-
                             <form id="profile-update-form" onsubmit="saveUserProfileDataState(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                                <div class="sm:col-span-2 flex flex-col sm:flex-row items-center gap-4 mb-2">
+                                    <div class="relative group">
+                                        <img id="prof-avatar-preview" src="https://ui-avatars.com/api/?name=Student&background=DC2626&color=fff" class="w-20 h-20 rounded-full border-4 border-gray-100 object-cover shadow-sm">
+                                        <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                            <i data-lucide="camera" class="text-white w-6 h-6"></i>
+                                            <input type="file" id="prof-avatar-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleAvatarSelect(event)">
+                                        </div>
+                                    </div>
+                                    <div class="text-center sm:text-left">
+                                        <p class="text-sm font-bold text-gray-800">Profile Picture</p>
+                                        <p class="text-xs text-gray-500">Click image to upload a real photo</p>
+                                    </div>
+                                </div>
+
                                 <div class="space-y-1">
                                     <label class="text-xs font-bold text-gray-500 uppercase">Full Name *</label>
                                     <input type="text" id="prof-fullname" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
@@ -253,38 +272,40 @@
                                     </select>
                                 </div>
                                 <div class="sm:col-span-2 pt-2">
-                                    <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-hover text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow transition-all">Save & Update Profile</button>
+                                    <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-hover text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow transition-all">Save Profile Data Securely</button>
                                 </div>
                             </form>
                         </div>
 
-                        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col h-full">
-                            <h3 class="text-lg font-bold text-gray-800 border-b border-gray-100 pb-3 flex items-center space-x-2">
-                                <i data-lucide="history" class="text-brand-red w-5 h-5"></i><span>Session History</span>
-                            </h3>
-                            <div class="pt-4 flex-1 overflow-y-auto custom-scrollbar space-y-3" id="profile-activity-list">
-                                <p class="text-xs text-gray-400 text-center py-4">Fetching active learning logs...</p>
-                            </div>
+                        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-[calc(100vh-140px)] flex flex-col">
+                            <h2 class="text-lg font-bold text-gray-800 border-b border-gray-100 pb-3 flex items-center space-x-2">
+                                <i data-lucide="history" class="text-brand-red w-5 h-5"></i>
+                                <span>Activity History</span>
+                            </h2>
+                            <p class="text-xs text-gray-500 mt-2">Your daily active time spent learning on Education Point.</p>
+                            <div id="activity-history-list" class="flex-1 overflow-y-auto custom-scrollbar mt-4 space-y-3">
+                                </div>
                         </div>
+
                     </div>
                 </section>
 
                 <section id="classroom-portal" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="flex flex-col xl:flex-row gap-6">
                         <div class="flex-1 space-y-4">
-                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl aspect-video relative border-4 border-white flex items-center justify-center">
-                                <iframe id="gdrive-video-player" class="w-full h-full absolute inset-0 bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen frameborder="0" width="100%" height="100%"></iframe>
+                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl w-full relative border-4 border-white pb-[56.25%]"> <iframe id="gdrive-video-player" class="absolute top-0 left-0 w-full h-full bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
                             </div>
                             
-                            <a id="external-gdrive-btn" href="#" target="_blank" class="w-full py-3 bg-red-50 hover:bg-red-100 text-brand-red font-bold text-sm rounded-xl border border-red-200 flex items-center justify-center space-x-2 transition-all hidden">
-                                <i data-lucide="external-link" class="w-5 h-5"></i>
-                                <span>Watch Full Video on Google Drive</span>
-                            </a>
-                            
-                            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                                    <h2 id="player-lesson-title" class="text-xl font-bold tracking-tight text-gray-900">Select Scheduled Module Node</h2>
-                                    <span id="player-duration-badge" class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full whitespace-nowrap">Est. Duration: -- mins</span>
+                            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+                                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                                    <div class="space-y-1">
+                                        <h2 id="player-lesson-title" class="text-xl font-bold tracking-tight text-gray-900">Select Scheduled Module Node</h2>
+                                        <span id="player-duration-badge" class="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full whitespace-nowrap">Est. Duration: -- mins</span>
+                                    </div>
+                                    <a id="drive-fullscreen-btn" href="#" target="_blank" class="shrink-0 hidden px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow flex items-center space-x-2 transition-all">
+                                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                                        <span>Watch Full Video in Drive</span>
+                                    </a>
                                 </div>
                                 <p id="player-lesson-desc" class="text-sm text-gray-500 leading-relaxed">Launch an engineering stream sequence parameter from the right matrix map vector tree.</p>
                                 
@@ -301,10 +322,10 @@
 
                             <div id="assignment-gate-container" class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
                                 <h3 class="text-base font-bold text-gray-800 flex items-center space-x-2">
-                                    <i data-lucide="file-check" class="text-brand-red w-5 h-5"></i><span>Daily Secure Assignment Gateway Channels</span>
+                                    <i data-lucide="file-check" class="text-brand-red w-5 h-5"></i><span>Daily Secure Assignment Gateway</span>
                                 </h3>
                                 <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
-                                    <p><strong>Assignment Interface Shielded:</strong> Stream content up to 90% completion parameters to unlock WhatsApp vectors. You have until <strong>10:00 PM</strong> to complete and submit your assignment.</p>
+                                    اپ کے پاس رات 10:00 بجے تک اسائنمنٹ جمع کروانے کا وقت ہے۔ ویڈیو مکمل دیکھیں تاکہ اسائنمنٹ سبمیشن کا لنک اوپن ہو سکے۔ (Watch video to 90%+ to unlock submission).
                                 </div>
                             </div>
                         </div>
@@ -319,51 +340,72 @@
                     </div>
                 </section>
 
+                <section id="reports-center" class="view-layer page-layer hidden-layer space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                        <h2 class="text-xl font-bold tracking-tight text-gray-900 mb-1">Academic Audit Reporting Station</h2>
+                        <p class="text-xs text-gray-400">Compile database operational schemas mapped straight to local processing array.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                            <div class="border border-gray-100 rounded-xl p-4 text-center space-y-2">
+                                <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Lesson Progress Log Map</h4>
+                                <button onclick="reportsEngine.exportData('CSV')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all">Download Matrix Sheet</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <section id="admin-console" class="view-layer page-layer hidden-layer space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 rounded-2xl border border-emerald-200 shadow-sm">
-                            <h3 class="text-lg font-bold text-gray-800 mb-2 flex items-center space-x-2">
-                                <i data-lucide="activity" class="text-emerald-600 w-5 h-5"></i><span>Live Active Students</span>
-                            </h3>
-                            <p class="text-xs text-gray-500 mb-4">Real-time platform presence tracking.</p>
-                            <div class="flex items-center space-x-4">
-                                <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
-                                    <h2 class="text-4xl font-black text-emerald-700" id="admin-online-count">0</h2>
+                    <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
+                        <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
+                            <h2 class="text-xl font-bold text-red-700">Super Admin Production Console</h2>
+                            <span class="px-3 py-1 bg-red-50 text-brand-red text-xs font-bold rounded-full border border-red-100 uppercase tracking-widest animate-pulse">Root Configuration Access</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs text-gray-500 font-bold uppercase">Total Registered Students</p>
+                                    <h3 class="text-2xl font-black text-gray-800" id="admin-total-students">Loading...</h3>
                                 </div>
-                                <div class="text-sm font-semibold text-gray-600">Students Currently Online</div>
+                                <i data-lucide="users" class="w-8 h-8 text-blue-500"></i>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-xl border border-emerald-200 flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs text-emerald-600 font-bold uppercase">Live Active Students</p>
+                                    <h3 class="text-2xl font-black text-emerald-700" id="admin-active-students">Loading...</h3>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-3 h-3 bg-emerald-500 rounded-full animate-ping"></span>
+                                    <i data-lucide="activity" class="w-8 h-8 text-emerald-500"></i>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
-                            <div class="border-b border-gray-100 pb-3 flex items-center justify-between mb-4">
-                                <h2 class="text-xl font-bold text-red-700">Super Admin Console</h2>
-                                <span class="px-3 py-1 bg-red-50 text-brand-red text-xs font-bold rounded-full border border-red-100 uppercase tracking-widest animate-pulse">Root Access</span>
-                            </div>
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-6">
                             <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Publish New Classroom Module Node Target</h3>
-                            <form id="admin-lesson-form" onsubmit="adminConsole.createLesson(event)" class="grid grid-cols-1 gap-4">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Number *</label>
-                                        <input type="number" id="adm-les-num" placeholder="e.g. 1" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold" required>
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-gray-500 uppercase">Estimated Duration (Secs) *</label>
-                                        <input type="number" id="adm-les-duration" placeholder="e.g. 1800" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold" required>
-                                    </div>
+                            <form id="admin-lesson-form" onsubmit="adminConsole.createLesson(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Sequential Index Number *</label>
+                                    <input type="number" id="adm-les-num" placeholder="e.g. 1, 2, 45" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
                                 </div>
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Structural Title *</label>
-                                    <input type="text" id="adm-les-title" placeholder="Core Architecture" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold" required>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Interface Structural Title *</label>
+                                    <input type="text" id="adm-les-title" placeholder="Core System Architecture Configurations" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
                                 </div>
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Google Drive Video ID *</label>
-                                    <input type="text" id="adm-les-gdrive" placeholder="e.g. 1A_xXBt9vQ..." class="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-mono" required>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Google Drive Video ID Only *</label>
+                                    <input type="text" id="adm-les-gdrive" placeholder="e.g. 1A_xXBt9vQ... (Extract the ID from link)" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-mono" required>
                                 </div>
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Syllabus Notes</label>
-                                    <textarea id="adm-les-desc" placeholder="Annotate parameters..." class="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-xs" rows="2"></textarea>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Estimated Running Runtime Duration Metrics (Seconds) *</label>
+                                    <input type="number" id="adm-les-duration" placeholder="e.g. 1800 for 30 minute calculations" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
                                 </div>
-                                <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Publish Component Node Asset</button>
+                                <div class="sm:col-span-2 space-y-1">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Syllabus Target Learning Description Notes Context</label>
+                                    <textarea id="adm-les-desc" placeholder="Annotate explicit learning target framework parameters cleanly inside core structural layers..." class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs" rows="3"></textarea>
+                                </div>
+                                <div class="sm:col-span-2 pt-2">
+                                    <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Publish Component Node Asset</button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -377,7 +419,7 @@
             <div class="text-center space-y-2">
                 <div class="inline-flex p-3 bg-red-50 text-brand-red rounded-2xl border border-red-100"><i data-lucide="shield-check" class="w-8 h-8"></i></div>
                 <h2 class="text-2xl font-black tracking-tight text-gray-900">Education Point LMS</h2>
-                <p class="text-xs text-gray-400">Authenticated Enterprise Identity Gateway Terminal Node</p>
+                <p class="text-xs text-gray-400">Authenticated Enterprise Identity Gateway Terminal</p>
             </div>
             <form id="auth-form" onsubmit="appAuth.handlePrimarySubmission(event)" class="space-y-4">
                 <div class="space-y-1">
@@ -392,13 +434,56 @@
                     Authenticate Identity Stream Block
                 </button>
             </form>
-            <div class="text-center">
-                <p class="text-[10px] text-gray-400 font-medium">Auto-Fallback Enforced: Inputting unregistered email records automatically triggers secure instant signup pipelines.</p>
+        </div>
+    </div>
+
+    <div id="certificate-render-zone" class="absolute top-[-9999px] left-[-9999px]">
+        <div id="certificate-template" class="w-[1000px] h-[700px] bg-white border-[16px] border-[#1e3a8a] p-12 relative flex flex-col items-center justify-center text-center font-serif shadow-2xl" style="background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');">
+            <div class="absolute top-4 left-4 w-16 h-16 border-t-4 border-l-4 border-brand-red"></div>
+            <div class="absolute top-4 right-4 w-16 h-16 border-t-4 border-r-4 border-brand-red"></div>
+            <div class="absolute bottom-4 left-4 w-16 h-16 border-b-4 border-l-4 border-brand-red"></div>
+            <div class="absolute bottom-4 right-4 w-16 h-16 border-b-4 border-r-4 border-brand-red"></div>
+            
+            <h1 class="text-[#1e3a8a] font-bold text-5xl mb-2 tracking-widest uppercase" style="font-family: 'Playfair Display', serif;">Education Point</h1>
+            <p class="text-brand-red text-sm font-bold tracking-widest uppercase mb-8">Certificate of Completion</p>
+            
+            <p class="text-gray-600 italic text-xl mb-6">This is to proudly certify that</p>
+            
+            <h2 id="cert-student-name" class="text-5xl font-bold text-gray-900 border-b-2 border-gray-300 pb-2 px-12 mb-6" style="font-family: 'Great Vibes', cursive;">Student Name</h2>
+            
+            <p class="text-gray-700 text-lg max-w-2xl leading-relaxed mb-12">
+                has successfully completed all 47 modules of the <br>
+                <strong class="text-[#1e3a8a]">Professional Computer Course</strong><br>
+                demonstrating exceptional dedication, skill, and mastery in web architecture, office automation, and digital enterprise frameworks.
+            </p>
+            
+            <div class="w-full flex justify-between items-end px-16 mt-auto">
+                <div class="text-center">
+                    <p id="cert-date" class="font-bold text-lg text-gray-800 border-b border-gray-400 pb-1 w-40 mx-auto">Date</p>
+                    <p class="text-xs text-gray-500 uppercase tracking-widest mt-2">Date of Issue</p>
+                </div>
+                
+                <div class="text-center relative">
+                    <p class="text-4xl text-[#1e3a8a] -rotate-3 mb-1" style="font-family: 'Great Vibes', cursive;">Muhammad Rizwan</p>
+                    <p class="font-bold text-lg text-gray-800 border-b border-gray-400 pb-1 w-64 mx-auto"></p>
+                    <p class="text-xs text-gray-500 uppercase tracking-widest mt-2">Muhammad Rizwan<br>Founder, Education Point</p>
+                </div>
+            </div>
+            
+            <div class="absolute bottom-12 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center border-4 border-white shadow-xl">
+                <span class="text-white font-bold text-xs text-center uppercase tracking-tighter">Official<br>Verified<br>Seal</span>
             </div>
         </div>
     </div>
 
     <script>
+        // --- SECURITY ANTI-COPY SCRIPT ---
+        document.addEventListener('keydown', function(e) {
+            // Prevent Ctrl+C, Ctrl+V, Ctrl+U, Ctrl+S, Ctrl+P, F12
+            if (e.ctrlKey && ['c', 'v', 'u', 's', 'p'].includes(e.key.toLowerCase())) { e.preventDefault(); }
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) { e.preventDefault(); }
+        });
+
         // --- 1. CONFIGURATION SYSTEM ENGINES STACK MAP ---
         const SUPABASE_URL = "https://sulgxyktyvngazgodvxf.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_WXhdCUvVr1TNQhv9_24MBQ_0wdXy-VB";
@@ -407,20 +492,15 @@
         try {
             if (typeof supabase !== 'undefined' && supabase.createClient) {
                 supabaseClientInstance = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            } else {
-                console.error("Supabase Engine unreachable via global CDN distribution vectors.");
             }
-        } catch(err) {
-            console.error("Critical Client Init Interruption:", err);
-        }
+        } catch(err) { console.error("Client Init Interruption:", err); }
 
         let globalState = {
             sessionUser: null,
             profileData: null,
             lessonsCollection: [],
             progressMatrix: [],
-            activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828",
-            sessionStartTime: Date.now()
+            activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828" 
         };
 
         // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
@@ -428,26 +508,20 @@
             if (typeof lucide !== 'undefined') lucide.createIcons();
             runClockEngine();
             await evaluateSessionContextState();
+            startRealTimeActivityTracker();
         });
 
         async function evaluateSessionContextState() {
             try {
-                if (!supabaseClientInstance) throw new Error("Database interface drivers failed deployment mappings.");
-
+                if (!supabaseClientInstance) return;
                 const { data: { session }, error } = await supabaseClientInstance.auth.getSession();
-                if (error) throw error;
-
                 if (session) {
                     globalState.sessionUser = session.user;
                     await pullProfileContextAndInitialize(session.user.id);
-                    initializePresenceTracking();
-                    fetchActivityHistory();
-                    startSessionTimer();
                 } else {
                     displayScreenLayer("auth-shield-container");
                 }
             } catch (err) {
-                console.error("Critical safe-boot fallback activated:", err);
                 displayScreenLayer("auth-shield-container");
             } finally {
                 const loader = document.getElementById("global-loader");
@@ -458,29 +532,26 @@
         async function pullProfileContextAndInitialize(uid) {
             try {
                 let { data: profile, error } = await supabaseClientInstance.from('profiles').select('*').eq('id', uid).maybeSingle();
-                if (error) throw error;
-
                 if (!profile) {
-                    const { data: seededProfile, error: insErr } = await supabaseClientInstance.from('profiles').insert([{
-                        id: uid, full_name: "Premium Scholar Student", father_name: "Academic Mentor Root",
-                        mobile_number: "0300" + Math.floor(1000000 + Math.random() * 9000000), email: globalState.sessionUser.email,
-                        city: "Lahore", complete_address: "Education Point Campus Block-A",
-                        gender: "Male", date_of_birth: "2000-01-01", education_level: "Intermediate", role: "student"
+                    const { data: seededProfile } = await supabaseClientInstance.from('profiles').insert([{
+                        id: uid, full_name: "Premium Scholar Student", email: globalState.sessionUser.email, role: "student"
                     }]).select().single();
-                    if (insErr) throw insErr;
                     profile = seededProfile;
                 }
 
                 globalState.profileData = profile;
                 syncProfileUILayoutRepresentations();
                 populateProfileInputsUIFields();
+                await fetchActivityHistory();
                 await syncClassroomSyllabusEngine();
-                establishRealtimeSubscriptions();
+                
+                if(profile.role === 'super_admin') {
+                    fetchAdminLiveStats();
+                }
+
                 displayScreenLayer("app-container");
                 switchView("student-dashboard");
             } catch(err) {
-                console.error(err);
-                alert("Profile Core Transaction Aborted: " + err.message);
                 displayScreenLayer("auth-shield-container");
             }
         }
@@ -489,15 +560,14 @@
             if (!globalState.profileData) return;
             const fields = ["prof-fullname", "prof-fathername", "prof-mobile", "prof-city", "prof-address", "prof-gender", "prof-dob", "prof-education"];
             const keys = ["full_name", "father_name", "mobile_number", "city", "complete_address", "gender", "date_of_birth", "education_level"];
-            
             fields.forEach((fid, idx) => {
                 const el = document.getElementById(fid);
-                if(el) el.value = globalState.profileData[keys[idx]] || el.value || "";
+                if(el) el.value = globalState.profileData[keys[idx]] || "";
             });
             
             if(globalState.profileData.avatar_url) {
-                document.getElementById('sb-avatar').src = globalState.profileData.avatar_url;
                 document.getElementById('prof-avatar-preview').src = globalState.profileData.avatar_url;
+                document.getElementById('sb-avatar').src = globalState.profileData.avatar_url;
             }
         }
 
@@ -517,35 +587,33 @@
                 }).eq('id', globalState.sessionUser.id);
 
                 if (error) throw error;
-                alert("Profile data saved and synchronized successfully!");
+                alert("پروفائل کامیابی سے سیو ہو گئی ہے!");
                 await pullProfileContextAndInitialize(globalState.sessionUser.id);
-            } catch(err) {
-                alert("Write Operations Pipeline Aborted: " + err.message);
-            }
+            } catch(err) { alert("Error: " + err.message); }
         }
 
         // --- AVATAR UPLOAD LOGIC ---
-        async function handleAvatarUpload(event) {
-            const file = event.target.files[0];
+        async function handleAvatarSelect(e) {
+            const file = e.target.files[0];
             if(!file || !globalState.sessionUser) return;
+            
             try {
                 const fileExt = file.name.split('.').pop();
-                const filePath = `${globalState.sessionUser.id}-${Math.random()}.${fileExt}`;
+                const fileName = `${globalState.sessionUser.id}-${Math.random()}.${fileExt}`;
+                const filePath = `avatars/${fileName}`;
                 
+                // Note: Needs 'avatars' bucket created in Supabase
                 let { error: uploadError } = await supabaseClientInstance.storage.from('avatars').upload(filePath, file);
-                if(uploadError) throw uploadError;
-                
+                if (uploadError) throw uploadError;
+
                 const { data } = supabaseClientInstance.storage.from('avatars').getPublicUrl(filePath);
                 
-                const { error: updateError } = await supabaseClientInstance.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', globalState.sessionUser.id);
-                if(updateError) throw updateError;
-                
-                document.getElementById('sb-avatar').src = data.publicUrl;
+                await supabaseClientInstance.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', globalState.sessionUser.id);
                 document.getElementById('prof-avatar-preview').src = data.publicUrl;
-                alert("Profile picture updated!");
-            } catch (err) {
-                console.error(err);
-                alert("Error uploading image. Ensure 'avatars' storage bucket exists and policies allow inserts.");
+                document.getElementById('sb-avatar').src = data.publicUrl;
+                alert("تصویر اپڈیٹ ہو گئی!");
+            } catch (error) {
+                console.error("Avatar error (Make sure 'avatars' storage bucket exists):", error);
             }
         }
 
@@ -586,39 +654,33 @@
             if(globalState.profileData.role === 'super_admin' && adminNav) adminNav.classList.remove("hidden");
         }
 
-        // --- 3. AUTH SECURITY TRANSACTION PIPELINES ---
+        // --- AUTH ---
         const appAuth = {
             handlePrimarySubmission: async (e) => {
                 e.preventDefault();
                 const email = document.getElementById("auth-email").value.trim();
                 const password = document.getElementById("auth-password").value;
-                
                 try {
                     const { data, error } = await supabaseClientInstance.auth.signInWithPassword({ email, password });
                     if (error) {
                         const { data: upData, error: upErr } = await supabaseClientInstance.auth.signUp({ email, password });
-                        if (upErr) throw upErr;
-                        if (upData) { alert("Secure registration array mapped! Re-verify credentials to launch terminal stack."); location.reload(); }
+                        if (upData) { alert("اکاؤنٹ بن گیا ہے! اب دوبارہ لاگ ان کریں۔"); location.reload(); }
                     } else if(data.user) {
                         globalState.sessionUser = data.user;
                         await pullProfileContextAndInitialize(data.user.id);
                     }
-                } catch(err) {
-                    alert("Security Block Access Refused: " + err.message);
-                }
+                } catch(err) { alert(err.message); }
             },
             logout: async () => {
-                await saveSessionTime();
                 await supabaseClientInstance.auth.signOut();
                 location.reload();
             }
         };
 
-        // --- 4. BUSINESS CORE LOGIC MATRIX PARSING SYLLABUS MECHANICS ---
+        // --- BUSINESS LOGIC & CLASSROOM ---
         async function syncClassroomSyllabusEngine() {
             try {
-                let { data: lessons, error } = await supabaseClientInstance.from('lessons').select('*').order('lesson_number', { ascending: true });
-                if (error) throw error;
+                let { data: lessons } = await supabaseClientInstance.from('lessons').select('*').order('lesson_number', { ascending: true });
                 globalState.lessonsCollection = lessons || [];
 
                 if(globalState.sessionUser) {
@@ -636,7 +698,7 @@
             container.innerHTML = "";
 
             if(globalState.lessonsCollection.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-8">No learning modules published yet.</p>`;
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-8">کوئی لیسن ابھی تک اپلوڈ نہیں ہوا۔</p>`;
                 return;
             }
 
@@ -672,14 +734,15 @@
             document.getElementById("player-lesson-desc").textContent = lesson.description || "";
             document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
             
+            // Setup Full Screen Drive Link
+            const driveBtn = document.getElementById("drive-fullscreen-btn");
+            if(driveBtn) {
+                driveBtn.classList.remove("hidden");
+                driveBtn.href = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/view`;
+            }
+
             const videoFrame = document.getElementById("gdrive-video-player");
             if (videoFrame) videoFrame.src = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/preview`;
-            
-            const fullScreenBtn = document.getElementById("external-gdrive-btn");
-            if (fullScreenBtn) {
-                fullScreenBtn.href = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/view`;
-                fullScreenBtn.classList.remove("hidden");
-            }
 
             const percentage = logContainer ? logContainer.watch_percentage : 0;
             updateWatchProgressBarUIState(percentage);
@@ -690,17 +753,16 @@
                     gateContainer.innerHTML = `
                         <div class="p-5 border border-emerald-200 bg-emerald-50/50 rounded-2xl space-y-3">
                             <div class="flex items-center space-x-2 text-emerald-800"><i data-lucide="check-circle" class="w-5 h-5"></i><span class="font-bold text-sm">Syllabus Compliance Criteria Met!</span></div>
-                            <p class="text-xs text-gray-600">Congratulations! Today's class has been completed successfully. You have until <strong>10:00 PM</strong> to complete and submit today's assignment. After today's learning requirements are completed, the next lesson will unlock according to the course schedule.</p>
+                            <p class="text-xs text-gray-600">آپ کا آج کا سبق مکمل ہو گیا ہے۔ اپنا اسائنمنٹ رات 10:00 بجے سے پہلے جمع کروائیں۔</p>
                             <div class="pt-2 flex flex-wrap gap-2">
                                 <a href="https://wa.me/923314220506?text=Assignment%20Submission%20Lesson%20${lesson.lesson_number}" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center space-x-2 shadow"><i data-lucide="message-square" class="w-4 h-4"></i><span>WhatsApp Submit</span></a>
-                                <a href="tel:+923314220506" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs rounded-xl flex items-center space-x-2 shadow"><i data-lucide="phone" class="w-4 h-4"></i><span>Call Office</span></a>
                             </div>
                         </div>
                     `;
                 } else {
                     gateContainer.innerHTML = `
                         <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 space-y-2">
-                            <p><strong>Assignment Interface Shielded:</strong> Stream content up to 90% completion parameters to unlock WhatsApp vectors. You have until <strong>10:00 PM</strong> to complete and submit your assignment.</p>
+                            <p><strong>اسائنمنٹ لاک ہے:</strong> اپ کے پاس رات 10:00 بجے تک کا وقت ہے۔ ویڈیو 90% دیکھیں تاکہ اسائنمنٹ سبمیشن کھل سکے۔</p>
                         </div>
                     `;
                 }
@@ -719,213 +781,134 @@
 
         async function evaluateAnalyticsAggregatesMetricsContainers() {
             if(!globalState.sessionUser) return;
-            const totalItemsCount = globalState.lessonsCollection.length > 0 ? globalState.lessonsCollection.length : 47;
+            const totalItemsCount = 47; // Fixed to 47 for this course as requested
             const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
-            const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
+            const completionRatio = Math.round((completedCount / totalItemsCount) * 100);
 
             if (document.getElementById("dash-course-progress-badge")) document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalItemsCount} Lessons`;
             if (document.getElementById("dash-progress-bar-fill")) document.getElementById("dash-progress-bar-fill").style.width = `${completionRatio}%`;
 
-            let { data: enrollment } = await supabaseClientInstance.from('enrollments').select('*').eq('student_id', globalState.sessionUser.id).maybeSingle();
-            if(enrollment) {
-                if(document.getElementById("stat-current-streak")) document.getElementById("stat-current-streak").textContent = `${enrollment.current_streak} Days`;
-                if(document.getElementById("stat-longest-streak")) document.getElementById("stat-longest-streak").textContent = `${enrollment.longest_streak} Days`;
-                if(document.getElementById("stat-study-hours")) document.getElementById("stat-study-hours").textContent = `${Math.round(enrollment.total_study_seconds / 3600)}h`;
-            }
-
-            let { data: attList } = await supabaseClientInstance.from('attendance').select('id').eq('student_id', globalState.sessionUser.id);
-            const attendancePct = completedCount > 0 ? Math.round(((attList?.length || 0) / completedCount) * 100) : 0;
-            if (document.getElementById("stat-attendance-rate")) document.getElementById("stat-attendance-rate").textContent = `${attendancePct || 100}%`;
-
-            if(completedCount >= 47 || completedCount >= totalItemsCount) {
-                const certWrapper = document.getElementById("certificate-delivery-wrapper");
-                if (certWrapper) {
+            // Display Certificate generation button ONLY if 47 modules completed
+            const certWrapper = document.getElementById("certificate-delivery-wrapper");
+            if (certWrapper) {
+                if(completedCount >= totalItemsCount) {
                     certWrapper.innerHTML = `
-                        <button onclick="generateCertificate()" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
-                            <i data-lucide="award" class="inline w-4 h-4 mr-1 mb-0.5"></i> Download Official Verified Certificate
+                        <button onclick="generateAndDownloadCertificate()" class="w-full text-center block py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md">
+                            <i data-lucide="award" class="inline w-4 h-4 mr-1"></i> Download Verified Certificate
                         </button>
                     `;
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                } else {
+                    certWrapper.innerHTML = `<button disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">Certificate Locked (${completedCount}/47 Completed)</button>`;
                 }
             }
-            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
-        // --- CERTIFICATE GENERATOR WITH CANVAS (MUHAMMAD RIZWAN SIGNATURE) ---
-        function generateCertificate() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 1000; canvas.height = 700;
-            const ctx = canvas.getContext('2d');
-            
-            // Background
-            ctx.fillStyle = '#ffffff'; 
-            ctx.fillRect(0, 0, 1000, 700);
-            
-            // Borders
-            ctx.strokeStyle = '#DC2626'; 
-            ctx.lineWidth = 15; 
-            ctx.strokeRect(20, 20, 960, 660);
-            ctx.strokeStyle = '#B91C1C'; 
-            ctx.lineWidth = 2; 
-            ctx.strokeRect(40, 40, 920, 620);
-            
-            ctx.textAlign = 'center';
-            
-            // Header
-            ctx.fillStyle = '#DC2626';
-            ctx.font = 'bold 50px Arial';
-            ctx.fillText('EDUCATION POINT', 500, 130);
-            
-            ctx.fillStyle = '#111827';
-            ctx.font = '24px Arial';
-            ctx.fillText('CERTIFICATE OF COMPLETION', 500, 190);
-            
-            // Line
-            ctx.beginPath(); ctx.moveTo(300, 220); ctx.lineTo(700, 220); ctx.stroke();
-            
-            // Body
-            ctx.font = 'italic 20px Arial';
-            ctx.fillText('This is to certify that', 500, 300);
-            
-            ctx.fillStyle = '#DC2626';
-            ctx.font = 'bold 45px Arial';
-            ctx.fillText(globalState.profileData?.full_name || 'Student Name', 500, 370);
-            
-            ctx.fillStyle = '#111827';
-            ctx.font = '18px Arial';
-            ctx.fillText('has successfully completed the 47-Lesson Professional Computer Course', 500, 440);
-            ctx.fillText('including Windows Ecosystem, Office Automations & Web Assets.', 500, 470);
-            
-            // Signatures
-            ctx.font = 'italic 28px "Times New Roman"';
-            ctx.fillText('Muhammad Rizwan', 750, 580);
-            ctx.font = '14px Arial';
-            ctx.fillText('Founder / Instructor', 750, 600);
-            
-            ctx.font = '14px Arial';
-            ctx.fillText('Date: ' + new Date().toLocaleDateString(), 250, 600);
-            
-            const link = document.createElement('a');
-            link.download = `Education_Point_Certificate_${globalState.profileData?.full_name || 'Student'}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        }
+        // --- REALTIME ACTIVITY TRACKING ---
+        let currentDayStr = new Date().toISOString().split('T')[0];
+        let todayActiveMinutes = 0;
 
-        // --- REALTIME PRESENCE & ACTIVITY LOGS ---
-        function initializePresenceTracking() {
-            if(!supabaseClientInstance || !globalState.sessionUser) return;
-            const presenceChannel = supabaseClientInstance.channel('online-students', {
-                config: { presence: { key: globalState.sessionUser.id } }
-            });
-            
-            presenceChannel.on('presence', { event: 'sync' }, () => {
-                const state = presenceChannel.presenceState();
-                const activeCount = Object.keys(state).length;
-                if(document.getElementById('admin-online-count')) {
-                    document.getElementById('admin-online-count').textContent = activeCount;
+        function startRealTimeActivityTracker() {
+            // Update active time every 60 seconds
+            setInterval(async () => {
+                if(globalState.sessionUser) {
+                    todayActiveMinutes++;
+                    document.getElementById("stat-study-hours").textContent = `${todayActiveMinutes} mins`;
+                    
+                    try {
+                        // Requires 'daily_activity' table in Supabase
+                        await supabaseClientInstance.from('daily_activity').upsert({
+                            student_id: globalState.sessionUser.id,
+                            date: currentDayStr,
+                            active_minutes: todayActiveMinutes,
+                            last_seen: new Date().toISOString()
+                        }, { onConflict: 'student_id, date' });
+                    } catch(e) { /* Ignore silently if table doesn't exist yet */ }
                 }
-            }).subscribe(async (status) => {
-                if (status === 'SUBSCRIBED') {
-                    await presenceChannel.track({
-                        user_name: globalState.profileData?.full_name,
-                        role: globalState.profileData?.role,
-                        online_at: new Date().toISOString()
-                    });
-                }
-            });
-        }
-
-        function startSessionTimer() {
-            // Save active time every 15 minutes to avoid losing data on sudden closure
-            setInterval(saveSessionTime, 15 * 60 * 1000); 
-            // Update time before user closes window
-            window.addEventListener('beforeunload', saveSessionTime);
-        }
-
-        async function saveSessionTime() {
-            if(!globalState.sessionUser) return;
-            const now = Date.now();
-            const sessionDurationMins = Math.round((now - globalState.sessionStartTime) / 60000);
-            if (sessionDurationMins < 1) return; // Ignore less than 1 min
-            
-            try {
-                // To keep it simple without breaking DB constraints, we upsert to study_sessions table
-                await supabaseClientInstance.from('study_sessions').insert([{
-                    student_id: globalState.sessionUser.id,
-                    duration_minutes: sessionDurationMins,
-                    session_date: new Date().toISOString()
-                }]);
-                globalState.sessionStartTime = now; // Reset timer after save
-            } catch(e) { console.error("Could not save session time", e); }
+            }, 60000);
         }
 
         async function fetchActivityHistory() {
             if(!globalState.sessionUser) return;
             try {
-                const list = document.getElementById("profile-activity-list");
+                let { data: history } = await supabaseClientInstance.from('daily_activity')
+                    .select('*')
+                    .eq('student_id', globalState.sessionUser.id)
+                    .order('date', { ascending: false });
+                
+                const list = document.getElementById('activity-history-list');
                 if(!list) return;
                 
-                let { data: sessions, error } = await supabaseClientInstance.from('study_sessions')
-                    .select('*').eq('student_id', globalState.sessionUser.id)
-                    .order('session_date', { ascending: false }).limit(10);
-                
-                if (error) throw error;
-                list.innerHTML = "";
-                
-                if(!sessions || sessions.length === 0) {
-                    list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">No recent activity found.</p>`;
-                    return;
-                }
-                
-                sessions.forEach(session => {
-                    const dateStr = new Date(session.session_date).toLocaleDateString();
-                    list.innerHTML += `
-                        <div class="p-3 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-between">
+                if(history && history.length > 0) {
+                    // Find today's
+                    const todayRec = history.find(h => h.date === currentDayStr);
+                    if(todayRec) {
+                        todayActiveMinutes = todayRec.active_minutes;
+                        document.getElementById("stat-study-hours").textContent = `${todayActiveMinutes} mins`;
+                    }
+
+                    list.innerHTML = history.map(h => `
+                        <div class="flex items-center justify-between p-3 border border-gray-100 rounded-xl bg-gray-50">
                             <div class="flex items-center space-x-3">
-                                <i data-lucide="calendar" class="w-4 h-4 text-gray-400"></i>
-                                <span class="text-sm font-semibold text-gray-700">${dateStr}</span>
+                                <i data-lucide="calendar-clock" class="text-gray-400 w-5 h-5"></i>
+                                <span class="text-sm font-semibold text-gray-700">${new Date(h.date).toLocaleDateString()}</span>
                             </div>
-                            <span class="text-xs font-bold text-brand-red bg-red-50 px-2 py-1 rounded-full">${session.duration_minutes} mins active</span>
+                            <span class="text-xs font-bold text-brand-red bg-red-50 px-3 py-1 rounded-full">${h.active_minutes} Mins Active</span>
                         </div>
-                    `;
-                });
-                if(typeof lucide !== 'undefined') lucide.createIcons();
-            } catch(e) { console.error("Error fetching activity", e); }
+                    `).join('');
+                } else {
+                    list.innerHTML = `<p class="text-xs text-gray-400 text-center">No previous history found.</p>`;
+                }
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            } catch(e) {}
         }
 
-        function establishRealtimeSubscriptions() {
-            if (!supabaseClientInstance) return;
-            // Removes specific table subscriptions to avoid duplicate listeners, keeps channel
-            supabaseClientInstance
-                .channel('schema-db-changes')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'lesson_progress' }, (payload) => {
-                    syncClassroomSyllabusEngine();
-                })
-                .subscribe();
-        }
+        // --- ADMIN LIVE STATS ---
+        async function fetchAdminLiveStats() {
+            try {
+                // Get total students
+                let { count: totalStudents } = await supabaseClientInstance.from('profiles').select('*', { count: 'exact', head: true });
+                document.getElementById('admin-total-students').textContent = totalStudents || 0;
 
-        const adminConsole = {
-            createLesson: async (e) => {
-                e.preventDefault();
-                try {
-                    const num = document.getElementById("adm-les-num").value;
-                    const title = document.getElementById("adm-les-title").value.trim();
-                    const gdrive = document.getElementById("adm-les-gdrive").value.trim();
-                    const dur = document.getElementById("adm-les-duration").value;
-                    const desc = document.getElementById("adm-les-desc").value.trim();
-
-                    const { error } = await supabaseClientInstance.from('lessons').insert([{
-                        course_id: globalState.activeCourseId, lesson_number: num, title: title,
-                        google_drive_video_id: gdrive, estimated_duration: dur, description: desc
-                    }]);
-
-                    if(error) throw error;
-                    alert("Lesson deployed into database nodes!");
-                    document.getElementById("admin-lesson-form").reset();
-                    await syncClassroomSyllabusEngine();
-                } catch(err) { alert(err.message); }
+                // Get active students in last 15 minutes
+                const fifteenMinsAgo = new Date(Date.now() - 15 * 60000).toISOString();
+                let { count: activeStudents } = await supabaseClientInstance.from('daily_activity')
+                    .select('*', { count: 'exact', head: true })
+                    .gte('last_seen', fifteenMinsAgo);
+                
+                document.getElementById('admin-active-students').textContent = activeStudents || 0;
+            } catch(e) {
+                console.error("Admin stats error", e);
             }
-        };
+        }
 
+        // --- CERTIFICATE GENERATION LOGIC ---
+        function generateAndDownloadCertificate() {
+            const studentName = globalState.profileData?.full_name || "Student Name";
+            document.getElementById('cert-student-name').textContent = studentName;
+            document.getElementById('cert-date').textContent = new Date().toLocaleDateString();
+            
+            const certNode = document.getElementById('certificate-template');
+            
+            // Temporarily bring it to screen to render properly
+            certNode.parentElement.classList.remove('absolute', 'top-[-9999px]');
+            certNode.parentElement.classList.add('fixed', 'inset-0', 'z-[9999]', 'flex', 'items-center', 'justify-center', 'bg-white');
+            
+            alert("سرٹیفکیٹ ڈاؤنلوڈ ہو رہا ہے، براہ کرم انتظار کریں...");
+
+            html2canvas(certNode, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `EducationPoint_Certificate_${studentName.replace(' ', '_')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // Hide again
+                certNode.parentElement.classList.remove('fixed', 'inset-0', 'z-[9999]', 'flex', 'items-center', 'justify-center', 'bg-white');
+                certNode.parentElement.classList.add('absolute', 'top-[-9999px]');
+            });
+        }
+
+        // --- CLOCK CONTROLLER ---
         function runClockEngine() {
             setInterval(() => {
                 const now = new Date();
