@@ -499,13 +499,14 @@
                 supabaseClientInstance = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch(err) { console.error("Client Init Interruption:", err); }
-
+let todayActiveMinutes = 0;
         let globalState = {
             sessionUser: null,
             profileData: null,
             lessonsCollection: [],
             progressMatrix: [],
             activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828" 
+            
         };
 
         // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
@@ -685,17 +686,12 @@
         // --- BUSINESS LOGIC & CLASSROOM ---
         async function syncClassroomSyllabusEngine() {
     try {
-        if (!supabaseClientInstance) {
-            console.error("Supabase Client is not initialized!");
-            return;
-        }
-
         let { data: lessons, error: lessonError } = await supabaseClientInstance
             .from('lessons')
             .select('*')
             .order('lesson_number', { ascending: true });
 
-        if (lessonError) throw lessonError; // یہاں پتہ چلے گا کہ ٹیبل کا نام غلط ہے یا کالم کا
+        if (lessonError) throw lessonError;
 
         globalState.lessonsCollection = lessons || [];
 
@@ -705,17 +701,17 @@
                 .select('*')
                 .eq('student_id', globalState.sessionUser.id);
             
-            if (progError) throw progError;
             globalState.progressMatrix = progress || [];
         }
         
         renderClassroomSyllabusTreeLayout();
-        // اس فنکشن کے اندر جہاں رینڈرنگ ختم ہو رہی ہو، وہاں یہ لکھیں:
-await evaluateAnalyticsAggregatesMetricsContainers();
+        await evaluateAnalyticsAggregatesMetricsContainers();
                 
     } catch(e) { 
-        console.error("Critical System Error:", e); // یہ کنسول میں اصلی غلطی دکھائے گا
+        console.error("Critical System Error:", e);
     }
+        }
+        
         function renderClassroomSyllabusTreeLayout() {
             const container = document.getElementById("classroom-lessons-stack");
             if(!container) return;
