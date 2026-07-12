@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Education Point LMS | Premium Production Framework</title>
+    <!-- Tailwind CSS Production CDN Engine -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -23,7 +24,9 @@
             }
         }
     </script>
+    <!-- Lucide Graphic Vectors Library Ecosystem -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase Core Engine Module -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .glass-panel {
@@ -41,14 +44,17 @@
 </head>
 <body class="bg-gray-50 text-brand-darkText custom-scrollbar font-sans antialiased">
 
+    <!-- GLOBAL LOADING ARCHITECTURE SYSTEM -->
     <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
         <div class="w-16 h-16 border-4 border-brand-red border-t-transparent rounded-full animate-spin"></div>
         <h2 class="mt-4 text-xl font-bold tracking-wider text-brand-red uppercase">Education Point</h2>
         <p class="text-sm text-gray-400 mt-1">Initializing Secure Environment...</p>
     </div>
 
+    <!-- MAIN CORE LMS WORKING FRAMEWORK GRID -->
     <div id="app-container" class="min-h-screen flex flex-col md:flex-row relative hidden-layer page-layer">
         
+        <!-- SIDEBAR CONTAINER DESKTOP/MOBILE -->
         <aside id="main-sidebar" class="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col fixed md:sticky top-0 h-auto md:h-screen z-40 transition-transform duration-300 transform md:transform-none -translate-x-full md:translate-x-0">
             <div class="p-5 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
@@ -91,6 +97,7 @@
             </div>
         </aside>
 
+        <!-- MAIN WINDOW DISPLAY CONTAINER NODE -->
         <main class="flex-1 min-w-0 flex flex-col min-h-screen relative">
             <header class="bg-white border-b border-gray-100 p-4 flex items-center justify-between md:hidden sticky top-0 z-30">
                 <button onclick="toggleMobileSidebar()" class="text-gray-700"><i data-lucide="menu" class="w-6 h-6"></i></button>
@@ -99,6 +106,7 @@
             </header>
 
             <div class="p-4 md:p-8 flex-1">
+                <!-- VIEW 1: STUDENT DASHBOARD -->
                 <section id="student-dashboard" class="view-layer page-layer space-y-6">
                     <div class="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
                         <div class="relative z-10 space-y-2 max-w-xl">
@@ -109,6 +117,7 @@
                         <i data-lucide="sparkles" class="absolute right-6 bottom-4 w-32 h-32 text-white/5 pointer-events-none"></i>
                     </div>
 
+                    <!-- ANALYTICS HIGHLIGHT METRICS WIDGETS -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
                             <div class="p-3 bg-red-100 text-brand-red rounded-xl"><i data-lucide="zap" class="w-6 h-6"></i></div>
@@ -181,6 +190,7 @@
                                     <p class="text-xs text-red-600 font-medium mb-1">Static Daily Closing Parameter</p>
                                     <div class="text-2xl font-black text-brand-red tracking-tight">8:00 PM SHARP</div>
                                     <div id="assignment-countdown" class="text-xs text-gray-500 font-mono mt-1 font-semibold">--:--:-- Left</div>
+                                }
                                 </div>
                             </div>
 
@@ -197,6 +207,7 @@
                     </div>
                 </section>
 
+                <!-- VIEW 2: PROFILE MANAGEMENT CORE SECTION -->
                 <section id="profile-completion-view" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm max-w-2xl mx-auto">
                         <h2 class="text-xl font-bold text-gray-800 border-b border-gray-100 pb-3">Complete System Identity Profile</h2>
@@ -233,9 +244,15 @@
                                 <label class="text-xs font-bold text-gray-500 uppercase">Date of Birth *</label>
                                 <input type="date" id="prof-dob" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
                             </div>
+                            <!-- FIXED OPTION ENUM COMPLIANCE DROP-DOWN -->
                             <div class="sm:col-span-2 space-y-1">
                                 <label class="text-xs font-bold text-gray-500 uppercase">Education Level *</label>
-                                <input type="text" id="prof-education" placeholder="Matric, Inter, Bachelors, etc." class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                <select id="prof-education" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                    <option value="Matric">Matric</option>
+                                    <option value="Intermediate">Intermediate (F.Sc / FA / ICS / Inter)</option>
+                                    <option value="Bachelors">Bachelors</option>
+                                    <option value="Masters">Masters</option>
+                                </select>
                             </div>
                             <div class="sm:col-span-2 pt-2">
                                 <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-hover text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow transition-all">Synchronize Dynamic Profile Dataset</button>
@@ -244,9 +261,9 @@
                     </div>
                 </section>
 
+                <!-- VIEW 3: DAILY CLASSROOM PORTAL -->
                 <section id="classroom-portal" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="flex flex-col xl:flex-row gap-6">
-                        
                         <div class="flex-1 space-y-4">
                             <div class="bg-black rounded-2xl overflow-hidden shadow-xl aspect-video relative border-4 border-white">
                                 <iframe id="gdrive-video-player" class="w-full h-full absolute inset-0 bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
@@ -285,11 +302,13 @@
                                 <i data-lucide="list-video" class="text-brand-red w-5 h-5"></i><span>Computer Course Syllabus Node</span>
                             </h3>
                             <div id="classroom-lessons-stack" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 mt-3 pr-1">
-                                </div>
+                                <!-- Async Populated Engine List Items -->
+                            </div>
                         </div>
                     </div>
                 </section>
 
+                <!-- VIEW 4: AUDIT DATA REPORTS GATEWAY -->
                 <section id="reports-center" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                         <h2 class="text-xl font-bold tracking-tight text-gray-900 mb-1">Academic Audit Reporting Station</h2>
@@ -303,6 +322,7 @@
                     </div>
                 </section>
 
+                <!-- VIEW 5: SUPER ADMIN ADMINISTRATIVE CONSOLE CONTROL NODE -->
                 <section id="admin-console" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
                         <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
@@ -321,8 +341,8 @@
                                     <input type="text" id="adm-les-title" placeholder="Core System Architecture Configurations" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
                                 </div>
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Google Drive Shared Resource Component ID *</label>
-                                    <input type="text" id="adm-les-gdrive" placeholder="1A_xXBt9vQ... (Extract unique alphanumeric hash character sets)" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-mono" required>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Google Drive Video ID Only *</label>
+                                    <input type="text" id="adm-les-gdrive" placeholder="e.g. 1A_xXBt9vQ... (Extract the ID from link)" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-mono" required>
                                 </div>
                                 <div class="space-y-1">
                                     <label class="text-[10px] font-bold text-gray-500 uppercase">Estimated Running Runtime Duration Metrics (Seconds) *</label>
@@ -343,6 +363,7 @@
         </main>
     </div>
 
+    <!-- AUTH INTERCEPT ENGINE CONTAINER SHIELD PANEL LAYER -->
     <div id="auth-shield-container" class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-red-50 to-neutral-100 p-4 hidden-layer page-layer">
         <div class="w-full max-w-md bg-white rounded-3xl border border-gray-200 shadow-2xl p-6 md:p-8 space-y-6">
             <div class="text-center space-y-2">
@@ -364,11 +385,12 @@
                 </button>
             </form>
             <div class="text-center">
-                <p class="text-[10px] text-gray-400 font-medium">Auto-Fallback Mechanism Enforced: Inputting unregistered email records automatically triggers secure instant signup pipelines securely.</p>
+                <p class="text-[10px] text-gray-400 font-medium">Auto-Fallback Enforced: Inputting unregistered email records automatically triggers secure instant signup pipelines.</p>
             </div>
         </div>
     </div>
 
+    <!-- CORE LOGICAL CONTROL INFRASTRUCTURE ENGINES -->
     <script>
         // --- 1. CONFIGURATION SYSTEM ENGINES STACK MAP ---
         const SUPABASE_URL = "https://sulgxyktyvngazgodvxf.supabase.co"; 
@@ -379,10 +401,10 @@
             if (typeof supabase !== 'undefined' && supabase.createClient) {
                 supabaseClientInstance = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             } else {
-                console.error("Supabase engine distribution package unreachable via global CDN assets.");
+                console.error("Supabase Engine unreachable via global CDN distribution vectors.");
             }
         } catch(err) {
-            console.error("Critical failure initialization core operational database engine driver client:", err);
+            console.error("Critical Client Init Interruption:", err);
         }
 
         let globalState = {
@@ -402,9 +424,7 @@
 
         async function evaluateSessionContextState() {
             try {
-                if (!supabaseClientInstance) {
-                    throw new Error("Supabase context instance failed compilation vector maps entirely.");
-                }
+                if (!supabaseClientInstance) throw new Error("Database interface drivers failed deployment mappings.");
 
                 const { data: { session }, error } = await supabaseClientInstance.auth.getSession();
                 if (error) throw error;
@@ -416,7 +436,7 @@
                     displayScreenLayer("auth-shield-container");
                 }
             } catch (err) {
-                console.error("Critical Runtime Interception Error Core Block Safe Mode Boot engaged:", err);
+                console.error("Critical safe-boot fallback activated:", err);
                 displayScreenLayer("auth-shield-container");
             } finally {
                 const loader = document.getElementById("global-loader");
@@ -430,12 +450,11 @@
                 if (error) throw error;
 
                 if (!profile) {
-                    // Seed dynamic fallback model dataset parameters to avoid database runtime breakages gracefully
                     const { data: seededProfile, error: insErr } = await supabaseClientInstance.from('profiles').insert([{
                         id: uid, full_name: "Premium Scholar Student", father_name: "Academic Mentor Root",
                         mobile_number: "0300" + Math.floor(1000000 + Math.random() * 9000000), email: globalState.sessionUser.email,
                         city: "Lahore", complete_address: "Education Point Campus Block-A",
-                        gender: "Male", date_of_birth: "2000-01-01", education_level: "Bachelors", role: "student"
+                        gender: "Male", date_of_birth: "2000-01-01", education_level: "Intermediate", role: "student"
                     }]).select().single();
                     if (insErr) throw insErr;
                     profile = seededProfile;
@@ -450,30 +469,20 @@
                 switchView("student-dashboard");
             } catch(err) {
                 console.error(err);
-                alert("Profile Transaction Pipeline Execution Interrupted: " + err.message);
+                alert("Profile Core Transaction Aborted: " + err.message);
                 displayScreenLayer("auth-shield-container");
             }
         }
 
         function populateProfileInputsUIFields() {
             if (!globalState.profileData) return;
-            const fn = document.getElementById("prof-fullname");
-            const fan = document.getElementById("prof-fathername");
-            const mob = document.getElementById("prof-mobile");
-            const ct = document.getElementById("prof-city");
-            const adr = document.getElementById("prof-address");
-            const gen = document.getElementById("prof-gender");
-            const db = document.getElementById("prof-dob");
-            const ed = document.getElementById("prof-education");
-
-            if(fn) fn.value = globalState.profileData.full_name || "";
-            if(fan) fan.value = globalState.profileData.father_name || "";
-            if(mob) mob.value = globalState.profileData.mobile_number || "";
-            if(ct) ct.value = globalState.profileData.city || "";
-            if(adr) adr.value = globalState.profileData.complete_address || "";
-            if(gen) gen.value = globalState.profileData.gender || "Male";
-            if(db) db.value = globalState.profileData.date_of_birth || "";
-            if(ed) ed.value = globalState.profileData.education_level || "";
+            const fields = ["prof-fullname", "prof-fathername", "prof-mobile", "prof-city", "prof-address", "prof-gender", "prof-dob", "prof-education"];
+            const keys = ["full_name", "father_name", "mobile_number", "city", "complete_address", "gender", "date_of_birth", "education_level"];
+            
+            fields.forEach((fid, idx) => {
+                const el = document.getElementById(fid);
+                if(el) el.value = globalState.profileData[keys[idx]] || el.value || "";
+            });
         }
 
         async function saveUserProfileDataState(e) {
@@ -488,11 +497,11 @@
                     complete_address: document.getElementById("prof-address").value.trim(),
                     gender: document.getElementById("prof-gender").value,
                     date_of_birth: document.getElementById("prof-dob").value,
-                    education_level: document.getElementById("prof-education").value.trim()
+                    education_level: document.getElementById("prof-education").value
                 }).eq('id', globalState.sessionUser.id);
 
                 if (error) throw error;
-                alert("Dynamic profile values written to persistent storage engine segments successfully!");
+                alert("Dynamic updates compiled across local profile layers successfully!");
                 await pullProfileContextAndInitialize(globalState.sessionUser.id);
             } catch(err) {
                 alert("Write Operations Pipeline Aborted: " + err.message);
@@ -528,17 +537,12 @@
 
         function syncProfileUILayoutRepresentations() {
             if(!globalState.profileData) return;
-            const u = document.getElementById("sb-username");
-            const r = document.getElementById("sb-role");
-            const w = document.getElementById("dash-welcome-title");
-            const m = document.getElementById("meta-student-id");
-            const a = document.getElementById("admin-nav-item");
-
-            if(u) u.textContent = globalState.profileData.full_name;
-            if(r) r.textContent = globalState.profileData.role;
-            if(w) w.textContent = `Welcome back, ${globalState.profileData.full_name}!`;
-            if(m) m.textContent = globalState.profileData.id.substring(0,8).toUpperCase();
-            if(globalState.profileData.role === 'super_admin' && a) a.classList.remove("hidden");
+            if(document.getElementById("sb-username")) document.getElementById("sb-username").textContent = globalState.profileData.full_name;
+            if(document.getElementById("sb-role")) document.getElementById("sb-role").textContent = globalState.profileData.role;
+            if(document.getElementById("meta-student-id")) document.getElementById("meta-student-id").textContent = globalState.profileData.id.substring(0,8).toUpperCase();
+            
+            const adminNav = document.getElementById("admin-nav-item");
+            if(globalState.profileData.role === 'super_admin' && adminNav) adminNav.classList.remove("hidden");
         }
 
         // --- 3. AUTH SECURITY TRANSACTION PIPELINES ---
@@ -553,13 +557,13 @@
                     if (error) {
                         const { data: upData, error: upErr } = await supabaseClientInstance.auth.signUp({ email, password });
                         if (upErr) throw upErr;
-                        if (upData) { alert("Registration Processing Sequence Complete! Re-enter your credentials to access the terminal now."); location.reload(); }
+                        if (upData) { alert("Secure registration array mapped! Re-verify credentials to launch terminal stack."); location.reload(); }
                     } else if(data.user) {
                         globalState.sessionUser = data.user;
                         await pullProfileContextAndInitialize(data.user.id);
                     }
                 } catch(err) {
-                    alert("Security System Refused Authentication Access: " + err.message);
+                    alert("Security Block Access Refused: " + err.message);
                 }
             },
             logout: async () => {
@@ -581,9 +585,7 @@
                 }
                 renderClassroomSyllabusTreeLayout();
                 await evaluateAnalyticsAggregatesMetricsContainers();
-            } catch(e) {
-                console.error(e);
-            }
+            } catch(e) { console.error(e); }
         }
 
         function renderClassroomSyllabusTreeLayout() {
@@ -592,7 +594,7 @@
             container.innerHTML = "";
 
             if(globalState.lessonsCollection.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-8">No learning modules published yet within persistent architecture layers.</p>`;
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-8">No learning modules published yet.</p>`;
                 return;
             }
 
@@ -650,7 +652,7 @@
                 } else {
                     gateContainer.innerHTML = `
                         <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 space-y-2">
-                            <p><strong>Assignment Interface Shielded:</strong> Stream the content module fully until your structural progression bar clears the 90% completion parameters to initialize interactive data channels.</p>
+                            <p><strong>Assignment Interface Shielded:</strong> Stream content up to 90% completion parameters to unlock WhatsApp vectors.</p>
                             <button onclick="simulationTriggers.simulateCompleteWatch('${lesson.id}')" class="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg transition-all">Simulate Completing 95% Video Stream</button>
                         </div>
                     `;
@@ -679,10 +681,7 @@
                         is_completed: true,
                         completed_at: new Date().toISOString()
                     });
-                    if(!error) {
-                        alert("Watch logs synchronized natively across data engines!");
-                        await syncClassroomSyllabusEngine();
-                    }
+                    if(!error) await syncClassroomSyllabusEngine();
                 } catch(e) { console.error(e); }
             }
         };
@@ -693,10 +692,8 @@
             const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
             const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
 
-            const pb = document.getElementById("dash-course-progress-badge");
-            const pbf = document.getElementById("dash-progress-bar-fill");
-            if (pb) pb.textContent = `${completedCount}/${totalItemsCount} Lessons`;
-            if (pbf) pbf.style.width = `${completionRatio}%`;
+            if (document.getElementById("dash-course-progress-badge")) document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalItemsCount} Lessons`;
+            if (document.getElementById("dash-progress-bar-fill")) document.getElementById("dash-progress-bar-fill").style.width = `${completionRatio}%`;
 
             let { data: enrollment } = await supabaseClientInstance.from('enrollments').select('*').eq('student_id', globalState.sessionUser.id).maybeSingle();
             if(enrollment) {
@@ -721,15 +718,20 @@
             }
         }
 
+        // --- FIXED SYNTAX REALTIME ENGINE ---
         function establishRealtimeSubscriptions() {
             if (!supabaseClientInstance) return;
-            supabaseClientInstance.channel('public:lesson_progress')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'lesson_progress' }, () => {
-                syncClassroomSyllabusEngine();
-            }).subscribe();
+            supabaseClientInstance.removeAllChannels();
+
+            supabaseClientInstance
+                .channel('schema-db-changes')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'lesson_progress' }, (payload) => {
+                    syncClassroomSyllabusEngine();
+                })
+                .subscribe();
         }
 
-        const reportsEngine = { exportData: (f) => { alert("Export Data Array Target Format Initialized: " + f); } };
+        const reportsEngine = { exportData: (f) => { alert("Export processing array: " + f); } };
 
         const adminConsole = {
             createLesson: async (e) => {
@@ -747,7 +749,7 @@
                     }]);
 
                     if(error) throw error;
-                    alert("Lesson successfully deployed to production database nodes!");
+                    alert("Lesson deployed into database nodes!");
                     document.getElementById("admin-lesson-form").reset();
                     await syncClassroomSyllabusEngine();
                 } catch(err) { alert(err.message); }
