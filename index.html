@@ -388,205 +388,247 @@
             </form>
         </div>
     </div>
+<script>
+    // --- 1. CORE SUPABASE CONFIGURATION INITIALIZATION ---
+    const SUPABASE_URL = "https://sulgxyktyvngazgodvxf.supabase.co"; 
+    const SUPABASE_ANON_KEY = "sb_publishable_WXhdCUvVr1TNQhv9_24MBQ_0wdXy-VB";
+    
+    // سنٹیکس ایرر (::) کو فکس کر دیا گیا ہے
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    <script>
-        // --- 1. CORE SUPABASE CONFIGURATION INITIALIZATION ---
-        const SUPABASE_URL = "https://sulgxyktyvngazgodvxf.supabase.co"; 
-        const SUPABASE_ANON_KEY = "sb_publishable_WXhdCUvVr1TNQhv9_24MBQ_0wdXy-VB";
-        const supabase = ::supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // --- 2. LOGICAL APP GLOBAL CONFIG STATE STATES CONTROLLER ---
+    let globalState = {
+        sessionUser: null,
+        profileData: null,
+        lessonsCollection: [],
+        progressMatrix: [],
+        activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828" 
+    };
 
-        // --- 2. LOGICAL APP GLOBAL CONFIG STATE STATES CONTROLLER ---
-        let globalState = {
-            sessionUser: null,
-            profileData: null,
-            lessonsCollection: [],
-            progressMatrix: [],
-            activeCourseId: "81335b2e-062e-4b2e-9dcb-70d51381c828" // Stand-in Standard Structural Course Generation ID Variable Context
-        };
+    // --- 3. LIFECYCLE INITIALIZER SYSTEM BOOT ---
+    document.addEventListener("DOMContentLoaded", async () => {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        runClockEngine();
+        await evaluateSessionContextState();
+    });
 
-        // --- 3. LIFECYCLE INITIALIZER SYSTEM BOOT ---
-        document.addEventListener("DOMContentLoaded", async () => {
-            lucide.createIcons();
-            runClockEngine();
-            await evaluateSessionContextState();
-        });
+    async function evaluateSessionContextState() {
+        try {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) throw error;
 
-        async function evaluateSessionContextState() {
-            const { data: { session } } = await supabase.auth.getSession();
             if (session) {
                 globalState.sessionUser = session.user;
                 await pullProfileContextAndInitialize(session.user.id);
             } else {
                 displayScreenLayer("auth-shield-container");
             }
-            document.getElementById("global-loader").classList.add("hidden");
+        } catch (err) {
+            console.error("Initialization Error:", err);
+            // اگر کنکشن کا مسئلہ ہو تو یوزر کو لاگ ان اسکرین دکھائیں تاکہ ایپ لوڈر پر ہینگ نہ رہے
+            displayScreenLayer("auth-shield-container");
+        } finally {
+            const loader = document.getElementById("global-loader");
+            if (loader) loader.classList.add("hidden");
         }
+    }
 
-        async function pullProfileContextAndInitialize(uid) {
-            try {
-                let { data: profile, error } = await supabase.from('profiles').select('*').eq('id', uid).maybeSingle();
-                if (error) throw error;
+    async function pullProfileContextAndInitialize(uid) {
+        try {
+            let { data: profile, error } = await supabase.from('profiles').select('*').eq('id', uid).maybeSingle();
+            if (error) throw error;
 
-                if (!profile) {
-                    // Seed Mock Fallback profile dataset parameters cleanly to protect pipeline operation models
-                    const { data: seededProfile } = await supabase.from('profiles').insert([{
-                        id: uid, full_name: "Premium Scholar Student", father_name: "Academic Mentor Root",
-                        mobile_number: "03001234567", email: globalState.sessionUser.email,
-                        city: "Lahore", complete_address: "Education Point Campus Complex Block-A",
-                        gender: "Male", date_of_birth: "2000-01-01", education_level: "Bachelors", role: "student"
-                    }]).select().single();
-                    profile = seededProfile;
-                }
-
-                globalState.profileData = profile;
-                syncProfileUILayoutRepresentations();
-                await syncClassroomSyllabusEngine();
-                establishRealtimeSubscriptions();
-                displayScreenLayer("app-container");
-                switchView("student-dashboard");
-            } catch(err) {
-                alert("Critical Initialization Error Fail: " + err.message);
-            }
-        }
-
-        function displayScreenLayer(targetId) {
-            ["global-loader", "app-container", "auth-shield-container"].forEach(id => {
-                document.getElementById(id)?.classList.add("hidden-layer");
-            });
-            document.getElementById(targetId)?.classList.remove("hidden-layer");
-        }
-
-        function toggleMobileSidebar() {
-            document.getElementById("main-sidebar").classList.toggle("-translate-x-full");
-        }
-
-        function switchView(viewId) {
-            document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
-            document.getElementById(viewId)?.classList.remove("hidden-layer");
-            
-            document.querySelectorAll(".nav-link").forEach(btn => {
-                btn.classList.remove("text-white", "bg-brand-red");
-                btn.classList.add("text-gray-600", "hover:bg-gray-100");
-            });
-            
-            // Auto close mobile drawer layout framework contexts gracefully
-            document.getElementById("main-sidebar").classList.add("-translate-x-full");
-        }
-
-        function syncProfileUILayoutRepresentations() {
-            if(!globalState.profileData) return;
-            document.getElementById("sb-username").textContent = globalState.profileData.full_name;
-            document.getElementById("sb-role").textContent = globalState.profileData.role;
-            document.getElementById("dash-welcome-title").textContent = `Welcome back, ${globalState.profileData.full_name}!`;
-            document.getElementById("meta-student-id").textContent = globalState.profileData.id.substring(0,8).toUpperCase();
-            
-            if(globalState.profileData.role === 'super_admin') {
-                document.getElementById("admin-nav-item").classList.remove("hidden");
-            }
-        }
-
-        // --- 4. AUTHENTICATION TRANSACTION CONTROLLERS INTERFACES ---
-        const appAuth = {
-            handlePrimarySubmission: async (e) => {
-                e.preventDefault();
-                const email = document.getElementById("auth-email").value.trim();
-                const password = document.getElementById("auth-password").value;
+            // اگر پروفائل موجود نہ ہو تو رئیل ٹائم ڈیٹا بیس ریکارڈ انسرٹ کریں
+            if (!profile) {
+                const { data: seededProfile, error: insertError } = await supabase.from('profiles').insert([{
+                    id: uid, 
+                    full_name: "Premium Scholar Student", 
+                    father_name: "Academic Mentor Root",
+                    mobile_number: "03001234567", 
+                    email: globalState.sessionUser.email,
+                    city: "Lahore", 
+                    complete_address: "Education Point Campus Complex Block-A",
+                    gender: "Male", 
+                    date_of_birth: "2000-01-01", 
+                    education_level: "Bachelors", 
+                    role: "student"
+                }]).select().single();
                 
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) {
-                    // Implicit processing fall-back strategy framework: Auto Signup fallback mode simulation execution
-                    const { data: upData, error: upErr } = await supabase.auth.signUp({ email, password });
-                    if (upErr) { alert("Authentication Processing Pipeline Fault: " + upErr.message); return; }
-                    if (upData) { alert("Registration Initialized! Please proceed to authorize validation access credentials."); location.reload(); }
-                } else if(data.user) {
-                    globalState.sessionUser = data.user;
-                    await pullProfileContextAndInitialize(data.user.id);
-                }
-            },
-            logout: async () => {
-                await supabase.auth.signOut();
-                location.reload();
+                if (insertError) throw insertError;
+                profile = seededProfile;
             }
-        };
 
-        // --- 5. CLASSROOM SYLLABUS ENGINE & CORE BUSINESS RULES ---
-        async function syncClassroomSyllabusEngine() {
-            // Fetch Lessons Stack Matrix List
+            globalState.profileData = profile;
+            syncProfileUILayoutRepresentations();
+            await syncClassroomSyllabusEngine();
+            establishRealtimeSubscriptions();
+            displayScreenLayer("app-container");
+            switchView("student-dashboard");
+        } catch(err) {
+            alert("Profile Sync Error: " + err.message);
+            displayScreenLayer("auth-shield-container");
+        }
+    }
+
+    function displayScreenLayer(targetId) {
+        ["global-loader", "app-container", "auth-shield-container"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add("hidden-layer");
+        });
+        const target = document.getElementById(targetId);
+        if (target) target.classList.remove("hidden-layer");
+    }
+
+    function toggleMobileSidebar() {
+        const sidebar = document.getElementById("main-sidebar");
+        if (sidebar) sidebar.classList.toggle("-translate-x-full");
+    }
+
+    function switchView(viewId) {
+        document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
+        const targetView = document.getElementById(viewId);
+        if (targetView) targetView.classList.remove("hidden-layer");
+        
+        document.querySelectorAll(".nav-link").forEach(btn => {
+            btn.classList.remove("text-white", "bg-brand-red");
+            btn.classList.add("text-gray-600", "hover:bg-gray-100");
+        });
+        
+        const activeSidebar = document.getElementById("main-sidebar");
+        if (activeSidebar) activeSidebar.classList.add("-translate-x-full");
+    }
+
+    function syncProfileUILayoutRepresentations() {
+        if(!globalState.profileData) return;
+        
+        const usernameEl = document.getElementById("sb-username");
+        const roleEl = document.getElementById("sb-role");
+        const welcomeTitleEl = document.getElementById("dash-welcome-title");
+        const studentIdEl = document.getElementById("meta-student-id");
+        const adminNavItem = document.getElementById("admin-nav-item");
+
+        if (usernameEl) usernameEl.textContent = globalState.profileData.full_name;
+        if (roleEl) roleEl.textContent = globalState.profileData.role;
+        if (welcomeTitleEl) welcomeTitleEl.textContent = `Welcome back, ${globalState.profileData.full_name}!`;
+        if (studentIdEl) studentIdEl.textContent = globalState.profileData.id.substring(0,8).toUpperCase();
+        
+        if(globalState.profileData.role === 'super_admin' && adminNavItem) {
+            adminNavItem.classList.remove("hidden");
+        }
+    }
+
+    // --- 4. AUTHENTICATION TRANSACTION CONTROLLERS INTERFACES ---
+    const appAuth = {
+        handlePrimarySubmission: async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("auth-email").value.trim();
+            const password = document.getElementById("auth-password").value;
+            
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+                // سائن ان فیل ہونے پر خودکار رئیل ٹائم سائن اپ اکاؤنٹ کریشن رن کریں
+                const { data: upData, error: upErr } = await supabase.auth.signUp({ email, password });
+                if (upErr) { 
+                    alert("Authentication Pipeline Fault: " + upErr.message); 
+                    return; 
+                }
+                if (upData) { 
+                    alert("Account Registered Success! Re-enter credentials to log in."); 
+                    location.reload(); 
+                }
+            } else if(data.user) {
+                globalState.sessionUser = data.user;
+                await pullProfileContextAndInitialize(data.user.id);
+            }
+        },
+        logout: async () => {
+            await supabase.auth.signOut();
+            location.reload();
+        }
+    };
+
+    // --- 5. CLASSROOM SYLLABUS ENGINE & CORE BUSINESS RULES ---
+    async function syncClassroomSyllabusEngine() {
+        try {
             let { data: lessons, error } = await supabase.from('lessons').select('*').order('lesson_number', { ascending: true });
-            if (error) return;
+            if (error) throw error;
             globalState.lessonsCollection = lessons || [];
 
-            // Fetch Progress Array Logs Metrics Context Maps
             if(globalState.sessionUser) {
-                let { data: progress } = await supabase.from('lesson_progress').select('*').eq('student_id', globalState.sessionUser.id);
+                let { data: progress, error: progError } = await supabase.from('lesson_progress').select('*').eq('student_id', globalState.sessionUser.id);
+                if (progError) throw progError;
                 globalState.progressMatrix = progress || [];
             }
 
             renderClassroomSyllabusTreeLayout();
-            evaluateAnalyticsAggregatesMetricsContainers();
+            await evaluateAnalyticsAggregatesMetricsContainers();
+        } catch (err) {
+            console.error("Database Sync Error:", err);
+        }
+    }
+
+    function renderClassroomSyllabusTreeLayout() {
+        const container = document.getElementById("classroom-lessons-stack");
+        if(!container) return;
+        container.innerHTML = "";
+
+        if(globalState.lessonsCollection.length === 0) {
+            container.innerHTML = `<p class="text-xs text-gray-400 text-center py-8">No published lesson logs compiled yet inside core storage layers.</p>`;
+            return;
         }
 
-        function renderClassroomSyllabusTreeLayout() {
-            const container = document.getElementById("classroom-lessons-stack");
-            if(!container) return;
-            container.innerHTML = "";
+        let sequentialGateUnlocked = true;
 
-            if(globalState.lessonsCollection.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-8">No published lesson logs compiled yet inside core storage layers.</p>`;
-                return;
+        globalState.lessonsCollection.forEach((lesson) => {
+            const log = globalState.progressMatrix.find(p => p.lesson_id === lesson.id);
+            const isCompleted = log ? log.is_completed : false;
+            const activeLockedState = !sequentialGateUnlocked;
+
+            const btn = document.createElement("button");
+            btn.disabled = activeLockedState;
+            btn.className = `w-full text-left p-3.5 rounded-xl border transition-all flex items-center justify-between gap-2 ${
+                activeLockedState ? 'bg-gray-50 border-gray-200 opacity-50 cursor-not-allowed' :
+                isCompleted ? 'bg-emerald-50/60 border-emerald-200 hover:bg-emerald-50' : 'bg-white border-gray-200 hover:border-brand-red'
+            }`;
+
+            btn.onclick = () => mountActiveLessonToStagePlayer(lesson, log);
+
+            btn.innerHTML = `
+                <div class="overflow-hidden space-y-0.5">
+                    <span class="block text-[10px] font-bold tracking-widest uppercase ${isCompleted ? 'text-emerald-600' : 'text-brand-red'}">Lesson ${lesson.lesson_number}</span>
+                    <h4 class="font-bold text-xs text-gray-800 truncate">${lesson.title}</h4>
+                </div>
+                <div>
+                    <i data-lucide="${activeLockedState ? 'lock' : isCompleted ? 'check-circle' : 'play-circle'}" class="w-4 h-4 ${activeLockedState ? 'text-gray-400' : isCompleted ? 'text-emerald-500' : 'text-brand-red'}"></i>
+                </div>
+            `;
+
+            container.appendChild(btn);
+
+            if(!isCompleted) {
+                sequentialGateUnlocked = false;
             }
+        });
+        
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
 
-            let sequentialGateUnlocked = true;
-
-            globalState.lessonsCollection.forEach((lesson, index) => {
-                const log = globalState.progressMatrix.find(p => p.lesson_id === lesson.id);
-                const isCompleted = log ? log.is_completed : false;
-                const activeLockedState = !sequentialGateUnlocked;
-
-                const btn = document.createElement("button");
-                btn.disabled = activeLockedState;
-                btn.className = `w-full text-left p-3.5 rounded-xl border transition-all flex items-center justify-between gap-2 ${
-                    activeLockedState ? 'bg-gray-50 border-gray-200 opacity-50 cursor-not-allowed' :
-                    isCompleted ? 'bg-emerald-50/60 border-emerald-200 hover:bg-emerald-50' : 'bg-white border-gray-200 hover:border-brand-red'
-                }`;
-
-                btn.onclick = () => mountActiveLessonToStagePlayer(lesson, log);
-
-                btn.innerHTML = `
-                    <div class="overflow-hidden space-y-0.5">
-                        <span class="block text-[10px] font-bold tracking-widest uppercase ${isCompleted ? 'text-emerald-600' : 'text-brand-red'}">Lesson ${lesson.lesson_number}</span>
-                        <h4 class="font-bold text-xs text-gray-800 truncate">${lesson.title}</h4>
-                    </div>
-                    <div>
-                        <i data-lucide="${activeLockedState ? 'lock' : isCompleted ? 'check-circle' : 'play-circle'}" class="w-4 h-4 ${activeLockedState ? 'text-gray-400' : isCompleted ? 'text-emerald-500' : 'text-brand-red'}"></i>
-                    </div>
-                `;
-
-                container.appendChild(btn);
-
-                // If this current step context is not explicitly checked off completed, then block following subsequent indexes
-                if(!isCompleted) {
-                    sequentialGateUnlocked = false;
-                }
-            });
-            lucide.createIcons();
+    function mountActiveLessonToStagePlayer(lesson, logContainer) {
+        document.getElementById("player-lesson-title").textContent = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
+        document.getElementById("player-lesson-desc").textContent = lesson.description || "No overview context details annotated for this index item resource.";
+        document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
+        
+        const videoFrame = document.getElementById("gdrive-video-player");
+        if (videoFrame) {
+            videoFrame.src = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/preview`;
         }
 
-        function mountActiveLessonToStagePlayer(lesson, logContainer) {
-            document.getElementById("player-lesson-title").textContent = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
-            document.getElementById("player-lesson-desc").textContent = lesson.description || "No overview context details annotated for this index item resource.";
-            document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
-            
-            // Build Video Embed Anchor Configuration Frame url path securely
-            const videoFrame = document.getElementById("gdrive-video-player");
-            videoFrame.src = `https://drive.google.com/file/d/d/${lesson.google_drive_video_id}/preview`;
+        const percentage = logContainer ? logContainer.watch_percentage : 0;
+        updateWatchProgressBarUIState(percentage);
 
-            const percentage = logContainer ? logContainer.watch_percentage : 0;
-            updateWatchProgressBarUIState(percentage);
-
-            const gateContainer = document.getElementById("assignment-gate-container");
+        const gateContainer = document.getElementById("assignment-gate-container");
+        if (gateContainer) {
             if(percentage >= 90.00 || logContainer?.is_completed) {
-                // Render WhatsApp Call Out Execution Actions Layout elements block
                 gateContainer.innerHTML = `
                     <div class="p-5 border border-emerald-200 bg-emerald-50/50 rounded-2xl space-y-3">
                         <div class="flex items-center space-x-2 text-emerald-800"><i data-lucide="check-circle" class="w-5 h-5"></i><span class="font-bold text-sm">Syllabus Compliance Criteria Met!</span></div>
@@ -605,139 +647,150 @@
                     </div>
                 `;
             }
-            lucide.createIcons();
         }
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
 
-        function updateWatchProgressBarUIState(pct) {
-            const bar = document.getElementById("lesson-watch-progress-bar");
-            const text = document.getElementById("lesson-watch-percentage-text");
-            if(bar && text) {
-                bar.style.width = `${pct}%`;
-                text.textContent = `${pct}% Completed`;
-            }
+    function updateWatchProgressBarUIState(pct) {
+        const bar = document.getElementById("lesson-watch-progress-bar");
+        const text = document.getElementById("lesson-watch-percentage-text");
+        if(bar && text) {
+            bar.style.width = `${pct}%`;
+            text.textContent = `${pct}% Completed`;
         }
+    }
 
-        // --- 6. SIMULATION MECHANICS & EVENT TRIGGERS ---
-        const simulationTriggers = {
-            simulateCompleteWatch: async (lessonId) => {
-                if(!globalState.sessionUser) return;
-                
-                const { data, error } = await supabase.from('lesson_progress').upsert({
-                    student_id: globalState.sessionUser.id,
-                    lesson_id: lessonId,
-                    watch_percentage: 95.00,
-                    is_completed: true,
-                    completed_at: new Date().toISOString()
-                }).select();
-
-                if(!error) {
-                    alert("Mock Streaming Watch Session Logs synchronized successfully!");
-                    await syncClassroomSyllabusEngine();
-                }
-            }
-        };
-
-        async function evaluateAnalyticsAggregatesMetricsContainers() {
+    // --- 6. SIMULATION MECHANICS & EVENT TRIGGERS ---
+    const simulationTriggers = {
+        simulateCompleteWatch: async (lessonId) => {
             if(!globalState.sessionUser) return;
             
-            // Sync Core Progress Aggregations percentages maps arrays 
-            const totalItemsCount = globalState.lessonsCollection.length || 47;
-            const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
-            const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
+            const { data, error } = await supabase.from('lesson_progress').upsert({
+                student_id: globalState.sessionUser.id,
+                lesson_id: lessonId,
+                watch_percentage: 95.00,
+                is_completed: true,
+                completed_at: new Date().toISOString()
+            }).select();
 
-            document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalItemsCount} Completed`;
-            document.getElementById("dash-progress-bar-fill").style.width = `${completionRatio}%`;
-
-            // Query Context Stats aggregations counts profiles variables
-            let { data: enrollment } = await supabase.from('enrollments').select('*').eq('student_id', globalState.sessionUser.id).maybeSingle();
-            if(enrollment) {
-                document.getElementById("stat-current-streak").textContent = `${enrollment.current_streak} Days`;
-                document.getElementById("stat-longest-streak").textContent = `${enrollment.longest_streak} Days`;
-                document.getElementById("stat-study-hours").textContent = `${Math.round(enrollment.total_study_seconds / 3600)}h`;
-            }
-
-            let { data: attList } = await supabase.from('attendance').select('id').eq('student_id', globalState.sessionUser.id);
-            const attendancePct = completedCount > 0 ? Math.round(((attList?.length || 0) / completedCount) * 100) : 0;
-            document.getElementById("stat-attendance-rate").textContent = `${attendancePct}%`;
-
-            if(completedCount >= totalItemsCount && totalItemsCount > 0) {
-                const certBtn = document.getElementById("download-cert-btn");
-                if(certBtn) {
-                    certBtn.disabled = false;
-                    certBtn.className = "w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md";
-                    certBtn.textContent = "Download Verified Certificate Asset";
-                }
+            if(!error) {
+                alert("Watch session logs synchronized via real-time stream!");
+                await syncClassroomSyllabusEngine();
+            } else {
+                alert("Error updating watch history: " + error.message);
             }
         }
+    };
 
-        // --- 7. REALTIME SYSTEM SUBSCRIPTION SYNCHRONIZER ENGINE ---
-        function establishRealtimeSubscriptions() {
-            supabase.channel('public:lesson_progress')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'lesson_progress' }, payload => {
-                syncClassroomSyllabusEngine();
-            })
-            .subscribe();
+    async function evaluateAnalyticsAggregatesMetricsContainers() {
+        if(!globalState.sessionUser) return;
+        
+        const totalItemsCount = globalState.lessonsCollection.length || 47;
+        const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
+        const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
+
+        const progressBadge = document.getElementById("dash-course-progress-badge");
+        const progressBarFill = document.getElementById("dash-progress-bar-fill");
+
+        if (progressBadge) progressBadge.textContent = `${completedCount}/${totalItemsCount} Completed`;
+        if (progressBarFill) progressBarFill.style.width = `${completionRatio}%`;
+
+        let { data: enrollment } = await supabase.from('enrollments').select('*').eq('student_id', globalState.sessionUser.id).maybeSingle();
+        if(enrollment) {
+            const curStreak = document.getElementById("stat-current-streak");
+            const lngStreak = document.getElementById("stat-longest-streak");
+            const stdHours = document.getElementById("stat-study-hours");
+
+            if (curStreak) curStreak.textContent = `${enrollment.current_streak} Days`;
+            if (lngStreak) lngStreak.textContent = `${enrollment.longest_streak} Days`;
+            if (stdHours) stdHours.textContent = `${Math.round(enrollment.total_study_seconds / 3600)}h`;
         }
 
-        // --- 8. REPORTS COMPILING EXPORT ENGINE CONSOLE ---
-        const reportsEngine = {
-            exportData: (format) => {
-                alert(`Initializing compilation vectors processing structural parsing engine... Exporting Data Schema Matrix natively mapped into .${format.toLowerCase()} extension format wrappers.`);
+        let { data: attList } = await supabase.from('attendance').select('id').eq('student_id', globalState.sessionUser.id);
+        const attendancePct = completedCount > 0 ? Math.round(((attList?.length || 0) / completedCount) * 100) : 0;
+        
+        const attRateEl = document.getElementById("stat-attendance-rate");
+        if (attRateEl) attRateEl.textContent = `${attendancePct}%`;
+
+        if(completedCount >= totalItemsCount && totalItemsCount > 0) {
+            const certBtn = document.getElementById("download-cert-btn");
+            if(certBtn) {
+                certBtn.disabled = false;
+                certBtn.className = "w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md";
+                certBtn.textContent = "Download Verified Certificate Asset";
             }
-        };
-
-        // --- 9. SUPER ADMIN OPERATIONS SUITE CONTROLLERS ---
-        const adminConsole = {
-            createLesson: async (e) => {
-                e.preventDefault();
-                const num = document.getElementById("adm-les-num").value;
-                const title = document.getElementById("adm-les-title").value.trim();
-                const gdrive = document.getElementById("adm-les-gdrive").value.trim();
-                const dur = document.getElementById("adm-les-duration").value;
-                const desc = document.getElementById("adm-les-desc").value.trim();
-
-                const { data, error } = await supabase.from('lessons').insert([{
-                    course_id: globalState.activeCourseId,
-                    lesson_number: num,
-                    title: title,
-                    google_drive_video_id: gdrive,
-                    estimated_duration: dur,
-                    description: desc
-                }]);
-
-                if(error) {
-                    alert("Write Execution Refused across transactional database arrays: " + error.message);
-                } else {
-                    alert("Published successfully! Realtime pipeline initialized notification broadcasts.");
-                    document.getElementById("admin-lesson-form").reset();
-                    await syncClassroomSyllabusEngine();
-                }
-            }
-        };
-
-        // --- 10. SYSTEM CLOCK & COUNTDOWN MATRIX CALCULATORS ---
-        function runClockEngine() {
-            setInterval(() => {
-                const now = new Date();
-                const deadline = new Date();
-                deadline.setHours(20, 0, 0, 0); // Hard lock gate target framing timestamp: 8:00 PM Static
-
-                let diff = deadline - now;
-                const element = document.getElementById("assignment-countdown");
-                
-                if (!element) return;
-
-                if (diff < 0) {
-                    element.textContent = "Submission timeframe lock state engaged.";
-                    element.className = "text-xs text-red-600 font-bold mt-1";
-                } else {
-                    const hrs = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
-                    const mins = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
-                    const secs = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-                    element.textContent = `${hrs}:${mins}:${secs} Left to clear compliance`;
-                }
-            }, 1000);
         }
-    </script>
-</body>
+    }
+
+    // --- 7. REALTIME SYSTEM SUBSCRIPTION SYNCHRONIZER ENGINE ---
+    function establishRealtimeSubscriptions() {
+        supabase.channel('public:lesson_progress')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'lesson_progress' }, () => {
+            syncClassroomSyllabusEngine();
+        })
+        .subscribe();
+    }
+
+    // --- 8. REPORTS COMPILING EXPORT ENGINE CONSOLE ---
+    const reportsEngine = {
+        exportData: (format) => {
+            alert(`Compiling database layers... Exporting system metrics natively mapped into .${format.toLowerCase()} format.`);
+        }
+    };
+
+    // --- 9. SUPER ADMIN OPERATIONS SUITE CONTROLLERS ---
+    const adminConsole = {
+        createLesson: async (e) => {
+            e.preventDefault();
+            const num = document.getElementById("adm-les-num").value;
+            const title = document.getElementById("adm-les-title").value.trim();
+            const gdrive = document.getElementById("adm-les-gdrive").value.trim();
+            const dur = document.getElementById("adm-les-duration").value;
+            const desc = document.getElementById("adm-les-desc").value.trim();
+
+            const { data, error } = await supabase.from('lessons').insert([{
+                course_id: globalState.activeCourseId,
+                lesson_number: num,
+                title: title,
+                google_drive_video_id: gdrive,
+                estimated_duration: dur,
+                description: desc
+            }]);
+
+            if(error) {
+                alert("Database Write Refused: " + error.message);
+            } else {
+                alert("Lesson published successfully to production database matrix!");
+                document.getElementById("admin-lesson-form").reset();
+                await syncClassroomSyllabusEngine();
+            }
+        }
+    };
+
+    // --- 10. SYSTEM CLOCK & COUNTDOWN MATRIX CALCULATORS ---
+    function runClockEngine() {
+        setInterval(() => {
+            const now = new Date();
+            const deadline = new Date();
+            deadline.setHours(20, 0, 0, 0); 
+
+            let diff = deadline - now;
+            const element = document.getElementById("assignment-countdown");
+            
+            if (!element) return;
+
+            if (diff < 0) {
+                element.textContent = "Submission timeframe locked.";
+                element.className = "text-xs text-red-600 font-bold mt-1";
+            } else {
+                const hrs = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+                const mins = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+                const secs = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+                element.textContent = `${hrs}:${mins}:${secs} Remaining today`;
+            }
+        }, 1000);
+    }
+</script>
+
+    </body>
 </html>
