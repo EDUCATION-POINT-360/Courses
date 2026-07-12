@@ -907,7 +907,44 @@
                 certNode.parentElement.classList.add('absolute', 'top-[-9999px]');
             });
         }
+const adminConsole = {
+    createLesson: async (e) => {
+        e.preventDefault();
+        console.log("Publishing started..."); // یہ کنسول میں چیک کرنے کے لیے ہے
 
+        const lesson_number = parseInt(document.getElementById("adm-les-num").value);
+        const title = document.getElementById("adm-les-title").value.trim();
+        const gdrive_id = document.getElementById("adm-les-gdrive").value.trim();
+        const duration = parseInt(document.getElementById("adm-les-duration").value);
+        const description = document.getElementById("adm-les-desc").value.trim();
+
+        try {
+            const { data, error } = await supabaseClientInstance
+                .from('lessons')
+                .insert([
+                    { 
+                        lesson_number: lesson_number, 
+                        title: title, 
+                        google_drive_video_id: gdrive_id, 
+                        estimated_duration: duration, 
+                        description: description 
+                    }
+                ]);
+
+            if (error) {
+                console.error("Supabase Error:", error);
+                alert("اپلوڈ میں ایرر ہے: " + error.message);
+            } else {
+                alert("کامیابی: لیکچر اپلوڈ ہو گیا!");
+                document.getElementById("admin-lesson-form").reset();
+                syncClassroomSyllabusEngine(); 
+            }
+        } catch (err) {
+            console.error("System Error:", err);
+        }
+    }
+};
+        
         // --- CLOCK CONTROLLER ---
         function runClockEngine() {
             setInterval(() => {
