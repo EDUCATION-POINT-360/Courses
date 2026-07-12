@@ -838,89 +838,131 @@ await evaluateAnalyticsAggregatesMetricsContainers();
 
         // اسٹریک کیلکولیشن اور ڈسپلے
 async function calculateAndDisplayStreak() {
-    if (!globalState.sessionUser) return;
-    let { data: history } = await supabaseClientInstance.from('daily_activity')
+    const { data: activity } = await supabaseClientInstance
+        .from('daily_activity')
         .select('date')
         .eq('student_id', globalState.sessionUser.id)
         .order('date', { ascending: false });
 
-    if (!history || history.length === 0) return;
+    if (!activity || activity.length === 0) return;
 
     let streak = 0;
-    let checkDate = new Date();
-    checkDate.setHours(0,0,0,0);
+    let today = new Date();
+    today.setHours(0,0,0,0);
 
-    for (let i = 0; i < history.length; i++) {
-        let entryDate = new Date(history[i].date);
-        if (entryDate.toDateString() === checkDate.toDateString()) {
+    for (let i = 0; i < activity.length; i++) {
+        let activityDate = new Date(activity[i].date);
+        activityDate.setHours(0,0,0,0);
+        
+        // اگر تاریخیں ترتیب سے ہیں تو اسٹریک بڑھائیں
+        let expectedDate = new Date(today);
+        expectedDate.setDate(today.getDate() - i);
+
+        if (activityDate.toDateString() === expectedDate.toDateString()) {
             streak++;
-            checkDate.setDate(checkDate.getDate() - 1);
-        } else if (i > 0) { break; }
+        } else {
+            break; 
+        }
     }
     const streakEl = document.getElementById("stat-current-streak");
     if(streakEl) streakEl.textContent = `${streak} Days`;
-}
-
+        }
+        
 // ایکٹیویٹی ہسٹری فیچنگ
-async function startRealTimeActivityTracker() {
-    setInterval(async () => {
-        if (!globalState.sessionUser) return;
-        todayActiveMinutes++;
-        
-        // UI اپ ڈیٹ
-        if(document.getElementById("stat-study-hours")) 
-            document.getElementById("stat-study-hours").textContent = `${todayActiveMinutes} mins`;
-        
-        // Supabase میں ڈیٹا سیو کریں
-        await supabaseClientInstance.from('daily_activity').upsert({
-            student_id: globalState.sessionUser.id,
-            date: new Date().toISOString().split('T')[0],
-            active_minutes: todayActiveMinutes,
-            last_seen: new Date().toISOString()
-        }, { onConflict: 'student_id, date' });
-
-        await fetchActivityHistory();
-    }, 60000);
-}
-
 async function fetchActivityHistory() {
-    if(!globalState.sessionUser) return;
-    let { data: history } = await supabaseClientInstance.from('daily_activity')
+    let { data: history } = await supabaseClientInstance
+        .from('daily_activity')
         .select('*')
         .eq('student_id', globalState.sessionUser.id)
         .order('date', { ascending: false });
-    
+
     const list = document.getElementById('activity-history-list');
-    if(list && history) {
-        list.innerHTML = history.map(h => `
-            <div class="flex items-center justify-between p-3 border border-gray-100 rounded-xl bg-gray-50">
-                <span class="text-xs font-bold text-gray-800">${h.date}</span>
-                <span class="text-xs font-bold text-brand-red bg-red-50 px-3 py-1 rounded-full">${h.active_minutes} Mins</span>
-            </div>
-        `).join('');
+    if (!list) return;
+
+    list.innerHTML = history.map(h => `
+        <div class="activity-card p-4 border rounded-xl mb-2">
+            <h4 class="font-bold text-lg">${h.date}</h4>
+            <p>⏱ کل وقت: ${h.active_minutes} منٹ</p>
+            <p class="text-sm">📚 دیکھے گئے لیکچرز: ${h.lectures_watched.length > 0 ? h.lectures_watched.join(', ') : 'کوئی لیکچر نہیں'}</p>
+        </div>
+    `).join('');
+}
+        // --- 1. منٹس ٹریکر (ہر 1 منٹ میں کال ہوگا) ---
+async function trackActivity() {
+    if (!globalState.sessionUser) return;
+    
+    todayActiveMinutes++; 
+    
+    // منٹس اور وقت اپ ڈیٹ کریں
+    await supabaseClientInstance.from('daily_activity').upsert({
+        student_id: globalState.sessionUser.id,
+        date: new Date().toISOString().split('T')[0],
+        active_minutes: todayActiveMinutes,
+        last_seen: new Date().toISOString()
+    }, { onConflict: 'student_id, date' });
+}
+setInterval(trackActivity, 60000);
+
+// --- 2. لیکچر ٹریکر (جب یزر لیکچر کھولے یا بٹن دبائے تو اسے کال کریں) ---
+async function logLectureActivity(lessonTitle) {
+    if (!globalState.sessionUser) return;
+
+    const today = new Date().toISOString().split('T')[0];
+    
+    // پہلے موجودہ ڈیٹا حاصل کریں
+    let { data: row } = await supabaseClientInstance
+        .from('daily_activity')
+        .select('lectures_watched')
+        .eq('student_id', globalState.sessionUser.id)
+        .eq('date', today)
+        .single();
+
+    let list = row ? row.lectures_watched : [];
+    
+    // اگر لیکچر لسٹ میں نہیں ہے تو ڈالیں
+    if (!list.includes(lessonTitle)) {
+        list.push(lessonTitle);
+        
+        await supabaseClientInstance.from('daily_activity').upsert({
+            student_id: globalState.sessionUser.id,
+            date: today,
+            lectures_watched: list
+        }, { onConflict: 'student_id, date' });
     }
-        }
+}
+
         
         
         // --- ADMIN LIVE STATS ---
         // یہ فنکشن تلاش کریں اور بدل دیں
-async function fetchAdminLiveStats() {
+async function updateAdminDashboard() {
     try {
-        // کل سٹوڈنٹس
-        const { count: totalCount } = await supabaseClientInstance.from('profiles').select('*', { count: 'exact', head: true });
-        
-        // ایکٹو سٹوڈنٹس (جنہوں نے پچھلے 5 منٹ میں لاسٹ سین اپ ڈیٹ کیا)
+        // 1. کل رجسٹرڈ سٹوڈنٹس کی تعداد
+        const { count: totalStudents } = await supabaseClientInstance
+            .from('profiles')
+            .select('*', { count: 'exact', head: true });
+
+        // 2. لائیو ایکٹیو سٹوڈنٹس (پچھلے 5 منٹ میں جس نے ایکٹیویٹی کی)
         const fiveMinsAgo = new Date(Date.now() - 5 * 60000).toISOString();
-        const { count: activeCount } = await supabaseClientInstance.from('daily_activity')
+        const { count: activeStudents } = await supabaseClientInstance
+            .from('daily_activity')
             .select('*', { count: 'exact', head: true })
             .gte('last_seen', fiveMinsAgo);
 
-        document.getElementById('admin-total-students').textContent = totalCount || 0;
-        document.getElementById('admin-active-students').textContent = activeCount || 0;
-    } catch(e) { console.error("Admin stats error:", e); }
+        // UI اپ ڈیٹ
+        if(document.getElementById('admin-total-students')) 
+            document.getElementById('admin-total-students').textContent = totalStudents || 0;
+        if(document.getElementById('admin-active-students')) 
+            document.getElementById('admin-active-students').textContent = activeStudents || 0;
+            
+    } catch (err) {
+        console.error("Admin stats update failed:", err);
+    }
 }
-// ہر 30 سیکنڈ میں ریفریش کریں
-setInterval(fetchAdminLiveStats, 30000);
+// ہر 30 سیکنڈ میں ریفریش
+setInterval(updateAdminDashboard, 30000);
+
+
     
 
 
