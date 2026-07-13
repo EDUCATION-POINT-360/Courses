@@ -644,23 +644,27 @@
             if (sb) sb.classList.toggle("-translate-x-full");
         }
 function switchView(viewId) {
-    // 1. تمام ویوز کو ہائیڈ کریں
+    // 1. سائیڈ بار کو خود بخود بند کریں (اگر موبائل پر کھلا ہے)
+    const sb = document.getElementById("main-sidebar");
+    if (sb && !sb.classList.contains("-translate-x-full")) {
+        // یہ سائیڈ بار کو بند کرنے والی کلاس ایڈ کر دے گا
+        sb.classList.add("-translate-x-full");
+    }
+
+    // 2. تمام ویوز کو ہائیڈ کریں
     document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
     
-    // 2. مطلوبہ ویو کو دکھائیں
+    // 3. مطلوبہ ویو کو دکھائیں
     const target = document.getElementById(viewId);
     if (target) target.classList.remove("hidden-layer");
 
-    // 3. فوٹر کا لاجک
+    // 4. فوٹر کا لاجک
     const footer = document.getElementById('main-footer');
-    
-    if (viewId === 'student-dashboard') {
-        footer.style.display = 'block'; // یا 'flex' (آپ کے لے آؤٹ کے مطابق)
-    } else {
-        footer.style.display = 'none'; // باقی سب کے لیے چھپا دیں
+    if (footer) {
+        footer.style.display = (viewId === 'student-dashboard') ? 'block' : 'none';
     }
         }
-        // پیج لوڈ ہوتے وقت اسے کال کریں تاکہ اسٹیٹس ٹھیک ہو جائے
+        
 switchView('student-dashboard'); 
 
 
