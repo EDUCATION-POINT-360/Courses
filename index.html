@@ -292,6 +292,10 @@
                             <p class="text-xs text-gray-500 mt-2">Your daily active time spent learning on Education Point.</p>
                             <div id="activity-history-list" class="flex-1 overflow-y-auto custom-scrollbar mt-4 space-y-3"></div>
                         </div>
+                        <div id="profile-completion-view" class="mt-6">
+    <h3 class="font-bold text-sm mb-3">Quiz History</h3>
+    <div id="quiz-history-list" class="bg-white rounded-xl border border-gray-100 p-2"></div>
+</div>
                     </div>
                 </section>
 
@@ -968,21 +972,23 @@
 // --- QUIZ SESSION SYSTEM ENGINE (FINAL FIXED VERSION) ---
 
 // --- QUIZ SESSION SYSTEM ENGINE (FINAL FIXED VERSION) ---
+// --- UPDATED QUIZ SESSION SYSTEM ENGINE ---
 
 async function refreshQuizListUI() {
     if (!globalState.sessionUser) return;
     
     try {
-        // ڈیٹا بیس سے کالم 'lesson_number' منگوایا کیونکہ آپ کی ٹیبل میں یہی نام ہے
+        // تمام کوئز لیسن نمبرز کے ساتھ فیچ کریں
         let { data: quizzes, error } = await supabaseClientInstance
             .from('quizzes')
             .select('lesson_number'); 
         
         if (error) throw error;
         
+        // یوزر کی پرانی اٹیمپٹس چیک کریں
         let { data: attempts } = await supabaseClientInstance
             .from('quiz_attempts')
-            .select('*')
+            .select('lesson_number')
             .eq('student_id', globalState.sessionUser.id);
             
         const listContainer = document.getElementById('quiz-list-container');
@@ -994,147 +1000,84 @@ async function refreshQuizListUI() {
             return;
         }
 
-        // تمام منفرد لیسن نمبرز حاصل کریں
         const uniqueLessonNumbers = [...new Set(quizzes.map(q => q.lesson_number))];
         
         uniqueLessonNumbers.forEach(lNum => {
-            // یہاں بھی lesson_number سے میچ کریں گے
-            const attempt = attempts?.find(a => a.lesson_number === lNum || a.lesson_id == lNum);
-            const isCompleted = !!attempt;
+            const isCompleted = attempts?.some(a => a.lesson_number === lNum);
             
             const btn = document.createElement('button');
             btn.className = `w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between gap-2 mb-2 ${
                 isCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-200 hover:border-brand-red'
             }`;
-            btn.onclick = () => renderActiveQuizWorkspace(lNum, attempt);
+            btn.onclick = () => renderActiveQuizWorkspace(lNum, isCompleted);
             
             btn.innerHTML = `
                 <div>
                     <span class="block text-[10px] font-bold uppercase ${isCompleted ? 'text-emerald-600' : 'text-gray-400'}">Lesson ${lNum}</span>
                     <h4 class="font-bold text-xs text-gray-800">Quiz Assessment</h4>
                 </div>
-                <div>
-                    ${isCompleted ? `<span class="text-xs font-black text-emerald-600">${attempt.score}/${attempt.total_questions}</span>` : `<i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>`}
-                </div>
+                <i data-lucide="${isCompleted ? 'check-circle' : 'chevron-right'}" class="w-4 h-4"></i>
             `;
             listContainer.appendChild(btn);
         });
         if (typeof lucide !== 'undefined') lucide.createIcons();
-
-    } catch (err) {
-        console.error("Error fetching quizzes:", err);
-    }
+    } catch (err) { console.error("Error:", err); }
 }
 
-async function renderActiveQuizWorkspace(lessonNumber, pastAttempt) {
+async function renderActiveQuizWorkspace(lessonNumber, isCompleted) {
     document.getElementById('quiz-placeholder').classList.add('hidden-layer');
     const ws = document.getElementById('active-quiz-container');
     ws.classList.remove('hidden-layer');
     
-    if(pastAttempt) {
-        ws.innerHTML = `
-            <div class="p-8 text-center bg-gray-50 rounded-2xl border border-gray-200 flex flex-col items-center">
-                <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 mb-4">
-                    <i data-lucide="award" class="w-10 h-10"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Quiz Completed!</h3>
-                <p class="text-sm text-gray-500 mb-4">آپ نے لیسن ${lessonNumber} کا کوئز پہلے ہی حل کر لیا ہے۔</p>
-            </div>
-        `;
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+    if(isCompleted) {
+        ws.innerHTML = `<div class="p-8 text-center bg-gray-50 rounded-2xl border border-gray-200">آپ یہ کوئز پہلے ہی حل کر چکے ہیں۔</div>`;
         return;
     }
 
-    ws.innerHTML = `<p class="text-sm text-gray-400 text-center py-8 animate-pulse">Loading Quiz Questions...</p>`;
+    ws.innerHTML = `<p class="text-sm text-gray-400 text-center py-8">Loading Questions...</p>`;
     
-    try {
-        let { data: questions } = await supabaseClientInstance
-            .from('quizzes')
-            .select('*')
-            .eq('lesson_number', lessonNumber);
-            
-        if(!questions || questions.length === 0) {
-            ws.innerHTML = `<p class="text-sm text-gray-400 text-center py-8">No questions found.</p>`;
-            return;
-        }
-
-        globalState.quizCache = questions;
+    let { data: questions } = await supabaseClientInstance
+        .from('quizzes')
+        .select('*')
+        .eq('lesson_number', lessonNumber);
         
-        let html = `
-            <h3 class="font-bold text-lg text-gray-800 mb-4">Assessment</h3>
-            <form id="active-quiz-form" onsubmit="submitQuizAssessment(event, ${lessonNumber})" class="space-y-6">
-        `;
-        
-        questions.forEach((q, idx) => {
-            // یہاں ڈیٹا بیس کالم کے عین مطابق q.opt_a استعمال کیا گیا ہے تاکہ undefined نہ آئے
-            html += `
-                <div class="bg-gray-50 p-5 rounded-xl border border-gray-100">
-                    <p class="font-bold text-sm text-gray-800 mb-3">${idx + 1}. ${q.question}</p>
-                    <div class="space-y-2">
-                        <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
-                            <input type="radio" name="q_${q.id}" value="A" required> <span>${q.opt_a || 'Option A'}</span>
+    globalState.quizCache = questions;
+    
+    let html = `<form id="active-quiz-form" onsubmit="submitQuizAssessment(event, ${lessonNumber})" class="space-y-6">`;
+    questions.forEach((q, idx) => {
+        html += `
+            <div class="bg-gray-50 p-5 rounded-xl border border-gray-100">
+                <p class="font-bold text-sm text-gray-800 mb-3">${idx + 1}. ${q.question}</p>
+                <div class="space-y-2">
+                    ${['A','B','C','D'].map(opt => `
+                        <label class="flex items-center gap-3 text-sm p-2 bg-white rounded cursor-pointer border border-gray-100">
+                            <input type="radio" name="q_${q.id}" value="${opt}" required> <span>${q['opt_'+opt.toLowerCase()]}</span>
                         </label>
-                        <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
-                            <input type="radio" name="q_${q.id}" value="B" required> <span>${q.opt_b || 'Option B'}</span>
-                        </label>
-                        <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
-                            <input type="radio" name="q_${q.id}" value="C" required> <span>${q.opt_c || 'Option C'}</span>
-                        </label>
-                        <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
-                            <input type="radio" name="q_${q.id}" value="D" required> <span>${q.opt_d || 'Option D'}</span>
-                        </label>
-                    </div>
+                    `).join('')}
                 </div>
-            `;
-        });
-        
-        html += `<button type="submit" class="w-full py-3 bg-brand-red text-white font-bold rounded-xl shadow-md">Submit Answers</button></form>`;
-        ws.innerHTML = html;
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-
-    } catch (err) {
-        ws.innerHTML = `<p class="text-sm text-red-500">Error loading quiz.</p>`;
-    }
+            </div>`;
+    });
+    html += `<button type="submit" class="w-full py-3 bg-brand-red text-white font-bold rounded-xl">Submit Quiz</button></form>`;
+    ws.innerHTML = html;
 }
-
 
 async function submitQuizAssessment(e, lessonNumber) {
     e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
+    const formData = new FormData(e.target);
     let score = 0;
-    
     globalState.quizCache.forEach(q => {
-        if(formData.get(`q_${q.id}`) === q.correct_opt) {
-            score++;
-        }
+        if(formData.get(`q_${q.id}`) === q.correct_opt) score++;
     });
     
-    // اٹیمپٹ سیو کرتے وقت کالم نیمز کا خاص خیال رکھا گیا ہے
-    const { error } = await supabaseClientInstance.from('quiz_attempts').insert([{
+    await supabaseClientInstance.from('quiz_attempts').insert([{
         student_id: globalState.sessionUser.id,
-        lesson_number: lessonNumber, // اس کو آپ کی ٹیبل سکیمہ کے مطابق رکھا گیا ہے
+        lesson_number: lessonNumber,
         score: score,
         total_questions: globalState.quizCache.length
     }]);
     
-    if (error) {
-        // اگر آپ کی quiz_attempts ٹیبل میں کالم کا نام 'lesson_id' ہے تو یہ متبادل کے طور پر رن ہوگا
-        const { error: retryError } = await supabaseClientInstance.from('quiz_attempts').insert([{
-            student_id: globalState.sessionUser.id,
-            lesson_id: lessonNumber,
-            score: score,
-            total_questions: globalState.quizCache.length
-        }]);
-        if(retryError) alert("Error: " + retryError.message);
-        else {
-            alert("Quiz submitted successfully! Score: " + score);
-            refreshQuizListUI();
-        }
-    } else {
-        alert("Quiz submitted successfully! Score: " + score);
-        refreshQuizListUI();
-    }
+    triggerToastNotification(`کوئز مکمل! آپ کا اسکور: ${score}/${globalState.quizCache.length}`);
+    refreshQuizListUI();
 }
             
                 // --- HISTORY & ACTIVITY TRACKING ---
@@ -1305,6 +1248,55 @@ async function submitQuizAssessment(e, lessonNumber) {
                 syncClassroomSyllabusEngine(); 
             } catch(err) {}
         }
+// اسکور اور لیڈر بورڈ فیچ کرنے کا فنکشن
+async function loadAcademicPerformance() {
+    // 1. لیٹسٹ اسکور ڈیش بورڈ پر
+    const { data: latest } = await supabaseClientInstance
+        .from('quiz_attempts')
+        .select('*')
+        .eq('student_id', globalState.sessionUser.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+    if (latest) {
+        document.getElementById('dash-recent-score').textContent = `${latest.score}/${latest.total_questions}`;
+    }
+
+    // 2. کوئز ہسٹری (پروفائل سیکشن کے لیے)
+    const { data: history } = await supabaseClientInstance
+        .from('quiz_attempts')
+        .select('*')
+        .eq('student_id', globalState.sessionUser.id)
+        .order('created_at', { ascending: false });
+
+    const historyContainer = document.getElementById('quiz-history-list');
+    if (historyContainer && history) {
+        historyContainer.innerHTML = history.map(h => `
+            <div class="flex justify-between p-3 border-b text-xs">
+                <span>Lesson ${h.lesson_number}</span>
+                <span class="font-bold">${h.score}/${h.total_questions}</span>
+            </div>
+        `).join('');
+    }
+
+    // 3. لیڈر بورڈ (ٹاپ 5 اسٹوڈنٹس)
+    const { data: leaderboard } = await supabaseClientInstance
+        .from('quiz_attempts')
+        .select('student_name, score') // نوٹ: آپ کا ٹیبل student_name ہولڈ کرتا ہو
+        .order('score', { ascending: false })
+        .limit(5);
+
+    const leaderContainer = document.getElementById('leaderboard-list');
+    if (leaderContainer && leaderboard) {
+        leaderContainer.innerHTML = leaderboard.map((l, i) => `
+            <div class="flex justify-between p-2 bg-gray-50 rounded mb-1 text-xs">
+                <span>${i+1}. ${l.student_name}</span>
+                <span class="font-bold text-brand-red">${l.score} pts</span>
+            </div>
+        `).join('');
+    }
+}
 
         // --- CLOCK CONTROLLER ---
         function runClockEngine() {
