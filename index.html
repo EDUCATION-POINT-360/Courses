@@ -938,21 +938,19 @@
     const qRender = document.getElementById("quiz-questions-render");
     const btnSubmit = document.getElementById("btn-submit-quiz");
     const resDisplay = document.getElementById("quiz-result-display");
-    
-    // UI کو ری سیٹ کریں
-    quizContainer.classList.add("hidden"); 
-    resDisplay.classList.add("hidden"); 
-    btnSubmit.classList.add("hidden");
 
-    // کوئز کے سوالات فیچ کریں
-    const { data: questions, error: qError } = await supabaseClientInstance
+    // ابتدائی حالت
+    quizContainer.classList.add("hidden");
+
+    // 1. کوئز سوالات حاصل کریں
+    const { data: questions, error: qErr } = await supabaseClientInstance
         .from('quizzes')
         .select('*')
         .eq('lesson_id', lessonId);
 
-    if (qError || !questions || questions.length === 0) return;
+    if (qErr || !questions || questions.length === 0) return;
 
-    // کیا طالب علم پہلے اٹمپٹ کر چکا ہے؟
+    // 2. چیک کریں کہ کیا طالب علم پہلے کوئز دے چکا ہے
     const { data: attempt } = await supabaseClientInstance
         .from('quiz_attempts')
         .select('*')
@@ -964,66 +962,66 @@
     globalState.currentQuizQuestions = questions;
 
     if (attempt) {
+        // پہلے سے اٹمپٹڈ ہے
         resDisplay.classList.remove("hidden");
+        btnSubmit.classList.add("hidden");
         resDisplay.className = `font-bold text-lg text-center p-4 rounded-xl ${attempt.percentage >= 50 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`;
-        resDisplay.innerHTML = `You already took this test. Score: ${attempt.score}/${attempt.total_questions} (${attempt.percentage}%)`;
+        resDisplay.innerHTML = `آپ یہ ٹیسٹ پہلے دے چکے ہیں۔ سکور: ${attempt.score}/${attempt.total_questions} (${attempt.percentage}%)`;
         qRender.innerHTML = "";
     } else {
+        // کوئز دکھائیں
         btnSubmit.classList.remove("hidden");
-        btnSubmit.disabled = false; // بٹن کو ان ایبل کریں
+        btnSubmit.disabled = false;
+        resDisplay.classList.add("hidden");
         qRender.innerHTML = questions.map((q, i) => `
-            <div class="p-4 bg-gray-50 border rounded-xl mb-3" id="q-block-${q.id}">
+            <div class="p-4 bg-gray-50 border rounded-xl mb-4">
                 <p class="font-bold text-gray-800 mb-3">Q${i+1}: ${q.question}</p>
                 <div class="space-y-2 text-sm">
-                    <label class="flex items-center space-x-2"><input type="radio" name="q_${q.id}" value="A"> <span>${q.option_a}</span></label>
-                    <label class="flex items-center space-x-2"><input type="radio" name="q_${q.id}" value="B"> <span>${q.option_b}</span></label>
-                    <label class="flex items-center space-x-2"><input type="radio" name="q_${q.id}" value="C"> <span>${q.option_c}</span></label>
-                    <label class="flex items-center space-x-2"><input type="radio" name="q_${q.id}" value="D"> <span>${q.option_d}</span></label>
+                    ${['A', 'B', 'C', 'D'].map(opt => `
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="q_${q.id}" value="${opt}"> 
+                            <span>${q['option_' + opt.toLowerCase()]}</span>
+                        </label>
+                    `).join('')}
                 </div>
             </div>
         `).join('');
     }
 }
+
 async function evaluateQuiz() {
     const btnSubmit = document.getElementById("btn-submit-quiz");
-    btnSubmit.disabled = true; // ڈبل کلک روکنے کے لیے
-    btnSubmit.innerText = "Submitting...";
+    btnSubmit.disabled = true;
+    
+    let score = 0;
+    const total = globalState.currentQuizQuestions.length;
+    
+    globalState.currentQuizQuestions.forEach(q => {
+        const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
+        if (selected && selected.value.toUpperCase() === q.correct_option.toUpperCase()) score++;
+    });
 
-    try {
-        let score = 0;
-        const total = globalState.currentQuizQuestions.length;
-        
-        globalState.currentQuizQuestions.forEach(q => {
-            const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
-            if (selected && selected.value.toUpperCase() === q.correct_option.toUpperCase()) {
-                score++;
-            }
-        });
+    const percentage = (score / total) * 100;
+    
+    // Supabase میں انسرٹ
+    const { error } = await supabaseClientInstance.from('quiz_attempts').insert([{
+        lesson_id: globalState.currentActiveLessonId,
+        student_id: globalState.sessionUser.id,
+        score: score,
+        total_questions: total,
+        percentage: percentage
+    }]);
 
-        const percentage = (score / total) * 100;
-        
-        // Supabase میں ڈیٹا داخل کریں
-        const { error } = await supabaseClientInstance.from('quiz_attempts').insert([{
-            lesson_id: globalState.currentActiveLessonId,
-            student_id: globalState.sessionUser.id,
-            score: score,
-            total_questions: total,
-            percentage: percentage
-        }]);
-
-        if (error) throw error;
-
-        // کام مکمل ہونے پر اپ ڈیٹ کریں
-        logLectureActivity(`Quiz Attempted: Score ${percentage}%`);
-        await loadQuizForLesson(globalState.currentActiveLessonId); 
-        fetchActivityHistory(); 
-    } catch (err) {
-        alert("Error submitting quiz. Please try again.");
-        console.error(err);
+    if (error) {
+        alert("ڈیٹا سیو کرنے میں مسئلہ ہوا: " + error.message);
         btnSubmit.disabled = false;
-        btnSubmit.innerText = "Submit Quiz";
+    } else {
+        alert("کوئز کامیابی سے جمع ہو گیا!");
+        await loadQuizForLesson(globalState.currentActiveLessonId);
+        fetchActivityHistory();
     }
 }
+
 
 
         async function evaluateAnalyticsAggregatesMetricsContainers() {
