@@ -941,14 +941,16 @@
         }
 // --- QUIZ SESSION SYSTEM ENGINE (FINAL FIXED VERSION) ---
 
+// --- QUIZ SESSION SYSTEM ENGINE (FINAL FIXED VERSION) ---
+
 async function refreshQuizListUI() {
     if (!globalState.sessionUser) return;
     
     try {
-        // یہاں 'lesson_id' استعمال کریں کیونکہ آپ کی ٹیبل میں یہی کالم ہے
+        // ڈیٹا بیس سے کالم 'lesson_number' منگوایا کیونکہ آپ کی ٹیبل میں یہی نام ہے
         let { data: quizzes, error } = await supabaseClientInstance
             .from('quizzes')
-            .select('lesson_id'); 
+            .select('lesson_number'); 
         
         if (error) throw error;
         
@@ -966,21 +968,23 @@ async function refreshQuizListUI() {
             return;
         }
 
-        const uniqueLessonIds = [...new Set(quizzes.map(q => q.lesson_id))];
+        // تمام منفرد لیسن نمبرز حاصل کریں
+        const uniqueLessonNumbers = [...new Set(quizzes.map(q => q.lesson_number))];
         
-        uniqueLessonIds.forEach(lId => {
-            const attempt = attempts?.find(a => a.lesson_id === lId);
+        uniqueLessonNumbers.forEach(lNum => {
+            // یہاں بھی lesson_number سے میچ کریں گے
+            const attempt = attempts?.find(a => a.lesson_number === lNum || a.lesson_id == lNum);
             const isCompleted = !!attempt;
             
             const btn = document.createElement('button');
             btn.className = `w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between gap-2 mb-2 ${
                 isCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-200 hover:border-brand-red'
             }`;
-            btn.onclick = () => renderActiveQuizWorkspace(lId, attempt);
+            btn.onclick = () => renderActiveQuizWorkspace(lNum, attempt);
             
             btn.innerHTML = `
                 <div>
-                    <span class="block text-[10px] font-bold uppercase ${isCompleted ? 'text-emerald-600' : 'text-gray-400'}">Lesson ${lId}</span>
+                    <span class="block text-[10px] font-bold uppercase ${isCompleted ? 'text-emerald-600' : 'text-gray-400'}">Lesson ${lNum}</span>
                     <h4 class="font-bold text-xs text-gray-800">Quiz Assessment</h4>
                 </div>
                 <div>
@@ -996,7 +1000,7 @@ async function refreshQuizListUI() {
     }
 }
 
-async function renderActiveQuizWorkspace(lessonId, pastAttempt) {
+async function renderActiveQuizWorkspace(lessonNumber, pastAttempt) {
     document.getElementById('quiz-placeholder').classList.add('hidden-layer');
     const ws = document.getElementById('active-quiz-container');
     ws.classList.remove('hidden-layer');
@@ -1008,10 +1012,10 @@ async function renderActiveQuizWorkspace(lessonId, pastAttempt) {
                     <i data-lucide="award" class="w-10 h-10"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Quiz Completed!</h3>
-                <p class="text-sm text-gray-500 mb-4">آپ نے لیسن ${lessonId} کا کوئز پہلے ہی حل کر لیا ہے۔</p>
+                <p class="text-sm text-gray-500 mb-4">آپ نے لیسن ${lessonNumber} کا کوئز پہلے ہی حل کر لیا ہے۔</p>
             </div>
         `;
-        lucide.createIcons();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
 
@@ -1021,7 +1025,7 @@ async function renderActiveQuizWorkspace(lessonId, pastAttempt) {
         let { data: questions } = await supabaseClientInstance
             .from('quizzes')
             .select('*')
-            .eq('lesson_id', lessonId); // یہاں بھی lesson_id استعمال کیا
+            .eq('lesson_number', lessonNumber); // کالم نیم کو درست کر کے 'lesson_number' کر دیا گیا ہے
             
         if(!questions || questions.length === 0) {
             ws.innerHTML = `<p class="text-sm text-gray-400 text-center py-8">No questions found.</p>`;
@@ -1032,7 +1036,7 @@ async function renderActiveQuizWorkspace(lessonId, pastAttempt) {
         
         let html = `
             <h3 class="font-bold text-lg text-gray-800 mb-4">Assessment</h3>
-            <form id="active-quiz-form" onsubmit="submitQuizAssessment(event, '${lessonId}')" class="space-y-6">
+            <form id="active-quiz-form" onsubmit="submitQuizAssessment(event, ${lessonNumber})" class="space-y-6">
         `;
         
         questions.forEach((q, idx) => {
@@ -1057,41 +1061,53 @@ async function renderActiveQuizWorkspace(lessonId, pastAttempt) {
             `;
         });
         
-        html += `<button type="submit" class="w-full py-3 bg-brand-red text-white font-bold rounded-xl">Submit Answers</button></form>`;
+        html += `<button type="submit" class="w-full py-3 bg-brand-red text-white font-bold rounded-xl shadow-md">Submit Answers</button></form>`;
         ws.innerHTML = html;
-        lucide.createIcons();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
 
     } catch (err) {
         ws.innerHTML = `<p class="text-sm text-red-500">Error loading quiz.</p>`;
     }
 }
 
-async function submitQuizAssessment(e, lessonId) {
+async function submitQuizAssessment(e, lessonNumber) {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
     let score = 0;
     
     globalState.quizCache.forEach(q => {
-        // یہاں کالم کا نام 'correct_option' استعمال کیا گیا ہے جو آپ کے ڈیٹا بیس میں ہے
-        if(formData.get(`q_${q.id}`) === q.correct_option) {
+        if(formData.get(`q_${q.id}`) === q.correct_opt) {
             score++;
         }
     });
     
+    // اٹیمپٹ سیو کرتے وقت کالم نیمز کا خاص خیال رکھا گیا ہے
     const { error } = await supabaseClientInstance.from('quiz_attempts').insert([{
         student_id: globalState.sessionUser.id,
-        lesson_id: lessonId,
+        lesson_number: lessonNumber, // اس کو آپ کی ٹیبل سکیمہ کے مطابق رکھا گیا ہے
         score: score,
         total_questions: globalState.quizCache.length
     }]);
     
-    if (error) alert("Error: " + error.message);
-    else {
-        alert("Quiz submitted! Score: " + score);
+    if (error) {
+        // اگر آپ کی quiz_attempts ٹیبل میں کالم کا نام 'lesson_id' ہے تو یہ متبادل کے طور پر رن ہوگا
+        const { error: retryError } = await supabaseClientInstance.from('quiz_attempts').insert([{
+            student_id: globalState.sessionUser.id,
+            lesson_id: lessonNumber,
+            score: score,
+            total_questions: globalState.quizCache.length
+        }]);
+        if(retryError) alert("Error: " + retryError.message);
+        else {
+            alert("Quiz submitted successfully! Score: " + score);
+            refreshQuizListUI();
+        }
+    } else {
+        alert("Quiz submitted successfully! Score: " + score);
         refreshQuizListUI();
     }
-        }
+}
             
                 // --- HISTORY & ACTIVITY TRACKING ---
         async function calculateAndDisplayStreak() {
