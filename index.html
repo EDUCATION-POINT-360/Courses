@@ -1025,7 +1025,7 @@ async function renderActiveQuizWorkspace(lessonNumber, pastAttempt) {
         let { data: questions } = await supabaseClientInstance
             .from('quizzes')
             .select('*')
-            .eq('lesson_number', lessonNumber); // کالم نیم کو درست کر کے 'lesson_number' کر دیا گیا ہے
+            .eq('lesson_number', lessonNumber);
             
         if(!questions || questions.length === 0) {
             ws.innerHTML = `<p class="text-sm text-gray-400 text-center py-8">No questions found.</p>`;
@@ -1040,21 +1040,22 @@ async function renderActiveQuizWorkspace(lessonNumber, pastAttempt) {
         `;
         
         questions.forEach((q, idx) => {
+            // یہاں ڈیٹا بیس کالم کے عین مطابق q.opt_a استعمال کیا گیا ہے تاکہ undefined نہ آئے
             html += `
                 <div class="bg-gray-50 p-5 rounded-xl border border-gray-100">
                     <p class="font-bold text-sm text-gray-800 mb-3">${idx + 1}. ${q.question}</p>
                     <div class="space-y-2">
                         <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
-                            <input type="radio" name="q_${q.id}" value="A" required> <span>${q.option_a}</span>
+                            <input type="radio" name="q_${q.id}" value="A" required> <span>${q.opt_a || 'Option A'}</span>
                         </label>
                         <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
-                            <input type="radio" name="q_${q.id}" value="B" required> <span>${q.option_b}</span>
+                            <input type="radio" name="q_${q.id}" value="B" required> <span>${q.opt_b || 'Option B'}</span>
                         </label>
                         <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
-                            <input type="radio" name="q_${q.id}" value="C" required> <span>${q.option_c}</span>
+                            <input type="radio" name="q_${q.id}" value="C" required> <span>${q.opt_c || 'Option C'}</span>
                         </label>
                         <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
-                            <input type="radio" name="q_${q.id}" value="D" required> <span>${q.option_d}</span>
+                            <input type="radio" name="q_${q.id}" value="D" required> <span>${q.opt_d || 'Option D'}</span>
                         </label>
                     </div>
                 </div>
@@ -1069,6 +1070,7 @@ async function renderActiveQuizWorkspace(lessonNumber, pastAttempt) {
         ws.innerHTML = `<p class="text-sm text-red-500">Error loading quiz.</p>`;
     }
 }
+
 
 async function submitQuizAssessment(e, lessonNumber) {
     e.preventDefault();
