@@ -934,66 +934,97 @@
 
         // --- QUICK TEST (QUIZ) SYSTEM ---
         async function loadQuizForLesson(lessonId) {
-            const quizContainer = document.getElementById("quiz-gate-container");
-            const qRender = document.getElementById("quiz-questions-render");
-            const btnSubmit = document.getElementById("btn-submit-quiz");
-            const resDisplay = document.getElementById("quiz-result-display");
-            
-            quizContainer.classList.add("hidden"); resDisplay.classList.add("hidden"); btnSubmit.classList.add("hidden");
+    const quizContainer = document.getElementById("quiz-gate-container");
+    const qRender = document.getElementById("quiz-questions-render");
+    const btnSubmit = document.getElementById("btn-submit-quiz");
+    const resDisplay = document.getElementById("quiz-result-display");
+    
+    // UI کو ری سیٹ کریں
+    quizContainer.classList.add("hidden"); 
+    resDisplay.classList.add("hidden"); 
+    btnSubmit.classList.add("hidden");
 
-            let { data: questions } = await supabaseClientInstance.from('quizzes').select('*').eq('lesson_id', lessonId);
-            if (!questions || questions.length === 0) return;
+    // کوئز کے سوالات فیچ کریں
+    const { data: questions, error: qError } = await supabaseClientInstance
+        .from('quizzes')
+        .select('*')
+        .eq('lesson_id', lessonId);
 
-            let { data: attempt } = await supabaseClientInstance.from('quiz_attempts')
-                .select('*').eq('lesson_id', lessonId).eq('student_id', globalState.sessionUser.id).maybeSingle();
+    if (qError || !questions || questions.length === 0) return;
 
-            quizContainer.classList.remove("hidden");
-            globalState.currentQuizQuestions = questions;
+    // کیا طالب علم پہلے اٹمپٹ کر چکا ہے؟
+    const { data: attempt } = await supabaseClientInstance
+        .from('quiz_attempts')
+        .select('*')
+        .eq('lesson_id', lessonId)
+        .eq('student_id', globalState.sessionUser.id)
+        .maybeSingle();
 
-            if (attempt) {
-                resDisplay.classList.remove("hidden");
-                resDisplay.className = `font-bold text-lg text-center p-4 rounded-xl ${attempt.percentage >= 50 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`;
-                resDisplay.innerHTML = `You already took this test. Score: ${attempt.score}/${attempt.total_questions} (${attempt.percentage}%)`;
-                qRender.innerHTML = "";
-            } else {
-                btnSubmit.classList.remove("hidden");
-                qRender.innerHTML = questions.map((q, i) => `
-                    <div class="p-4 bg-gray-50 border rounded-xl" id="q-block-${q.id}">
-                        <p class="font-bold text-gray-800 mb-3">Q${i+1}: ${q.question}</p>
-                        <div class="space-y-2 text-sm">
-                            <label class="flex items-center space-x-2"><input type="radio" name="q_${q.id}" value="A"> <span>${q.option_a}</span></label>
-                            <label class="flex items-center space-x-2"><input type="radio" name="q_${q.id}" value="B"> <span>${q.option_b}</span></label>
-                            <label class="flex items-center space-x-2"><input type="radio" name="q_${q.id}" value="C"> <span>${q.option_c}</span></label>
-                            <label class="flex items-center space-x-2"><input type="radio" name="q_${q.id}" value="D"> <span>${q.option_d}</span></label>
-                        </div>
-                    </div>
-                `).join('');
+    quizContainer.classList.remove("hidden");
+    globalState.currentQuizQuestions = questions;
+
+    if (attempt) {
+        resDisplay.classList.remove("hidden");
+        resDisplay.className = `font-bold text-lg text-center p-4 rounded-xl ${attempt.percentage >= 50 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`;
+        resDisplay.innerHTML = `You already took this test. Score: ${attempt.score}/${attempt.total_questions} (${attempt.percentage}%)`;
+        qRender.innerHTML = "";
+    } else {
+        btnSubmit.classList.remove("hidden");
+        btnSubmit.disabled = false; // بٹن کو ان ایبل کریں
+        qRender.innerHTML = questions.map((q, i) => `
+            <div class="p-4 bg-gray-50 border rounded-xl mb-3" id="q-block-${q.id}">
+                <p class="font-bold text-gray-800 mb-3">Q${i+1}: ${q.question}</p>
+                <div class="space-y-2 text-sm">
+                    <label class="flex items-center space-x-2"><input type="radio" name="q_${q.id}" value="A"> <span>${q.option_a}</span></label>
+                    <label class="flex items-center space-x-2"><input type="radio" name="q_${q.id}" value="B"> <span>${q.option_b}</span></label>
+                    <label class="flex items-center space-x-2"><input type="radio" name="q_${q.id}" value="C"> <span>${q.option_c}</span></label>
+                    <label class="flex items-center space-x-2"><input type="radio" name="q_${q.id}" value="D"> <span>${q.option_d}</span></label>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+async function evaluateQuiz() {
+    const btnSubmit = document.getElementById("btn-submit-quiz");
+    btnSubmit.disabled = true; // ڈبل کلک روکنے کے لیے
+    btnSubmit.innerText = "Submitting...";
+
+    try {
+        let score = 0;
+        const total = globalState.currentQuizQuestions.length;
+        
+        globalState.currentQuizQuestions.forEach(q => {
+            const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
+            if (selected && selected.value.toUpperCase() === q.correct_option.toUpperCase()) {
+                score++;
             }
-        }
+        });
 
-        async function evaluateQuiz() {
-            let score = 0;
-            const total = globalState.currentQuizQuestions.length;
-            
-            globalState.currentQuizQuestions.forEach(q => {
-                const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
-                if (selected && selected.value === q.correct_option) score++;
-            });
+        const percentage = (score / total) * 100;
+        
+        // Supabase میں ڈیٹا داخل کریں
+        const { error } = await supabaseClientInstance.from('quiz_attempts').insert([{
+            lesson_id: globalState.currentActiveLessonId,
+            student_id: globalState.sessionUser.id,
+            score: score,
+            total_questions: total,
+            percentage: percentage
+        }]);
 
-            const percentage = (score / total) * 100;
-            
-            await supabaseClientInstance.from('quiz_attempts').insert([{
-                lesson_id: globalState.currentActiveLessonId,
-                student_id: globalState.sessionUser.id,
-                score: score,
-                total_questions: total,
-                percentage: percentage
-            }]);
+        if (error) throw error;
 
-            logLectureActivity(`Quiz Attempted: Score ${percentage}%`);
-            loadQuizForLesson(globalState.currentActiveLessonId); // Reload UI
-            fetchActivityHistory(); // Update Dashboard Stats
-        }
+        // کام مکمل ہونے پر اپ ڈیٹ کریں
+        logLectureActivity(`Quiz Attempted: Score ${percentage}%`);
+        await loadQuizForLesson(globalState.currentActiveLessonId); 
+        fetchActivityHistory(); 
+    } catch (err) {
+        alert("Error submitting quiz. Please try again.");
+        console.error(err);
+        btnSubmit.disabled = false;
+        btnSubmit.innerText = "Submit Quiz";
+    }
+}
+
 
         async function evaluateAnalyticsAggregatesMetricsContainers() {
             if (!globalState.sessionUser) return;
