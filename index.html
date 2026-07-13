@@ -425,87 +425,10 @@
             </div>
         </div>
     </div>
-</section>
-
-<script>
-// کوئز لسٹ کو اپڈیٹ کرنے کا فنکشن
-async function refreshQuizListUI() {
-    if (!globalState.sessionUser) return;
-    
-    // تمام لیسنز حاصل کریں جن کے کوئز موجود ہیں
-    const { data: quizzes } = await supabaseClientInstance.from('quizzes').select('lesson_number');
-    const container = document.getElementById('quiz-lesson-list');
-    container.innerHTML = '';
-    
-    const uniqueLessons = [...new Set(quizzes.map(q => q.lesson_number))];
-    
-    uniqueLessons.forEach(lNum => {
-        const btn = document.createElement('button');
-        btn.className = "w-full text-left p-3 rounded-xl border border-gray-200 hover:bg-red-50 hover:border-brand-red transition-all mb-2 font-bold text-xs";
-        btn.textContent = `Lesson ${lNum} - Start Quiz`;
-        btn.onclick = () => loadFullQuizForLesson(lNum);
-        container.appendChild(btn);
-    });
-}
-
-// ایک لیسن کے تمام سوالات لوڈ کرنا
-async function loadFullQuizForLesson(lessonNumber) {
-    const ws = document.getElementById('active-quiz-container');
-    document.getElementById('quiz-placeholder').classList.add('hidden-layer');
-    ws.classList.remove('hidden-layer');
-    ws.innerHTML = '<p class="text-center py-10">Loading...</p>';
-
-    const { data: questions } = await supabaseClientInstance
-        .from('quizzes')
-        .select('*')
-        .eq('lesson_number', lessonNumber);
-
-    globalState.quizCache = questions;
-    
-    let html = `<form onsubmit="submitQuizAssessment(event, ${lessonNumber})" class="space-y-4">`;
-    questions.forEach((q, i) => {
-        html += `
-            <div class="p-4 bg-gray-50 rounded-lg">
-                <p class="font-bold mb-2">${i+1}. ${q.question}</p>
-                <div class="grid grid-cols-1 gap-2">
-                    <label><input type="radio" name="q_${q.id}" value="A" required> ${q.opt_a}</label>
-                    <label><input type="radio" name="q_${q.id}" value="B" required> ${q.opt_b}</label>
-                    <label><input type="radio" name="q_${q.id}" value="C" required> ${q.opt_c}</label>
-                    <label><input type="radio" name="q_${q.id}" value="D" required> ${q.opt_d}</label>
-                </div>
-            </div>`;
-    });
-    html += `<button class="w-full py-3 bg-brand-red text-white font-bold rounded-xl">Submit Quiz</button></form>`;
-    ws.innerHTML = html;
-}
-
-// کوئز سبمشن اور رزلٹ سیونگ
-async function submitQuizAssessment(e, lessonNumber) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    let score = 0;
-    
-    globalState.quizCache.forEach(q => {
-        if(formData.get(`q_${q.id}`) === q.correct_opt) score++;
-    });
-
-    await supabaseClientInstance.from('quiz_attempts').insert([{
-        student_id: globalState.sessionUser.id,
-        lesson_number: lessonNumber,
-        score: score,
-        total_questions: globalState.quizCache.length
-    }]);
-
-    alert(`Quiz Finished! Your Score: ${score}/${globalState.quizCache.length}`);
-    switchView('student-dashboard'); // ڈیش بورڈ پر واپس
-}
-</script>
-
-                                        </section>
-            </div>
+    </section>
         </main>
     </div>
-
+                </section>
     <div id="assignment-modal" class="fixed inset-0 z-[10000] bg-black/60 hidden-layer flex items-center justify-center backdrop-blur-sm transition-opacity duration-300 page-layer">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 transform transition-all shadow-2xl border border-gray-200">
             <div class="flex justify-between items-center border-b border-gray-100 pb-3">
@@ -994,7 +917,77 @@ async function submitQuizAssessment(e, lessonNumber) {
             if (bar) bar.style.width = `${completionRatio}%`;
         }
 // --- QUIZ SESSION SYSTEM ENGINE (FINAL FIXED VERSION) ---
+// کوئز لسٹ کو اپڈیٹ کرنے کا فنکشن
+async function refreshQuizListUI() {
+    if (!globalState.sessionUser) return;
+    
+    // تمام لیسنز حاصل کریں جن کے کوئز موجود ہیں
+    const { data: quizzes } = await supabaseClientInstance.from('quizzes').select('lesson_number');
+    const container = document.getElementById('quiz-lesson-list');
+    container.innerHTML = '';
+    
+    const uniqueLessons = [...new Set(quizzes.map(q => q.lesson_number))];
+    
+    uniqueLessons.forEach(lNum => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-3 rounded-xl border border-gray-200 hover:bg-red-50 hover:border-brand-red transition-all mb-2 font-bold text-xs";
+        btn.textContent = `Lesson ${lNum} - Start Quiz`;
+        btn.onclick = () => loadFullQuizForLesson(lNum);
+        container.appendChild(btn);
+    });
+}
 
+// ایک لیسن کے تمام سوالات لوڈ کرنا
+async function loadFullQuizForLesson(lessonNumber) {
+    const ws = document.getElementById('active-quiz-container');
+    document.getElementById('quiz-placeholder').classList.add('hidden-layer');
+    ws.classList.remove('hidden-layer');
+    ws.innerHTML = '<p class="text-center py-10">Loading...</p>';
+
+    const { data: questions } = await supabaseClientInstance
+        .from('quizzes')
+        .select('*')
+        .eq('lesson_number', lessonNumber);
+
+    globalState.quizCache = questions;
+    
+    let html = `<form onsubmit="submitQuizAssessment(event, ${lessonNumber})" class="space-y-4">`;
+    questions.forEach((q, i) => {
+        html += `
+            <div class="p-4 bg-gray-50 rounded-lg">
+                <p class="font-bold mb-2">${i+1}. ${q.question}</p>
+                <div class="grid grid-cols-1 gap-2">
+                    <label><input type="radio" name="q_${q.id}" value="A" required> ${q.opt_a}</label>
+                    <label><input type="radio" name="q_${q.id}" value="B" required> ${q.opt_b}</label>
+                    <label><input type="radio" name="q_${q.id}" value="C" required> ${q.opt_c}</label>
+                    <label><input type="radio" name="q_${q.id}" value="D" required> ${q.opt_d}</label>
+                </div>
+            </div>`;
+    });
+    html += `<button class="w-full py-3 bg-brand-red text-white font-bold rounded-xl">Submit Quiz</button></form>`;
+    ws.innerHTML = html;
+}
+
+// کوئز سبمشن اور رزلٹ سیونگ
+async function submitQuizAssessment(e, lessonNumber) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    let score = 0;
+    
+    globalState.quizCache.forEach(q => {
+        if(formData.get(`q_${q.id}`) === q.correct_opt) score++;
+    });
+
+    await supabaseClientInstance.from('quiz_attempts').insert([{
+        student_id: globalState.sessionUser.id,
+        lesson_number: lessonNumber,
+        score: score,
+        total_questions: globalState.quizCache.length
+    }]);
+
+    alert(`Quiz Finished! Your Score: ${score}/${globalState.quizCache.length}`);
+    switchView('student-dashboard'); // ڈیش بورڈ پر واپس
+}
             
                 // --- HISTORY & ACTIVITY TRACKING ---
         async function calculateAndDisplayStreak() {
