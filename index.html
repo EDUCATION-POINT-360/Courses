@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <meta name="theme-color" content="#DC2626">
+
     <title>Education Point LMS | Premium Production Framework</title>
     <link rel="icon" href="https://i.ibb.co/d44ds7rw/1783870808728.png" type="image/png" />
     <link rel="manifest" href="manifest.json">
-    
+    <link rel="apple-touch-icon" href="https://i.ibb.co/d44ds7rw/1783870808728.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -30,7 +31,27 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
+       <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('SW Registered:', reg))
+                .catch(err => console.log('SW Registration Failed:', err));
+            });
+        }
+
+        // Notification Request
+        function requestNotificationPermission() {
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        console.log("Notification permission granted.");
+                    }
+                });
+            }
+        }
+       </script>
     <style>
         /* SECURITY CLASSES */
         .secure-shield {
@@ -521,7 +542,7 @@
             if (e.ctrlKey && ['c', 'v', 'u', 's', 'p'].includes(e.key.toLowerCase())) { e.preventDefault(); }
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) { e.preventDefault(); }
         });
-
+onload="requestNotificationPermission()">
         // --- 1. CONFIGURATION SYSTEM ENGINES STACK MAP ---
         const SUPABASE_URL = "https://sulgxyktyvngazgodvxf.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_WXhdCUvVr1TNQhv9_24MBQ_0wdXy-VB";
