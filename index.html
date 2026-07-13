@@ -157,53 +157,63 @@
                         </div>
                         <i data-lucide="sparkles" class="absolute right-6 bottom-4 w-32 h-32 text-white/5 pointer-events-none"></i>
                     </div>
-
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
-    <!-- Current Streak -->
-    <div class="relative overflow-hidden bg-gradient-to-b from-white to-gray-50/50 p-5 rounded-2xl border border-gray-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05),0_10px_20px_-5px_rgba(0,0,0,0.03)] flex items-center space-x-4 transition-all duration-300 hover:shadow-md group">
-        <!-- Top Apple Accent Stripe -->
-        <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-orange-500 to-red-500"></div>
-        <div class="p-3 bg-red-50 text-red-500 rounded-xl transition-transform duration-300 group-hover:scale-105"><i data-lucide="zap" class="w-5 h-5 stroke-[2.5]"></i></div>
-        <div>
-            <p class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">Current Streak</p>
-            <h3 class="text-2xl font-bold tracking-tight text-gray-900 mt-0.5" id="stat-current-streak">0 Days</h3>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Current Streak Card -->
+    <div class="relative bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 flex items-center space-x-4 overflow-hidden">
+        <!-- Apple-style Left Stripe Accent -->
+        <div class="absolute left-0 top-0 bottom-0 w-1 bg-red-500 rounded-l-2xl"></div>
+        
+        <div class="p-3 bg-red-50 text-red-500 rounded-xl flex items-center justify-center shrink-0">
+            <i data-lucide="zap" class="w-5 h-5"></i>
+        </div>
+        <div class="min-w-0">
+            <p class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider leading-none mb-1">Current Streak</p>
+            <h3 class="text-xl font-bold text-gray-900 tracking-tight" id="stat-current-streak">0 Days</h3>
         </div>
     </div>
 
-    <!-- Longest Streak -->
-    <div class="relative overflow-hidden bg-gradient-to-b from-white to-gray-50/50 p-5 rounded-2xl border border-gray-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05),0_10px_20px_-5px_rgba(0,0,0,0.03)] flex items-center space-x-4 transition-all duration-300 hover:shadow-md group">
-        <!-- Top Apple Accent Stripe -->
-        <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-amber-400 to-orange-400"></div>
-        <div class="p-3 bg-amber-50 text-amber-500 rounded-xl transition-transform duration-300 group-hover:scale-105"><i data-lucide="trophy" class="w-5 h-5 stroke-[2.5]"></i></div>
-        <div>
-            <p class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">Longest Streak</p>
-            <h3 class="text-2xl font-bold tracking-tight text-gray-900 mt-0.5" id="stat-longest-streak">0 Days</h3>
+    <!-- Longest Streak Card -->
+    <div class="relative bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 flex items-center space-x-4 overflow-hidden">
+        <!-- Apple-style Left Stripe Accent -->
+        <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500 rounded-l-2xl"></div>
+        
+        <div class="p-3 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center shrink-0">
+            <i data-lucide="trophy" class="w-5 h-5"></i>
+        </div>
+        <div class="min-w-0">
+            <p class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider leading-none mb-1">Longest Streak</p>
+            <h3 class="text-xl font-bold text-gray-900 tracking-tight" id="stat-longest-streak">0 Days</h3>
         </div>
     </div>
 
-    <!-- Attendance -->
-    <div class="relative overflow-hidden bg-gradient-to-b from-white to-gray-50/50 p-5 rounded-2xl border border-gray-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05),0_10px_20px_-5px_rgba(0,0,0,0.03)] flex items-center space-x-4 transition-all duration-300 hover:shadow-md group">
-        <!-- Top Apple Accent Stripe -->
-        <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-400 to-indigo-500"></div>
-        <div class="p-3 bg-blue-50 text-blue-500 rounded-xl transition-transform duration-300 group-hover:scale-105"><i data-lucide="calendar" class="w-5 h-5 stroke-[2.5]"></i></div>
-        <div>
-            <p class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">Attendance</p>
-            <h3 class="text-2xl font-bold tracking-tight text-gray-900 mt-0.5" id="stat-attendance-rate">0%</h3>
+    <!-- Attendance Card -->
+    <div class="relative bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 flex items-center space-x-4 overflow-hidden">
+        <!-- Apple-style Left Stripe Accent -->
+        <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-l-2xl"></div>
+        
+        <div class="p-3 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center shrink-0">
+            <i data-lucide="calendar" class="w-5 h-5"></i>
+        </div>
+        <div class="min-w-0">
+            <p class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider leading-none mb-1">Attendance</p>
+            <h3 class="text-xl font-bold text-gray-900 tracking-tight" id="stat-attendance-rate">0%</h3>
         </div>
     </div>
 
-    <!-- Active Time (Today) -->
-    <div class="relative overflow-hidden bg-gradient-to-b from-white to-gray-50/50 p-5 rounded-2xl border border-gray-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05),0_10px_20px_-5px_rgba(0,0,0,0.03)] flex items-center space-x-4 transition-all duration-300 hover:shadow-md group">
-        <!-- Top Apple Accent Stripe -->
-        <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-400 to-teal-500"></div>
-        <div class="p-3 bg-emerald-50 text-emerald-500 rounded-xl transition-transform duration-300 group-hover:scale-105"><i data-lucide="clock" class="w-5 h-5 stroke-[2.5]"></i></div>
-        <div>
-            <p class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">Active Time (Today)</p>
-            <h3 class="text-2xl font-bold tracking-tight text-gray-900 mt-0.5" id="stat-study-hours">0 mins</h3>
+    <!-- Active Time Card -->
+    <div class="relative bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 flex items-center space-x-4 overflow-hidden">
+        <!-- Apple-style Left Stripe Accent -->
+        <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 rounded-l-2xl"></div>
+        
+        <div class="p-3 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center shrink-0">
+            <i data-lucide="clock" class="w-5 h-5"></i>
+        </div>
+        <div class="min-w-0">
+            <p class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider leading-none mb-1">Active Time Today</p>
+            <h3 class="text-xl font-bold text-gray-900 tracking-tight" id="stat-study-hours">0 mins</h3>
         </div>
     </div>
 </div>
-
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2 space-y-6">
