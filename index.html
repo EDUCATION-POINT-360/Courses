@@ -77,7 +77,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Great+Vibes&display=swap');
     </style>
 </head>
-<body class="bg-gray-50 text-brand-darkText custom-scrollbar font-sans antialiased secure-shield" oncontextmenu="return false;">
+<body class="bg-gray-50 text-brand-darkText custom-scrollbar font-sans antialiased secure-shield" 
+      oncontextmenu="return false;" 
+      onload="requestNotificationPermission()">
 
     <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
         <div class="w-16 h-16 border-4 border-brand-red border-t-transparent rounded-full animate-spin"></div>
@@ -542,7 +544,7 @@
             if (e.ctrlKey && ['c', 'v', 'u', 's', 'p'].includes(e.key.toLowerCase())) { e.preventDefault(); }
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) { e.preventDefault(); }
         });
-onload="requestNotificationPermission()">
+
         // --- 1. CONFIGURATION SYSTEM ENGINES STACK MAP ---
         const SUPABASE_URL = "https://sulgxyktyvngazgodvxf.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_WXhdCUvVr1TNQhv9_24MBQ_0wdXy-VB";
