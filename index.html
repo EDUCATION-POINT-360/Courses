@@ -341,7 +341,7 @@
                                     <p class="text-sm font-semibold">بائیں جانب سے کوئی کوئز سلیکٹ کریں</p>
                                 </div>
                                 <div id="active-quiz-container" class="hidden-layer flex-1 overflow-y-auto custom-scrollbar">
-                                </div>
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -611,7 +611,7 @@
                 .channel('public:quizzes')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'quizzes' }, payload => {
                     if (globalState.profileData?.role !== 'super_admin') {
-                        triggerToastNotification(`Lesson ${payload.new.lesson_id || payload.new.lesson_number} کا نیا کوئز شامل کر دیا گیا ہے۔`);
+                        triggerToastNotification(`Lesson ${payload.new.lesson_number} کا نیا کوئز شامل کر دیا گیا ہے۔`);
                     }
                     refreshQuizListUI();
                 })
@@ -631,7 +631,7 @@
                 }
             } catch (err) {
                 displayScreenLayer("auth-shield-container");
-            } finaly {
+            } finally {
                 const loader = document.getElementById("global-loader");
                 if (loader) loader.classList.add("hidden");
             }
@@ -911,10 +911,9 @@
 
         function closeAssignmentModal() {
             const modal = document.getElementById('assignment-modal');
-            modal.classList.add('opacity-0');
+            modal.classList.remove('opacity-100');
             setTimeout(() => {
                 modal.classList.add('hidden-layer');
-                modal.classList.remove('opacity-0');
             }, 300);
         }
 
@@ -946,9 +945,10 @@
             if (!globalState.sessionUser) return;
             
             try {
+                // Fetch unique lesson numbers that have quizzes
                 let { data: quizzes, error } = await supabaseClientInstance
                     .from('quizzes')
-                    .select('lesson_id, lesson_number'); 
+                    .select('lesson_number');
                 
                 if (error) throw error;
                 
@@ -966,21 +966,22 @@
                     return;
                 }
 
-                const uniqueLessonIds = [...new Set(quizzes.map(q => q.lesson_id || q.lesson_number))];
+                // Get unique lesson numbers
+                const uniqueLessonNums = [...new Set(quizzes.map(q => q.lesson_number))].sort((a,b) => a - b);
                 
-                uniqueLessonIds.forEach(lId => {
-                    const attempt = attempts?.find(a => (a.lesson_id === lId || a.lesson_number === lId));
+                uniqueLessonNums.forEach(lNum => {
+                    const attempt = attempts?.find(a => a.lesson_number === lNum);
                     const isCompleted = !!attempt;
                     
                     const btn = document.createElement('button');
                     btn.className = `w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between gap-2 mb-2 ${
                         isCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-200 hover:border-brand-red'
                     }`;
-                    btn.onclick = () => renderActiveQuizWorkspace(lId, attempt);
+                    btn.onclick = () => renderActiveQuizWorkspace(lNum, attempt);
                     
                     btn.innerHTML = `
                         <div>
-                            <span class="block text-[10px] font-bold uppercase ${isCompleted ? 'text-emerald-600' : 'text-gray-400'}">Lesson ${lId}</span>
+                            <span class="block text-[10px] font-bold uppercase ${isCompleted ? 'text-emerald-600' : 'text-gray-400'}">Lesson ${lNum}</span>
                             <h4 class="font-bold text-xs text-gray-800">Quiz Assessment</h4>
                         </div>
                         <div>
@@ -996,7 +997,7 @@
             }
         }
 
-        async function renderActiveQuizWorkspace(lessonId, pastAttempt) {
+        async function renderActiveQuizWorkspace(lessonNumber, pastAttempt) {
             document.getElementById('quiz-placeholder').classList.add('hidden-layer');
             const ws = document.getElementById('active-quiz-container');
             ws.classList.remove('hidden-layer');
@@ -1008,94 +1009,116 @@
                             <i data-lucide="award" class="w-10 h-10"></i>
                         </div>
                         <h3 class="text-xl font-bold text-gray-800 mb-2">Quiz Completed!</h3>
-                        <p class="text-sm text-gray-500 mb-4">آپ نے لیسن ${lessonId} کا کوئز پہلے ہی حل کر لیا ہے۔</p>
+                        <p class="text-sm text-gray-500 mb-4">آپ نے لیسن ${lessonNumber} کا کوئز پہلے ہی حل کر لیا ہے۔</p>
+                        <div class="bg-white px-6 py-4 rounded-xl border border-gray-100 shadow-sm inline-block">
+                            <p class="text-xs font-bold uppercase text-gray-400">Final Score</p>
+                            <p class="text-3xl font-black text-emerald-600">${pastAttempt.score} <span class="text-lg text-gray-400">/ ${pastAttempt.total_questions}</span></p>
+                        </div>
                     </div>
                 `;
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                lucide.createIcons();
                 return;
             }
 
+            // Fetch questions for this lesson
             ws.innerHTML = `<p class="text-sm text-gray-400 text-center py-8 animate-pulse">Loading Quiz Questions...</p>`;
             
             try {
                 let { data: questions } = await supabaseClientInstance
                     .from('quizzes')
                     .select('*')
-                    .or(`lesson_id.eq.${lessonId},lesson_number.eq.${lessonId}`);
+                    .eq('lesson_number', lessonNumber);
                     
                 if(!questions || questions.length === 0) {
-                    ws.innerHTML = `<p class="text-sm text-gray-400 text-center py-8">No questions found.</p>`;
+                    ws.innerHTML = `<p class="text-sm text-gray-400 text-center py-8">No questions found for this lesson.</p>`;
                     return;
                 }
 
-                globalState.quizCache = questions;
+                globalState.quizCache = questions; // save for grading
                 
                 let html = `
-                    <h3 class="font-bold text-lg text-gray-800 mb-4">Assessment</h3>
-                    <form id="active-quiz-form" onsubmit="submitQuizAssessment(event, '${lessonId}')" class="space-y-6">
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
+                        <h3 class="font-bold text-lg text-gray-800">Lesson ${lessonNumber} Assessment</h3>
+                        <span class="text-xs font-bold text-brand-red bg-red-50 px-3 py-1 rounded-full">${questions.length} Questions</span>
+                    </div>
+                    <form id="active-quiz-form" onsubmit="submitQuizAssessment(event, ${lessonNumber})" class="space-y-6">
                 `;
                 
                 questions.forEach((q, idx) => {
                     html += `
                         <div class="bg-gray-50 p-5 rounded-xl border border-gray-100">
-                            <p class="font-bold text-sm text-gray-800 mb-3">${idx + 1}. ${q.question}</p>
-                            <div class="space-y-2">
-                                <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
-                                    <input type="radio" name="q_${q.id}" value="A" required> <span>${q.option_a}</span>
+                            <p class="font-bold text-sm text-gray-800 mb-3"><span class="text-brand-red mr-1">${idx + 1}.</span> ${q.question}</p>
+                            <div class="space-y-2 pl-4">
+                                <label class="flex items-center gap-3 text-sm text-gray-700 cursor-pointer p-2 hover:bg-white rounded border border-transparent hover:border-gray-200 transition-all">
+                                    <input type="radio" name="q_${q.id}" value="A" required class="text-brand-red focus:ring-brand-red"> <span>${q.opt_a}</span>
                                 </label>
-                                <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
-                                    <input type="radio" name="q_${q.id}" value="B" required> <span>${q.option_b}</span>
+                                <label class="flex items-center gap-3 text-sm text-gray-700 cursor-pointer p-2 hover:bg-white rounded border border-transparent hover:border-gray-200 transition-all">
+                                    <input type="radio" name="q_${q.id}" value="B" required class="text-brand-red focus:ring-brand-red"> <span>${q.opt_b}</span>
                                 </label>
-                                <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
-                                    <input type="radio" name="q_${q.id}" value="C" required> <span>${q.option_c}</span>
+                                <label class="flex items-center gap-3 text-sm text-gray-700 cursor-pointer p-2 hover:bg-white rounded border border-transparent hover:border-gray-200 transition-all">
+                                    <input type="radio" name="q_${q.id}" value="C" required class="text-brand-red focus:ring-brand-red"> <span>${q.opt_c}</span>
                                 </label>
-                                <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
-                                    <input type="radio" name="q_${q.id}" value="D" required> <span>${q.option_d}</span>
+                                <label class="flex items-center gap-3 text-sm text-gray-700 cursor-pointer p-2 hover:bg-white rounded border border-transparent hover:border-gray-200 transition-all">
+                                    <input type="radio" name="q_${q.id}" value="D" required class="text-brand-red focus:ring-brand-red"> <span>${q.opt_d}</span>
                                 </label>
                             </div>
                         </div>
                     `;
                 });
                 
-                html += `<button type="submit" class="w-full py-3 bg-brand-red text-white font-bold rounded-xl">Submit Answers</button></form>`;
+                html += `
+                        <button type="submit" class="w-full py-3.5 bg-brand-red hover:bg-brand-hover text-white font-bold text-sm rounded-xl shadow-lg transition-all flex justify-center items-center gap-2">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i> Submit Answers Real-Time
+                        </button>
+                    </form>
+                `;
+                
                 ws.innerHTML = html;
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                lucide.createIcons();
 
             } catch (err) {
-                ws.innerHTML = `<p class="text-sm text-red-500">Error loading quiz.</p>`;
+                ws.innerHTML = `<p class="text-sm text-red-500 text-center py-8">Error loading quiz.</p>`;
             }
         }
 
-        async function submitQuizAssessment(e, lessonId) {
+        async function submitQuizAssessment(e, lessonNumber) {
             e.preventDefault();
+            if(!globalState.quizCache || globalState.quizCache.length === 0) return;
+            
             const form = e.target;
             const formData = new FormData(form);
             let score = 0;
+            const total = globalState.quizCache.length;
             
             globalState.quizCache.forEach(q => {
-                if(formData.get(`q_${q.id}`) === q.correct_option) {
+                const answer = formData.get(`q_${q.id}`);
+                if(answer === q.correct_opt) {
                     score++;
                 }
             });
             
-            const { error } = await supabaseClientInstance.from('quiz_attempts').insert([{
-                student_id: globalState.sessionUser.id,
-                lesson_id: isNaN(lessonId) ? null : parseInt(lessonId),
-                lesson_number: isNaN(lessonId) ? parseInt(lessonId) : parseInt(lessonId),
-                score: score,
-                total_questions: globalState.quizCache.length
-            }]);
-            
-            if (error) alert("Error: " + error.message);
-            else {
-                alert("Quiz submitted! Score: " + score);
-                refreshQuizListUI();
+            try {
+                // Save attempt
+                const { error } = await supabaseClientInstance.from('quiz_attempts').insert([{
+                    student_id: globalState.sessionUser.id,
+                    lesson_number: lessonNumber,
+                    score: score,
+                    total_questions: total
+                }]);
+                
+                if (error) throw error;
+                
+                triggerToastNotification(`کوئز جمع ہو گیا! آپ کا اسکور: ${score}/${total}`, true);
+                await refreshQuizListUI();
+                renderActiveQuizWorkspace(lessonNumber, { score, total_questions: total });
+                
+            } catch (err) {
+                alert("Error submitting quiz: " + err.message);
             }
         }
-            
+
         // --- HISTORY & ACTIVITY TRACKING ---
         async function calculateAndDisplayStreak() {
-            if (!globalState.sessionUser) return;
             const { data: activity } = await supabaseClientInstance
                 .from('daily_activity')
                 .select('date')
@@ -1134,9 +1157,9 @@
             const list = document.getElementById('activity-history-list');
             if (!list) return;
 
-            list.innerHTML = (history || []).map(h => {
+            list.innerHTML = history.map(h => {
                 let parsedDate = new Date(h.date).toLocaleDateString('ur-PK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                let lecturesHtml = h.lectures_watched && h.lectures_watched.length > 0 
+                let lecturesHtml = h.lectures_watched.length > 0 
                     ? h.lectures_watched.map(l => `<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs inline-block m-0.5">${l}</span>`).join('') 
                     : '<span class="text-xs text-gray-400">کوئی لیکچر نہیں دیکھا گیا</span>';
 
@@ -1153,7 +1176,7 @@
                 </div>
             `}).join('');
             
-            if(history && history.length > 0 && history[0].date === new Date().toISOString().split('T')[0]) {
+            if(history.length > 0 && history[0].date === new Date().toISOString().split('T')[0]) {
                 todayActiveMinutes = history[0].active_minutes;
                 const hrsUI = document.getElementById('stat-study-hours');
                 if(hrsUI) hrsUI.textContent = `${todayActiveMinutes} mins`;
@@ -1186,8 +1209,8 @@
             let timeAccessed = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             let logString = `${lessonTitle} (at ${timeAccessed})`;
             
-            let { data: row } = await supabaseClientInstance.from('daily_activity').select('lectures_watched').eq('student_id', globalState.sessionUser.id).eq('date', today).maybeSingle();
-            let list = row ? (row.lectures_watched || []) : [];
+            let { data: row } = await supabaseClientInstance.from('daily_activity').select('lectures_watched').eq('student_id', globalState.sessionUser.id).eq('date', today).single();
+            let list = row ? row.lectures_watched : [];
             let alreadyWatched = list.some(l => l.includes(lessonTitle));
 
             if (!alreadyWatched) {
@@ -1199,7 +1222,6 @@
         
         async function updateAdminDashboard() {
             try {
-                if(!supabaseClientInstance) return;
                 const { count: totalStudents } = await supabaseClientInstance.from('profiles').select('*', { count: 'exact', head: true });
                 const fiveMinsAgo = new Date(Date.now() - 5 * 60000).toISOString();
                 const { count: activeStudents } = await supabaseClientInstance.from('daily_activity').select('*', { count: 'exact', head: true }).gte('last_seen', fiveMinsAgo);
@@ -1225,6 +1247,7 @@
                     else {
                         triggerToastNotification("کامیابی: لیکچر اپلوڈ ہو گیا!");
                         document.getElementById("admin-lesson-form").reset();
+                        // Realtime will auto sync
                     }
                 } catch (err) {}
             },
@@ -1236,29 +1259,19 @@
                 const opt_b = document.getElementById("adm-quiz-opt-b").value.trim();
                 const opt_c = document.getElementById("adm-quiz-opt-c").value.trim();
                 const opt_d = document.getElementById("adm-quiz-opt-d").value.trim();
-                const correct_option = document.getElementById("adm-quiz-correct").value;
+                const correct_opt = document.getElementById("adm-quiz-correct").value;
 
                 try {
                     const { error } = await supabaseClientInstance.from('quizzes').insert([{
-                        lesson_number: lesson_number,
-                        lesson_id: lesson_number,
-                        question: question,
-                        option_a: opt_a,
-                        option_b: opt_b,
-                        option_c: opt_c,
-                        option_d: opt_d,
-                        correct_option: correct_option 
+                        lesson_number, question, opt_a, opt_b, opt_c, opt_d, correct_opt
                     }]);
                     
-                    if(error) { 
-                        alert("ایرر: " + error.message); 
-                    } else {
+                    if(error) { alert("ایرر: " + error.message); }
+                    else {
                         triggerToastNotification(`کامیابی: Lesson ${lesson_number} کا کوئز سوال ایڈ ہو گیا۔`);
                         document.getElementById("admin-quiz-form").reset();
                     }
-                } catch(err) {
-                    console.error(err);
-                }
+                } catch(err) {}
             }
         };
 
