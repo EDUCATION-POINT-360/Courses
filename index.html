@@ -158,51 +158,39 @@
                         <i data-lucide="sparkles" class="absolute right-6 bottom-4 w-32 h-32 text-white/5 pointer-events-none"></i>
                     </div>
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-    <style>
-        .apple-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .apple-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        }
-    </style>
-
-    <div class="apple-card p-5 rounded-3xl shadow-sm flex items-center space-x-4 min-w-0">
-        <div class="p-3 bg-red-50 text-brand-red rounded-2xl flex-shrink-0"><i data-lucide="zap" class="w-6 h-6"></i></div>
-        <div class="truncate">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Current</p>
-            <h3 class="text-lg md:text-xl font-semibold text-gray-900 truncate" id="stat-current-streak">0 Days</h3>
+    <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] flex items-center space-x-4">
+        <div class="p-3 bg-red-50 text-brand-red rounded-2xl"><i data-lucide="zap" class="w-6 h-6"></i></div>
+        <div class="min-w-0">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Current Streak</p>
+            <h3 class="text-xl font-black text-gray-900 whitespace-nowrap" id="stat-current-streak">0 Days</h3>
         </div>
     </div>
 
-    <div class="apple-card p-5 rounded-3xl shadow-sm flex items-center space-x-4 min-w-0">
-        <div class="p-3 bg-amber-50 text-amber-600 rounded-2xl flex-shrink-0"><i data-lucide="trophy" class="w-6 h-6"></i></div>
-        <div class="truncate">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Longest</p>
-            <h3 class="text-lg md:text-xl font-semibold text-gray-900 truncate" id="stat-longest-streak">0 Days</h3>
+    <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] flex items-center space-x-4">
+        <div class="p-3 bg-amber-50 text-amber-500 rounded-2xl"><i data-lucide="trophy" class="w-6 h-6"></i></div>
+        <div class="min-w-0">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Longest Streak</p>
+            <h3 class="text-xl font-black text-gray-900 whitespace-nowrap" id="stat-longest-streak">0 Days</h3>
         </div>
     </div>
 
-    <div class="apple-card p-5 rounded-3xl shadow-sm flex items-center space-x-4 min-w-0">
-        <div class="p-3 bg-blue-50 text-blue-600 rounded-2xl flex-shrink-0"><i data-lucide="calendar" class="w-6 h-6"></i></div>
-        <div class="truncate">
+    <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] flex items-center space-x-4">
+        <div class="p-3 bg-blue-50 text-blue-500 rounded-2xl"><i data-lucide="calendar" class="w-6 h-6"></i></div>
+        <div class="min-w-0">
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Attendance</p>
-            <h3 class="text-lg md:text-xl font-semibold text-gray-900 truncate" id="stat-attendance-rate">0%</h3>
+            <h3 class="text-xl font-black text-gray-900 whitespace-nowrap" id="stat-attendance-rate">0%</h3>
         </div>
     </div>
 
-    <div class="apple-card p-5 rounded-3xl shadow-sm flex items-center space-x-4 min-w-0">
-        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl flex-shrink-0"><i data-lucide="clock" class="w-6 h-6"></i></div>
-        <div class="truncate">
+    <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] flex items-center space-x-4">
+        <div class="p-3 bg-emerald-50 text-emerald-500 rounded-2xl"><i data-lucide="clock" class="w-6 h-6"></i></div>
+        <div class="min-w-0">
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Active Time</p>
-            <h3 class="text-lg md:text-xl font-semibold text-gray-900 truncate" id="stat-study-hours">0 mins</h3>
+            <h3 class="text-xl font-black text-gray-900 whitespace-nowrap" id="stat-study-hours">0 mins</h3>
         </div>
     </div>
 </div>
+
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2 space-y-6">
