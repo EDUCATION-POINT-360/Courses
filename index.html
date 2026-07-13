@@ -643,31 +643,26 @@
             const sb = document.getElementById("main-sidebar");
             if (sb) sb.classList.toggle("-translate-x-full");
         }
-function switchView(viewName) {
+function switchView(viewId) {
+    // 1. تمام ویوز کو ہائیڈ کریں
+    document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
+    
+    // 2. مطلوبہ ویو کو دکھائیں
+    const target = document.getElementById(viewId);
+    if (target) target.classList.remove("hidden-layer");
+
+    // 3. فوٹر کا لاجک
     const footer = document.getElementById('main-footer');
     
-    // تمام ویوز کو ہائیڈ کرنے کے بعد یہ چیک لگائیں
-    if (viewName === 'home') {
-        footer.style.display = 'block'; // یا 'flex' جو بھی آپ کے لے آؤٹ کے مطابق ہو
+    if (viewId === 'student-dashboard') {
+        footer.style.display = 'block'; // یا 'flex' (آپ کے لے آؤٹ کے مطابق)
     } else {
-        footer.style.display = 'none';
+        footer.style.display = 'none'; // باقی سب کے لیے چھپا دیں
     }
-    
-    // یہاں آپ کا باقی کا کوڈ جو ویوز سوئچ کرتا ہے
         }
-        
-        function switchView(viewId) {
-            document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
-            const target = document.getElementById(viewId);
-            if (target) target.classList.remove("hidden-layer");
-            
-            document.querySelectorAll(".nav-link").forEach(btn => {
-                btn.classList.remove("text-white", "bg-brand-red");
-                btn.classList.add("text-gray-600", "hover:bg-gray-100");
-            });
-            const sb = document.getElementById("main-sidebar");
-            if (sb) sb.classList.add("-translate-x-full");
-        }
+        // پیج لوڈ ہوتے وقت اسے کال کریں تاکہ اسٹیٹس ٹھیک ہو جائے
+switchView('student-dashboard'); 
+
 
         function syncProfileUILayoutRepresentations() {
             if(!globalState.profileData) return;
