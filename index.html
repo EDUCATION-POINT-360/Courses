@@ -1068,33 +1068,110 @@
         }
 
         // --- HISTORY & ACTIVITY TRACKING ---
-        async function calculateAndDisplayStreak() {
-            const { data: activity } = await supabaseClientInstance
+                async function calculateAndDisplayStreak() {
+            if (!globalState.sessionUser) return;
+            
+            const { data: activity, error } = await supabaseClientInstance
                 .from('daily_activity')
                 .select('date')
                 .eq('student_id', globalState.sessionUser.id)
                 .order('date', { ascending: false });
 
-            if (!activity || activity.length === 0) return;
-
-            let streak = 0;
-            let totalDaysActive = activity.length;
-            let today = new Date();
-            today.setHours(0,0,0,0);
-
-            for (let i = 0; i < activity.length; i++) {
-                let activityDate = new Date(activity[i].date);
-                activityDate.setHours(0,0,0,0);
-                let expectedDate = new Date(today);
-                expectedDate.setDate(today.getDate() - i);
-                if (activityDate.toDateString() === expectedDate.toDateString()) { streak++; } else { break; }
+            if (error || !activity || activity.length === 0) {
+                document.getElementById("stat-current-streak").textContent = "0 Days";
+                document.getElementById("stat-longest-streak").textContent = "0 Days";
+                return;
             }
-            
+
+            // Step 1: Filter unique, valid dates and sort them descending
+            const uniqueDates = Array.from(new Set(activity.map(a => a.date)))
+                .map(dStr => new Date(dStr))
+                .sort((a, b) => b - a);
+
+            // Normalize time helper to prevent time zone mismatch breaks
+            const normalizeDate = (d) => {
+                const normalized = new Date(d);
+                normalized.setHours(0, 0, 0, 0);
+                return normalized;
+            };
+
+            const today = normalizeDate(new Date());
+            const yesterday = normalizeDate(new Date());
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            let currentStreak = 0;
+            let longestStreak = 0;
+            let tempStreak = 0;
+
+            // Step 2: Check if the user is active today or was active yesterday to maintain current streak
+            const mostRecentActiveDate = normalizeDate(uniqueDates[0]);
+            const isStreakActive = (mostRecentActiveDate.getTime() === today.getTime() || mostRecentActiveDate.getTime() === yesterday.getTime());
+
+            // Step 3: Calculate streaks mathematically
+            if (uniqueDates.length > 0) {
+                tempStreak = 1;
+                longestStreak = 1;
+
+                for (let i = 0; i < uniqueDates.length - 1; i++) {
+                    const current = normalizeDate(uniqueDates[i]);
+                    const next = normalizeDate(uniqueDates[i + 1]);
+                    
+                    // Calculate absolute difference in days
+                    const diffTime = Math.abs(current - next);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    if (diffDays === 1) {
+                        // Consecutive day sequence matches!
+                        tempStreak++;
+                    } else if (diffDays > 1) {
+                        // Sequence broke, save the highest temp run and reset
+                        if (tempStreak > longestStreak) {
+                            longestStreak = tempStreak;
+                        }
+                        tempStreak = 1; 
+                    }
+                }
+                
+                // Final check for the last loop sequence
+                if (tempStreak > longestStreak) {
+                    longestStreak = tempStreak;
+                }
+                
+                // If streak is mathematically continuous but user hasn't logged in for >1 day, current streak is 0
+                if (isStreakActive) {
+                    // Current streak is calculated from the modern run starting from the most recent session backward
+                    let runningCurrentStreak = 0;
+                    let expectedDate = mostRecentActiveDate;
+
+                    for (let i = 0; i < uniqueDates.length; i++) {
+                        const checkDate = normalizeDate(uniqueDates[i]);
+                        if (checkDate.getTime() === expectedDate.getTime()) {
+                            runningCurrentStreak++;
+                            expectedDate.setDate(expectedDate.getDate() - 1);
+                        } else {
+                            break;
+                        }
+                    }
+                    currentStreak = runningCurrentStreak;
+                } else {
+                    currentStreak = 0;
+                }
+            }
+
+            // Step 4: Display on Screen UI
             const streakEl = document.getElementById("stat-current-streak");
-            if(streakEl) streakEl.textContent = `${streak} Days`;
+            const longestEl = document.getElementById("stat-longest-streak");
             const attendanceEl = document.getElementById("stat-attendance-rate");
-            if(attendanceEl) { attendanceEl.textContent = `${Math.min((totalDaysActive / 60) * 100, 100).toFixed(0)}%`; }
+
+            if (streakEl) streakEl.textContent = `${currentStreak} Day${currentStreak !== 1 ? 's' : ''}`;
+            if (longestEl) longestEl.textContent = `${longestStreak} Day${longestStreak !== 1 ? 's' : ''}`;
+            
+            if (attendanceEl) {
+                const totalDaysActive = uniqueDates.length;
+                attendanceEl.textContent = `${Math.min((totalDaysActive / 60) * 100, 100).toFixed(0)}%`;
+            }
         }
+
         
         async function fetchActivityHistory() {
             if (!globalState.sessionUser) return;
