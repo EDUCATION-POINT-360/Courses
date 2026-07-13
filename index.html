@@ -1252,28 +1252,32 @@
                 } catch (err) {}
             },
             createQuizQuestion: async (e) => {
-                e.preventDefault();
-                const lesson_number = parseInt(document.getElementById("adm-quiz-les-num").value);
-                const question = document.getElementById("adm-quiz-qtext").value.trim();
-                const opt_a = document.getElementById("adm-quiz-opt-a").value.trim();
-                const opt_b = document.getElementById("adm-quiz-opt-b").value.trim();
-                const opt_c = document.getElementById("adm-quiz-opt-c").value.trim();
-                const opt_d = document.getElementById("adm-quiz-opt-d").value.trim();
-                const correct_opt = document.getElementById("adm-quiz-correct").value;
+    e.preventDefault();
+    const lesson_number = parseInt(document.getElementById("adm-quiz-les-num").value);
+    const question = document.getElementById("adm-quiz-qtext").value.trim();
+    const opt_a = document.getElementById("adm-quiz-opt-a").value.trim();
+    const opt_b = document.getElementById("adm-quiz-opt-b").value.trim();
+    const opt_c = document.getElementById("adm-quiz-opt-c").value.trim();
+    const opt_d = document.getElementById("adm-quiz-opt-d").value.trim();
+    const correct_opt = document.getElementById("adm-quiz-correct").value; // اس ویری ایبل کو یقینی بنائیں
 
-                try {
-                    const { error } = await supabaseClientInstance.from('quizzes').insert([{
-                        lesson_number, question, opt_a, opt_b, opt_c, opt_d, correct_opt
-                    }]);
-                    
-                    if(error) { alert("ایرر: " + error.message); }
-                    else {
-                        triggerToastNotification(`کامیابی: Lesson ${lesson_number} کا کوئز سوال ایڈ ہو گیا۔`);
-                        document.getElementById("admin-quiz-form").reset();
-                    }
-                } catch(err) {}
-            }
-        };
+    try {
+        // یہاں کالم کا نام 'correct_opt' ہی ہونا چاہیے جو ڈیٹا بیس میں بنایا ہے
+        const { error } = await supabaseClientInstance.from('quizzes').insert([{
+            lesson_number, question, opt_a, opt_b, opt_c, opt_d, correct_opt
+        }]);
+        
+        if(error) { 
+            alert("ایرر: " + error.message); 
+        } else {
+            triggerToastNotification(`کامیابی: Lesson ${lesson_number} کا کوئز سوال ایڈ ہو گیا۔`);
+            document.getElementById("admin-quiz-form").reset();
+        }
+    } catch(err) {
+        console.error(err);
+    }
+}
+
 
         async function unlockAssignmentManually(lessonId) {
             if(!confirm("کیا آپ واقعی اسائنمنٹ ان لاک کرنا چاہتے ہیں؟")) return;
