@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Wani">
-    <!-- Theme & Status Bar Customization for Mobile -->
     <meta name="theme-color" content="#B91C1C">
+
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Education Point LMS | Premium Production Framework by Wani</title>
+
+    <title>Education Point LMS | Premium Production Framework</title>
     <link rel="icon" href="https://i.ibb.co/d44ds7rw/1783870808728.png" type="image/png" />
+    <link rel="manifest" href="/manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -16,7 +17,11 @@
                 extend: {
                     colors: {
                         brand: {
-                            red: '#DC2626', hover: '#B91C1C', surface: '#FFFFFF', bgLight: '#F9FAFB', darkText: '#111827'
+                            red: '#DC2626',
+                            hover: '#B91C1C',
+                            surface: '#FFFFFF',
+                            bgLight: '#F9FAFB',
+                            darkText: '#111827'
                         }
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'] }
@@ -29,33 +34,48 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
-        .secure-shield { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-        .premium-logo { color: #B91C1C; text-shadow: 0 0 10px rgba(185, 28, 28, 0.5); font-weight: 800; letter-spacing: -1px; }
-        .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(220, 38, 38, 0.1); }
+        /* SECURITY CLASSES */
+        .secure-shield {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .premium-logo {
+            color: #B91C1C;
+            text-shadow: 0 0 10px rgba(185, 28, 28, 0.5); /* ہلکی ریڈ چمک */
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(220, 38, 38, 0.1);
+        }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #F1F1F1; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #DC2626; border-radius: 4px; }
         .page-layer { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .hidden-layer { display: none !important; opacity: 0; transform: translateY(10px); }
+        
+        /* Certificate Print Font */
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Great+Vibes&display=swap');
     </style>
 </head>
 <body class="bg-gray-50 text-brand-darkText custom-scrollbar font-sans antialiased secure-shield" oncontextmenu="return false;">
 
-    <!-- Toast Notifications Root Container -->
     <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
-    <!-- Initialization Screen Loader -->
     <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
         <div class="w-16 h-16 border-4 border-brand-red border-t-transparent rounded-full animate-spin"></div>
         <h2 class="mt-4 text-xl font-bold tracking-wider text-brand-red uppercase">Education Point</h2>
         <p class="text-sm text-gray-400 mt-1">Initializing Secure Environment...</p>
     </div>
 
-    <!-- Primary Application App Container -->
     <div id="app-container" class="min-h-screen flex flex-col md:flex-row relative hidden-layer page-layer">
         
-        <!-- Sidebar Shell -->
         <aside id="main-sidebar" class="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col fixed md:sticky top-0 h-auto md:h-screen z-40 transition-transform duration-300 transform md:transform-none -translate-x-full md:translate-x-0">
             <div class="p-5 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
@@ -65,7 +85,6 @@
                 <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-500"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
             
-            <!-- Student Avatar Metadata Widget -->
             <div class="p-4 mx-4 my-3 bg-red-50 rounded-xl flex items-center space-x-3">
                 <img id="sb-avatar" src="https://ui-avatars.com/api/?name=Student&background=DC2626&color=fff" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-brand-red object-cover">
                 <div class="overflow-hidden">
@@ -74,7 +93,6 @@
                 </div>
             </div>
 
-            <!-- Navigation Directives -->
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
                 <button onclick="switchView('student-dashboard')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all text-white bg-brand-red">
                     <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Dashboard</span>
@@ -100,7 +118,6 @@
             </div>
         </aside>
 
-        <!-- Primary Canvas viewport -->
         <main class="flex-1 min-w-0 flex flex-col min-h-screen relative">
             <header class="bg-white border-b border-gray-100 p-4 flex items-center justify-between md:hidden sticky top-0 z-30">
                 <button onclick="toggleMobileSidebar()" class="text-gray-700"><i data-lucide="menu" class="w-6 h-6"></i></button>
@@ -109,8 +126,6 @@
             </header>
 
             <div class="p-4 md:p-8 flex-1 overflow-y-auto">
-                
-                <!-- View 1: Dashboard Panel -->
                 <section id="student-dashboard" class="view-layer page-layer space-y-6">
                     <div class="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
                         <div class="relative z-10 space-y-2 max-w-xl">
@@ -121,40 +136,33 @@
                         <i data-lucide="sparkles" class="absolute right-6 bottom-4 w-32 h-32 text-white/5 pointer-events-none"></i>
                     </div>
 
-                    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
                             <div class="p-3 bg-red-100 text-brand-red rounded-xl"><i data-lucide="zap" class="w-6 h-6"></i></div>
                             <div>
-                                <p class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Current Streak</p>
-                                <h3 class="text-lg font-black text-gray-800" id="stat-current-streak">0 Days</h3>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Current Streak</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-current-streak">0 Days</h3>
                             </div>
                         </div>
                         <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
                             <div class="p-3 bg-amber-100 text-amber-600 rounded-xl"><i data-lucide="trophy" class="w-6 h-6"></i></div>
                             <div>
-                                <p class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Longest Streak</p>
-                                <h3 class="text-lg font-black text-gray-800" id="stat-longest-streak">0 Days</h3>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Longest Streak</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-longest-streak">0 Days</h3>
                             </div>
                         </div>
                         <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
                             <div class="p-3 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="calendar" class="w-6 h-6"></i></div>
                             <div>
-                                <p class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Attendance</p>
-                                <h3 class="text-lg font-black text-gray-800" id="stat-attendance-rate">0%</h3>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Attendance</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-attendance-rate">0%</h3>
                             </div>
                         </div>
                         <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
                             <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i data-lucide="clock" class="w-6 h-6"></i></div>
                             <div>
-                                <p class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Active Time</p>
-                                <h3 class="text-lg font-black text-gray-800" id="stat-study-hours">0 mins</h3>
-                            </div>
-                        </div>
-                        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4 col-span-2 lg:col-span-1">
-                            <div class="p-3 bg-purple-100 text-purple-600 rounded-xl"><i data-lucide="check-square" class="w-6 h-6"></i></div>
-                            <div>
-                                <p class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Total Quiz Score</p>
-                                <h3 class="text-lg font-black text-gray-800" id="stat-quiz-score">0 Pts</h3>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Active Time (Today)</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-study-hours">0 mins</h3>
                             </div>
                         </div>
                     </div>
@@ -179,14 +187,38 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Leaderboard Panel -->
+
                             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                    <i data-lucide="bar-chart-2" class="text-brand-red w-5 h-5"></i><span>Top Active Scholars (Leaderboard)</span>
+                                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center justify-between">
+                                    <span class="flex items-center gap-2"><i data-lucide="crown" class="text-amber-500 w-5 h-5 animate-bounce"></i> Academic Active Leaderboard</span>
+                                    <span class="text-xs text-gray-400 uppercase tracking-wide">Real-Time Sync</span>
                                 </h3>
-                                <div id="leaderboard-container" class="space-y-3">
-                                    <p class="text-xs text-gray-400 animate-pulse">Ranking matrices loading...</p>
+                                <div id="leaderboard-table-container" class="overflow-x-auto">
+                                    <table class="w-full text-left text-xs font-semibold text-gray-600">
+                                        <thead>
+                                            <tr class="border-b border-gray-100 text-gray-400 uppercase text-[10px] tracking-wider">
+                                                <th class="py-3 px-2">Rank</th>
+                                                <th class="py-3">Student Name</th>
+                                                <th class="py-3 text-center">Active Minutes</th>
+                                                <th class="py-3 text-right">Activity Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="leaderboard-target-rows" class="divide-y divide-gray-50">
+                                            <tr>
+                                                <td colspan="4" class="py-4 text-center text-gray-400">Loading Leaderboard Matrix...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                                <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3">Enterprise Syllabus Extensions Coming Soon</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div class="p-3 border border-gray-100 rounded-xl flex items-center space-x-2 text-xs text-gray-500"><i data-lucide="palette" class="w-4 h-4 text-red-400"></i><span>Graphic Designing Matrix</span></div>
+                                    <div class="p-3 border border-gray-100 rounded-xl flex items-center space-x-2 text-xs text-gray-500"><i data-lucide="code" class="w-4 h-4 text-red-400"></i><span>Full-Stack Web Architectures</span></div>
+                                    <div class="p-3 border border-gray-100 rounded-xl flex items-center space-x-2 text-xs text-gray-500"><i data-lucide="cpu" class="w-4 h-4 text-red-400"></i><span>Advanced AI & ChatGPT Paradigms</span></div>
+                                    <div class="p-3 border border-gray-100 rounded-xl flex items-center space-x-2 text-xs text-gray-500"><i data-lucide="trending-up" class="w-4 h-4 text-red-400"></i><span>Digital Marketing Systems</span></div>
                                 </div>
                             </div>
                         </div>
@@ -204,19 +236,31 @@
                             </div>
 
                             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
+                                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="award" class="text-brand-red w-4 h-4"></i> Quiz Performance Index
+                                </h3>
+                                <div class="p-3 bg-red-50/50 rounded-xl border border-red-100 flex justify-between items-center">
+                                    <div>
+                                        <p class="text-[10px] text-gray-400 font-bold uppercase">Average Score Ratio</p>
+                                        <p id="dash-avg-quiz-score" class="text-lg font-black text-brand-red">0/0</p>
+                                    </div>
+                                    <i data-lucide="check-square" class="w-8 h-8 text-brand-red opacity-80"></i>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
                                 <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider">System Credentials</h3>
                                 <div class="text-xs space-y-2 text-gray-600 border-t border-gray-50 pt-2">
-                                    <div class="flex justify-between"><span>Database Student ID:</span><span class="font-mono font-bold text-gray-800" id="meta-student-id">--</span></div>
+                                    <div class="flex justify-between"><span>Database Student Identification:</span><span class="font-mono font-bold text-gray-800" id="meta-student-id">--</span></div>
                                 </div>
                                 <div id="certificate-delivery-wrapper" class="pt-2">
-                                    <button id="download-cert-btn" disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">Certificate Locked</button>
+                                    <button id="download-cert-btn" disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">Certificate Locked (Complete 47 Lessons)</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- View 2: Profile Update Terminal -->
                 <section id="profile-completion-view" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
@@ -264,20 +308,19 @@
                             </form>
                         </div>
                         <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-[calc(100vh-140px)] flex flex-col">
-                            <h2 class="text-lg font-bold text-gray-800 border-b border-gray-100 pb-3 flex items-center space-x-2"><i data-lucide="history" class="text-brand-red w-5 h-5"></i><span>Activity & Quiz History</span></h2>
-                            <p class="text-xs text-gray-500 mt-2">Your daily active time and assessment records.</p>
+                            <h2 class="text-lg font-bold text-gray-800 border-b border-gray-100 pb-3 flex items-center space-x-2"><i data-lucide="history" class="text-brand-red w-5 h-5"></i><span>Activity History (Real-Time)</span></h2>
+                            <p class="text-xs text-gray-500 mt-2">Your daily active time spent learning on Education Point.</p>
                             <div id="activity-history-list" class="flex-1 overflow-y-auto custom-scrollbar mt-4 space-y-3"></div>
                         </div>
                     </div>
                 </section>
 
-                <!-- View 3: Classroom Video Matrix Player -->
                 <section id="classroom-portal" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="flex flex-col xl:flex-row gap-6">
                         <div class="flex-1 space-y-4">
-                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl w-full relative border-4 border-white pb-[56.25%]"> 
-                                <iframe id="gdrive-video-player" class="absolute top-0 left-0 w-full h-full bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl w-full relative border-4 border-white pb-[56.25%]"> <iframe id="gdrive-video-player" class="absolute top-0 left-0 w-full h-full bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
                             </div>
+                            
                             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
                                 <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
                                     <div class="space-y-1">
@@ -291,6 +334,7 @@
                                     </a>
                                 </div>
                                 <p id="player-lesson-desc" class="text-sm text-gray-500 leading-relaxed">Launch an engineering stream sequence parameter from the right matrix map vector tree.</p>
+                                
                                 <div class="pt-2 border-t border-gray-100">
                                     <div class="flex justify-between text-xs font-semibold text-gray-500 mb-1">
                                         <span>Video Watch Validation Audit</span>
@@ -301,6 +345,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div id="assignment-gate-container" class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
                                 <h3 class="text-base font-bold text-gray-800 flex items-center space-x-2">
                                     <i data-lucide="file-check" class="text-brand-red w-5 h-5"></i><span>Daily Secure Assignment Gateway</span>
@@ -315,12 +360,12 @@
                             <h3 class="font-bold text-gray-800 text-base pb-3 border-b border-gray-100 flex items-center space-x-2">
                                 <i data-lucide="list-video" class="text-brand-red w-5 h-5"></i><span>Computer Course Syllabus Node</span>
                             </h3>
-                            <div id="classroom-lessons-stack" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 mt-3 pr-1"></div>
+                            <div id="classroom-lessons-stack" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 mt-3 pr-1">
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- View 4: Quiz Interface Segment -->
                 <section id="quiz-session" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                         <h2 class="text-xl font-bold tracking-tight text-gray-900 mb-1 flex items-center gap-2">
@@ -341,13 +386,13 @@
                                     <i data-lucide="clipboard-list" class="w-16 h-16 mb-2 opacity-50"></i>
                                     <p class="text-sm font-semibold">بائیں جانب سے کوئی کوئز سلیکٹ کریں</p>
                                 </div>
-                                <div id="active-quiz-container" class="hidden-layer flex-1 overflow-y-auto custom-scrollbar"></div>
+                                <div id="active-quiz-container" class="hidden-layer flex-1 overflow-y-auto custom-scrollbar">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- View 5: Super Admin System Controls -->
                 <section id="admin-console" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
                         <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
@@ -375,46 +420,42 @@
                             </div>
                         </div>
 
-                        <!-- Add Lesson Panel -->
                         <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-6">
-                            <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider text-brand-red flex items-center gap-2">
-                                <i data-lucide="plus-circle" class="w-4 h-4"></i> Upload New Lecture Node
-                            </h3>
+                            <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Publish New Classroom Module</h3>
                             <form id="admin-lesson-form" onsubmit="adminConsole.createLesson(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Title *</label>
-                                    <input type="text" id="adm-les-title" placeholder="e.g. MS Word Basic Settings" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
-                                </div>
-                                <div class="space-y-1">
                                     <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Number *</label>
-                                    <input type="number" id="adm-les-number" placeholder="e.g. 1" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
+                                    <input type="number" id="adm-les-num" placeholder="e.g. 1, 2, 45" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
                                 </div>
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Google Drive Video Iframe URL *</label>
-                                    <input type="url" id="adm-les-iframe" placeholder="https://drive.google.com/file/d/.../preview" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs" required>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Title *</label>
+                                    <input type="text" id="adm-les-title" placeholder="Core System Architecture" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
                                 </div>
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Direct Drive Watch URL *</label>
-                                    <input type="url" id="adm-les-watch" placeholder="https://drive.google.com/file/d/.../view" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs" required>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Google Drive Video ID *</label>
+                                    <input type="text" id="adm-les-gdrive" placeholder="Extract ID from link" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-mono" required>
                                 </div>
-                                <div class="space-y-1 sm:col-span-2">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Description *</label>
-                                    <textarea id="adm-les-desc" placeholder="Write comprehensive details..." class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs" rows="2" required></textarea>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Est. Runtime Metrics (Seconds) *</label>
+                                    <input type="number" id="adm-les-duration" placeholder="e.g. 1800" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
+                                </div>
+                                <div class="sm:col-span-2 space-y-1">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Description Notes Context</label>
+                                    <textarea id="adm-les-desc" placeholder="Notes..." class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs" rows="3"></textarea>
                                 </div>
                                 <div class="sm:col-span-2 pt-2">
-                                    <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Add Lesson Stream</button>
+                                    <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Publish Lecture</button>
                                 </div>
                             </form>
                         </div>
 
-                        <!-- Upload Quiz Panel -->
                         <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-6">
                             <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider text-brand-red flex items-center gap-2">
-                                <i data-lucide="help-circle" class="w-4 h-4"></i> Upload Quiz Question to Lesson (Multiple Supported)
+                                <i data-lucide="help-circle" class="w-4 h-4"></i> Upload Quiz Question to Lesson
                             </h3>
                             <form id="admin-quiz-form" onsubmit="adminConsole.createQuizQuestion(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Target Lesson Number (e.g. 1, 2) *</label>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Target Lesson Number (e.g. 0, 1) *</label>
                                     <input type="number" id="adm-quiz-les-num" placeholder="Lesson Number to attach quiz" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
                                 </div>
                                 <div class="space-y-1">
@@ -447,7 +488,7 @@
                                     <input type="text" id="adm-quiz-opt-d" placeholder="Answer D" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs" required>
                                 </div>
                                 <div class="sm:col-span-2 pt-2">
-                                    <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Upload Single Question Real-Time</button>
+                                    <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Upload Question Real-Time</button>
                                 </div>
                             </form>
                         </div>
@@ -457,7 +498,6 @@
         </main>
     </div>
 
-    <!-- Modal: Secure Submission Gateway Popup -->
     <div id="assignment-modal" class="fixed inset-0 z-[10000] bg-black/60 hidden-layer flex items-center justify-center backdrop-blur-sm transition-opacity duration-300 page-layer">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 transform transition-all shadow-2xl border border-gray-200">
             <div class="flex justify-between items-center border-b border-gray-100 pb-3">
@@ -474,7 +514,6 @@
         </div>
     </div>
 
-    <!-- Sign In Identity Gateway -->
     <div id="auth-shield-container" class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-red-50 to-neutral-100 p-4 hidden-layer page-layer">
         <div class="w-full max-w-md bg-white rounded-3xl border border-gray-200 shadow-2xl p-6 md:p-8 space-y-6">
             <div class="text-center space-y-2">
@@ -498,44 +537,53 @@
         </div>
     </div>
 
-    <!-- Certificate Render Sandbox (Off-Screen Engine) -->
     <div id="certificate-render-zone" class="absolute top-[-9999px] left-[-9999px]">
         <div id="certificate-template" class="w-[1000px] h-[700px] bg-white border-[16px] border-[#1e3a8a] p-12 relative flex flex-col items-center justify-center text-center font-serif shadow-2xl" style="background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');">
             <div class="absolute top-4 left-4 w-16 h-16 border-t-4 border-l-4 border-brand-red"></div>
             <div class="absolute top-4 right-4 w-16 h-16 border-t-4 border-r-4 border-brand-red"></div>
             <div class="absolute bottom-4 left-4 w-16 h-16 border-b-4 border-l-4 border-brand-red"></div>
             <div class="absolute bottom-4 right-4 w-16 h-16 border-b-4 border-r-4 border-brand-red"></div>
+            
             <h1 class="text-[#1e3a8a] font-bold text-5xl mb-2 tracking-widest uppercase" style="font-family: 'Playfair Display', serif;">Education Point</h1>
             <p class="text-brand-red text-sm font-bold tracking-widest uppercase mb-8">Certificate of Completion</p>
+            
             <p class="text-gray-600 italic text-xl mb-6">This is to proudly certify that</p>
+            
             <h2 id="cert-student-name" class="text-5xl font-bold text-gray-900 border-b-2 border-gray-300 pb-2 px-12 mb-6" style="font-family: 'Great Vibes', cursive;">Student Name</h2>
-            <p class="text-gray-700 text-lg max-w-2xl leading-relaxed mb-12">has successfully completed all 47 modules of the <br><strong class="text-[#1e3a8a]">Professional Computer Course</strong><br>demonstrating exceptional dedication, skill, and mastery in web architecture, office automation, and digital enterprise frameworks.</p>
+            
+            <p class="text-gray-700 text-lg max-w-2xl leading-relaxed mb-12">
+                has successfully completed all 47 modules of the <br>
+                <strong class="text-[#1e3a8a]">Professional Computer Course</strong><br>
+                demonstrating exceptional dedication, skill, and mastery in web architecture, office automation, and digital enterprise frameworks.
+            </p>
+            
             <div class="w-full flex justify-between items-end px-16 mt-auto">
                 <div class="text-center">
                     <p id="cert-date" class="font-bold text-lg text-gray-800 border-b border-gray-400 pb-1 w-40 mx-auto">Date</p>
                     <p class="text-xs text-gray-500 uppercase tracking-widest mt-2">Date of Issue</p>
                 </div>
+                
                 <div class="text-center relative">
                     <p class="text-4xl text-[#1e3a8a] -rotate-3 mb-1" style="font-family: 'Great Vibes', cursive;">Muhammad Rizwan</p>
                     <p class="font-bold text-lg text-gray-800 border-b border-gray-400 pb-1 w-64 mx-auto"></p>
                     <p class="text-xs text-gray-500 uppercase tracking-widest mt-2">Muhammad Rizwan<br>Founder, Education Point</p>
                 </div>
             </div>
+            
             <div class="absolute bottom-12 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center border-4 border-white shadow-xl">
                 <span class="text-white font-bold text-xs text-center uppercase tracking-tighter">Official<br>Verified<br>Seal</span>
             </div>
         </div>
     </div>
 
-    <!-- Core Javascript Initialization & Secure Execution State Architecture -->
     <script>
-        // Security Protocols: Prevent standard scraping & shortcut diagnostics
+        // --- SECURITY ANTI-COPY SCRIPT ---
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && ['c', 'v', 'u', 's', 'p'].includes(e.key.toLowerCase())) { e.preventDefault(); }
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) { e.preventDefault(); }
         });
 
-        // Supabase Infrastructure Gateway Key Configuration
+        // --- 1. CONFIGURATION SYSTEM ENGINES STACK MAP ---
         const SUPABASE_URL = "https://sulgxyktyvngazgodvxf.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_WXhdCUvVr1TNQhv9_24MBQ_0wdXy-VB";
         
@@ -546,7 +594,6 @@
             }
         } catch(err) { console.error("Client Init Interruption:", err); }
 
-        // Localized Runtime State Storage Model
         let globalState = {
             sessionUser: null,
             profileData: null,
@@ -557,46 +604,76 @@
         };
         let todayActiveMinutes = 0;
         let loginTimeRecorded = false;
-        let activeWatchInterval = null;
-        let activeLessonUnderWatch = null;
-        let simulatedWatchPercentages = {};
+        let tabInactivityTimer = null;
 
+        // --- TOAST NOTIFICATION ENGINE ---
         function triggerToastNotification(message, isSuccess = true) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `px-6 py-4 rounded-xl shadow-2xl transform transition-all duration-300 translate-y-[-20px] opacity-0 flex items-center space-x-3 pointer-events-auto border-l-4 ${isSuccess ? 'bg-white border-emerald-500 text-gray-800' : 'bg-white border-brand-red text-gray-800'}`;
+            
             toast.innerHTML = `
                 <div class="p-2 rounded-full ${isSuccess ? 'bg-emerald-50 text-emerald-500' : 'bg-red-50 text-brand-red'}">
                     <i data-lucide="${isSuccess ? 'bell-ring' : 'alert-circle'}" class="w-5 h-5"></i>
                 </div>
                 <span class="font-bold text-sm">${message}</span>
             `;
+            
             container.appendChild(toast);
             if (typeof lucide !== 'undefined') lucide.createIcons({root: toast});
-            requestAnimationFrame(() => toast.classList.remove('translate-y-[-20px]', 'opacity-0'));
+            
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+            });
+
             setTimeout(() => {
                 toast.classList.add('translate-y-[-20px]', 'opacity-0');
                 setTimeout(() => toast.remove(), 300);
             }, 5000);
         }
 
+        // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
         document.addEventListener("DOMContentLoaded", async () => {
             if (typeof lucide !== 'undefined') lucide.createIcons();
             runClockEngine();
             await evaluateSessionContextState();
             startRealTimeActivityTracker(); 
             initRealTimeSubscriptions();
+            startTabInactivityAlertSystem();
         });
+
+        function initRealTimeSubscriptions() {
+            if (!supabaseClientInstance) return;
+            
+            // Listen to New Lessons (Realtime)
+            supabaseClientInstance
+                .channel('public:lessons')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'lessons' }, payload => {
+                    triggerToastNotification(`نیو لیکچر ایڈ کر دیا گیا ہے: ${payload.new.title}`);
+                    syncClassroomSyllabusEngine(); 
+                })
+                .subscribe();
+
+            // Listen to New Quizzes (Realtime)
+            supabaseClientInstance
+                .channel('public:quizzes')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'quizzes' }, payload => {
+                    if (globalState.profileData?.role !== 'super_admin') {
+                        triggerToastNotification(`Lesson ${payload.new.lesson_number} کا نیا کوئز شامل کر دیا گیا ہے۔`);
+                    }
+                    refreshQuizListUI();
+                })
+                .subscribe();
+        }
 
         async function evaluateSessionContextState() {
             try {
                 if (!supabaseClientInstance) return;
-                const { data: { session } } = await supabaseClientInstance.auth.getSession();
+                const { data: { session }, error } = await supabaseClientInstance.auth.getSession();
                 if (session) {
                     globalState.sessionUser = session.user;
                     await pullProfileContextAndInitialize(session.user.id);
                     recordLoginTime();
-                    checkInactivityAlert();
                 } else {
                     displayScreenLayer("auth-shield-container");
                 }
@@ -608,35 +685,23 @@
             }
         }
 
-        async function checkInactivityAlert() {
-            const { data: activity } = await supabaseClientInstance
-                .from('daily_activity')
-                .select('last_seen')
-                .eq('student_id', globalState.sessionUser.id)
-                .order('last_seen', { ascending: false })
-                .limit(1);
-            if (activity && activity.length > 0) {
-                const lastSeen = new Date(activity[0].last_seen);
-                const now = new Date();
-                const diffTime = Math.abs(now - lastSeen);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                if (diffDays > 2) {
-                    setTimeout(() => triggerToastNotification(`Alert: You haven't been active for ${diffDays} days! Keep your streak up.`, false), 2000);
-                }
+        function recordLoginTime() {
+            if(!loginTimeRecorded) {
+                console.log("User logged in at: " + new Date().toLocaleTimeString());
+                loginTimeRecorded = true;
             }
         }
 
-        function recordLoginTime() { if(!loginTimeRecorded) { loginTimeRecorded = true; } }
-
         async function pullProfileContextAndInitialize(uid) {
             try {
-                let { data: profile } = await supabaseClientInstance.from('profiles').select('*').eq('id', uid).maybeSingle();
+                let { data: profile, error } = await supabaseClientInstance.from('profiles').select('*').eq('id', uid).maybeSingle();
                 if (!profile) {
                     const { data: seededProfile } = await supabaseClientInstance.from('profiles').insert([{
                         id: uid, full_name: "Premium Scholar Student", email: globalState.sessionUser.email, role: "student"
                     }]).select().single();
                     profile = seededProfile;
                 }
+
                 globalState.profileData = profile;
                 syncProfileUILayoutRepresentations();
                 populateProfileInputsUIFields();
@@ -644,624 +709,868 @@
                 await calculateAndDisplayStreak();
                 await syncClassroomSyllabusEngine();
                 await refreshQuizListUI();
-                await fetchLeaderboard();
+                await fetchLeaderboardMatrix();
+                await calculateAndUpdateDashboardQuizzesScore();
                 
-                if(profile.role === 'super_admin') updateAdminDashboard(); 
-                displayScreenLayer("app-container");
-                switchView("student-dashboard");
-            } catch(err) { displayScreenLayer("auth-shield-container"); }
-        }
-
-        async function fetchLeaderboard() {
-            const container = document.getElementById("leaderboard-container");
-            if(!container) return;
-            try {
-                const { data: activities } = await supabaseClientInstance.from('daily_activity').select('student_id, active_minutes');
-                const { data: profiles } = await supabaseClientInstance.from('profiles').select('id, full_name, avatar_url');
-                
-                if(!activities || !profiles) return;
-                
-                let userTotals = {};
-                activities.forEach(a => {
-                    if(!userTotals[a.student_id]) userTotals[a.student_id] = 0;
-                    userTotals[a.student_id] += a.active_minutes;
-                });
-
-                let ranked = Object.keys(userTotals).map(uid => {
-                    const p = profiles.find(pr => pr.id === uid) || { full_name: 'Unknown Student', avatar_url: '' };
-                    return { uid, name: p.full_name, total: userTotals[uid], avatar: p.avatar_url };
-                }).sort((a,b) => b.total - a.total).slice(0, 5);
-
-                if(ranked.length === 0) {
-                    container.innerHTML = `<p class="text-xs text-gray-500">Not enough data to generate leaderboard.</p>`;
-                    return;
+                if(profile.role === 'super_admin') {
+                    updateAdminDashboard(); 
                 }
 
-                container.innerHTML = ranked.map((r, i) => `
-                    <div class="flex items-center justify-between p-3 bg-gray-50 border border-gray-100 rounded-xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-6 h-6 rounded-full bg-brand-red text-white flex items-center justify-center text-[10px] font-bold">${i+1}</div>
-                            <img src="${r.avatar || 'https://ui-avatars.com/api/?name=Student'}" class="w-8 h-8 rounded-full border border-gray-200">
-                            <span class="text-xs font-bold text-gray-800">${r.name}</span>
-                        </div>
-                        <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">${r.total} Mins</span>
-                    </div>
-                `).join('');
-            } catch(e) { console.error("Leaderboard Error", e); }
+                displayScreenLayer("app-container");
+                switchView("student-dashboard");
+            } catch(err) {
+                displayScreenLayer("auth-shield-container");
+            }
         }
 
-        function initRealTimeSubscriptions() {
-            if (!supabaseClientInstance) return;
-            supabaseClientInstance
-                .channel('public:lessons')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'lessons' }, payload => {
-                    triggerToastNotification(`نیو لیکچر ایڈ کر دیا گیا ہے: ${payload.new.title}`);
-                    syncClassroomSyllabusEngine(); 
-                }).subscribe();
-            supabaseClientInstance
-                .channel('public:quizzes')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'quizzes' }, payload => {
-                    if (globalState.profileData?.role !== 'super_admin') {
-                        triggerToastNotification(`Lesson ${payload.new.lesson_number} کا نیا کوئز شامل کر دیا گیا ہے۔`);
-                    }
-                    refreshQuizListUI();
-                }).subscribe();
+        function populateProfileInputsUIFields() {
+            if (!globalState.profileData) return;
+            const fields = ["prof-fullname", "prof-fathername", "prof-mobile", "prof-city", "prof-address", "prof-gender", "prof-dob", "prof-education"];
+            const keys = ["full_name", "father_name", "mobile_number", "city", "complete_address", "gender", "date_of_birth", "education_level"];
+            fields.forEach((fid, idx) => {
+                const el = document.getElementById(fid);
+                if(el) el.value = globalState.profileData[keys[idx]] || "";
+            });
+            
+            if(globalState.profileData.avatar_url) {
+                document.getElementById('prof-avatar-preview').src = globalState.profileData.avatar_url;
+                document.getElementById('sb-avatar').src = globalState.profileData.avatar_url;
+            }
         }
+
+        async function saveUserProfileDataState(e) {
+            e.preventDefault();
+            if (!globalState.sessionUser) return;
+            try {
+                const { error } = await supabaseClientInstance.from('profiles').update({
+                    full_name: document.getElementById("prof-fullname").value.trim(),
+                    father_name: document.getElementById("prof-fathername").value.trim(),
+                    mobile_number: document.getElementById("prof-mobile").value.trim(),
+                    city: document.getElementById("prof-city").value.trim(),
+                    complete_address: document.getElementById("prof-address").value.trim(),
+                    gender: document.getElementById("prof-gender").value,
+                    date_of_birth: document.getElementById("prof-dob").value,
+                    education_level: document.getElementById("prof-education").value
+                }).eq('id', globalState.sessionUser.id);
+
+                if (error) throw error;
+                alert("پروفائل کامیابی سے سیو ہو گئی ہے!");
+                await pullProfileContextAndInitialize(globalState.sessionUser.id);
+            } catch(err) { alert("Error: " + err.message); }
+        }
+
+        // --- AVATAR UPLOAD LOGIC ---
+        async function handleAvatarSelect(e) {
+            const file = e.target.files[0];
+            if(!file || !globalState.sessionUser) return;
+            try {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${globalState.sessionUser.id}-${Math.random()}.${fileExt}`;
+                const filePath = `avatars/${fileName}`;
+                
+                let { error: uploadError } = await supabaseClientInstance.storage.from('avatars').upload(filePath, file);
+                if (uploadError) throw uploadError;
+
+                const { data } = supabaseClientInstance.storage.from('avatars').getPublicUrl(filePath);
+                
+                await supabaseClientInstance.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', globalState.sessionUser.id);
+                document.getElementById('prof-avatar-preview').src = data.publicUrl;
+                document.getElementById('sb-avatar').src = data.publicUrl;
+                triggerToastNotification("تصویر اپڈیٹ ہو گئی!");
+            } catch (error) {
+                console.error("Avatar error:", error);
+            }
+        }
+
+        function displayScreenLayer(targetId) {
+            ["global-loader", "app-container", "auth-shield-container"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add("hidden-layer");
+            });
+            const target = document.getElementById(targetId);
+            if (target) target.classList.remove("hidden-layer");
+        }
+
+        function toggleMobileSidebar() {
+            const sb = document.getElementById("main-sidebar");
+            if (sb) sb.classList.toggle("-translate-x-full");
+        }
+
+        function switchView(viewId) {
+            const sb = document.getElementById("main-sidebar");
+            if (sb && !sb.classList.contains("-translate-x-full")) {
+                sb.classList.add("-translate-x-full");
+            }
+
+            document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
+            
+            const target = document.getElementById(viewId);
+            if (target) target.classList.remove("hidden-layer");
+
+            const footer = document.getElementById('main-footer');
+            if (footer) {
+                footer.style.display = (viewId === 'student-dashboard') ? 'block' : 'none';
+            }
+        }
+        
+        function syncProfileUILayoutRepresentations() {
+            if(!globalState.profileData) return;
+            if(document.getElementById("sb-username")) document.getElementById("sb-username").textContent = globalState.profileData.full_name;
+            if(document.getElementById("sb-role")) document.getElementById("sb-role").textContent = globalState.profileData.role;
+            if(document.getElementById("meta-student-id")) document.getElementById("meta-student-id").textContent = globalState.profileData.id.substring(0,8).toUpperCase();
+            
+            const adminNav = document.getElementById("admin-nav-item");
+            if(globalState.profileData.role === 'super_admin' && adminNav) adminNav.classList.remove("hidden");
+        }
+
+        // --- AUTH ---
+        const appAuth = {
+            handlePrimarySubmission: async (e) => {
+                e.preventDefault();
+                const email = document.getElementById("auth-email").value.trim();
+                const password = document.getElementById("auth-password").value;
+                try {
+                    const { data, error } = await supabaseClientInstance.auth.signInWithPassword({ email, password });
+                    if (error) {
+                        const { data: upData, error: upErr } = await supabaseClientInstance.auth.signUp({ email, password });
+                        if (upData) { alert("اکاؤنٹ بن گیا ہے! اب دوبارہ لاگ ان کریں۔"); location.reload(); }
+                    } else if(data.user) {
+                        globalState.sessionUser = data.user;
+                        await pullProfileContextAndInitialize(data.user.id);
+                    }
+                } catch(err) { alert(err.message); }
+            },
+            logout: async () => {
+                await supabaseClientInstance.auth.signOut();
+                location.reload();
+            }
+        };
+
+        // --- BUSINESS LOGIC & CLASSROOM ---
+        async function syncClassroomSyllabusEngine() {
+            try {
+                let { data: lessons, error: lessonError } = await supabaseClientInstance
+                    .from('lessons')
+                    .select('*')
+                    .order('lesson_number', { ascending: true });
+
+                if (lessonError) throw lessonError;
+                globalState.lessonsCollection = lessons || [];
+
+                if(globalState.sessionUser) {
+                    let { data: progress, error: progError } = await supabaseClientInstance
+                        .from('lesson_progress')
+                        .select('*')
+                        .eq('student_id', globalState.sessionUser.id);
+                    
+                    globalState.progressMatrix = progress || [];
+                }
+                
+                renderClassroomSyllabusTreeLayout();
+                await evaluateAnalyticsAggregatesMetricsContainers(); 
+                        
+            } catch(e) { 
+                console.error("Critical System Error:", e);
+            }
+        } 
+        
+        function renderClassroomSyllabusTreeLayout() {
+            const container = document.getElementById("classroom-lessons-stack");
+            if(!container) return;
+            container.innerHTML = "";
+
+            if(globalState.lessonsCollection.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-8">کوئی لیسن ابھی تک اپلوڈ نہیں ہوا۔</p>`;
+                return;
+            }
+
+            let sequentialGateUnlocked = true;
+            globalState.lessonsCollection.forEach((lesson) => {
+                const log = globalState.progressMatrix.find(p => p.lesson_id === lesson.id);
+                const isCompleted = log ? log.is_completed : false;
+                const activeLockedState = !sequentialGateUnlocked;
+
+                const btn = document.createElement("button");
+                btn.disabled = activeLockedState;
+                btn.className = `w-full text-left p-3.5 rounded-xl border transition-all flex items-center justify-between gap-2 ${
+                    activeLockedState ? 'bg-gray-50 border-gray-200 opacity-50 cursor-not-allowed' :
+                    isCompleted ? 'bg-emerald-50/60 border-emerald-200 hover:bg-emerald-50' : 'bg-white border-gray-200 hover:border-brand-red'
+                }`;
+
+                btn.onclick = () => mountActiveLessonToStagePlayer(lesson, log);
+                btn.innerHTML = `
+                    <div class="overflow-hidden space-y-0.5">
+                        <span class="block text-[10px] font-bold tracking-widest uppercase ${isCompleted ? 'text-emerald-600' : 'text-brand-red'}">Module ${lesson.lesson_number}</span>
+                        <h4 class="font-bold text-xs text-gray-800 truncate">${lesson.title}</h4>
+                    </div>
+                    <div><i data-lucide="${activeLockedState ? 'lock' : isCompleted ? 'check-circle' : 'play-circle'}" class="w-4 h-4"></i></div>
+                `;
+                container.appendChild(btn);
+                if(!isCompleted) sequentialGateUnlocked = false;
+            });
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function mountActiveLessonToStagePlayer(lesson, logContainer) {
+            document.getElementById("player-lesson-title").textContent = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
+            document.getElementById("player-lesson-desc").textContent = lesson.description || "";
+            document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
+            
+            const driveBtn = document.getElementById("drive-fullscreen-btn");
+            if(driveBtn) {
+                driveBtn.classList.remove("hidden");
+                driveBtn.href = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/view`;
+            }
+
+            const videoFrame = document.getElementById("gdrive-video-player");
+            if (videoFrame) videoFrame.src = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/preview`;
+
+            const percentage = logContainer ? logContainer.watch_percentage : 0;
+            updateWatchProgressBarUIState(percentage);
+
+            const gateContainer = document.getElementById("assignment-gate-container");
+            if(gateContainer) {
+                gateContainer.innerHTML = `
+                    <div class="p-5 border border-emerald-200 bg-emerald-50/50 rounded-2xl space-y-3">
+                        <div class="flex items-center space-x-2 text-emerald-800"><i data-lucide="check-circle" class="w-5 h-5"></i><span class="font-bold text-sm">Assignment Gateway</span></div>
+                        <p class="text-xs text-gray-600">ویڈیو مکمل دیکھنے کے بعد نیچے بٹن سے اسائنمنٹ سبمٹ کروانے کا پاپ اپ ان لاک کریں۔</p>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <button onclick="showAssignmentPopup('${lesson.lesson_number}')" class="px-5 py-2.5 bg-brand-red hover:bg-brand-hover text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-2"><i data-lucide="upload-cloud" class="w-4 h-4"></i> Submit Complete Task</button>
+                            <button onclick="unlockAssignmentManually('${lesson.id}')" class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl shadow-sm transition-all border border-gray-200">Mark Completed Internally</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            logLectureActivity(lesson.title);
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // --- NEW ASSIGNMENT POPUP LOGIC ---
+        function showAssignmentPopup(lessonNumber) {
+            const modal = document.getElementById('assignment-modal');
+            const waBtn = document.getElementById('wa-submit-btn');
+            
+            waBtn.href = `https://wa.me/923314220506?text=Hello,%20Here%20is%20my%20completed%20document%20for%20Lesson%20${lessonNumber}%20submission.`;
+            
+            modal.classList.remove('hidden-layer');
+            setTimeout(() => {
+                modal.classList.add('opacity-100');
+            }, 10);
+        }
+
+        function closeAssignmentModal() {
+            const modal = document.getElementById('assignment-modal');
+            modal.classList.remove('opacity-100');
+            setTimeout(() => {
+                modal.classList.add('hidden-layer');
+            }, 300);
+        }
+
+        function updateWatchProgressBarUIState(pct) {
+            const bar = document.getElementById("lesson-watch-progress-bar");
+            const text = document.getElementById("lesson-watch-percentage-text");
+            if(bar && text) {
+                bar.style.width = `${pct}%`;
+                text.textContent = `${pct}% Completed`;
+            }
+        }
+
+        async function evaluateAnalyticsAggregatesMetricsContainers() {
+            if (!globalState.sessionUser) return;
+
+            const totalItemsCount = globalState.lessonsCollection.length;
+            const completedCount = globalState.progressMatrix.filter(p => p.is_completed).length;
+            const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
+
+            const badge = document.getElementById("dash-course-progress-badge");
+            if (badge) badge.textContent = `${completedCount}/${totalItemsCount} Modules`;
+            
+            const bar = document.getElementById("dash-progress-bar-fill");
+            if (bar) bar.style.width = `${completionRatio}%`;
+        }
+
+        // --- QUIZ SESSION SYSTEM ENGINE ---
 
         async function refreshQuizListUI() {
             if (!globalState.sessionUser) return;
+            
             try {
-                let { data: quizzes } = await supabaseClientInstance.from('quizzes').select('lesson_number'); 
-                let { data: attempts } = await supabaseClientInstance.from('quiz_attempts').select('*').eq('student_id', globalState.sessionUser.id);
+                let { data: quizzes, error } = await supabaseClientInstance
+                    .from('quizzes')
+                    .select('lesson_number'); 
                 
-                let totalScore = attempts ? attempts.reduce((acc, curr) => acc + curr.score, 0) : 0;
-                let qsUI = document.getElementById("stat-quiz-score");
-                if(qsUI) qsUI.textContent = `${totalScore} Pts`;
-
+                if (error) throw error;
+                
+                let { data: attempts } = await supabaseClientInstance
+                    .from('quiz_attempts')
+                    .select('*')
+                    .eq('student_id', globalState.sessionUser.id);
+                    
                 const listContainer = document.getElementById('quiz-list-container');
                 if(!listContainer) return;
                 listContainer.innerHTML = '';
-                if(!quizzes || quizzes.length === 0) { listContainer.innerHTML = `<p class="text-xs text-gray-500">کوئی کوئز ابھی دستیاب نہیں ہے۔</p>`; return; }
+                
+                if(!quizzes || quizzes.length === 0) {
+                    listContainer.innerHTML = `<p class="text-xs text-gray-500">کوئی کوئز ابھی دستیاب نہیں ہے۔</p>`;
+                    return;
+                }
 
                 const uniqueLessonNumbers = [...new Set(quizzes.map(q => q.lesson_number))];
+                
                 uniqueLessonNumbers.forEach(lNum => {
                     const attempt = attempts?.find(a => a.lesson_number === lNum || a.lesson_id == lNum);
                     const isCompleted = !!attempt;
+                    
                     const btn = document.createElement('button');
-                    btn.className = `w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between gap-2 mb-2 ${isCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-200 hover:border-brand-red'}`;
+                    btn.className = `w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between gap-2 mb-2 ${
+                        isCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-200 hover:border-brand-red'
+                    }`;
                     btn.onclick = () => renderActiveQuizWorkspace(lNum, attempt);
+                    
                     btn.innerHTML = `
-                        <div><span class="block text-[10px] font-bold uppercase ${isCompleted ? 'text-emerald-600' : 'text-gray-400'}">Lesson ${lNum}</span><h4 class="font-bold text-xs text-gray-800">Quiz Assessment</h4></div>
-                        <div>${isCompleted ? `<span class="text-xs font-black text-emerald-600">${attempt.score}/${attempt.total_questions}</span>` : `<i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>`}</div>
+                        <div>
+                            <span class="block text-[10px] font-bold uppercase ${isCompleted ? 'text-emerald-600' : 'text-gray-400'}">Lesson ${lNum}</span>
+                            <h4 class="font-bold text-xs text-gray-800">Quiz Assessment</h4>
+                        </div>
+                        <div>
+                            ${isCompleted ? `<span class="text-xs font-black text-emerald-600">${attempt.score}/${attempt.total_questions}</span>` : `<i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>`}
+                        </div>
                     `;
                     listContainer.appendChild(btn);
                 });
                 if (typeof lucide !== 'undefined') lucide.createIcons();
-            } catch (err) {}
+
+            } catch (err) {
+                console.error("Error fetching quizzes:", err);
+            }
         }
 
         async function renderActiveQuizWorkspace(lessonNumber, pastAttempt) {
             document.getElementById('quiz-placeholder').classList.add('hidden-layer');
             const ws = document.getElementById('active-quiz-container');
             ws.classList.remove('hidden-layer');
+            
             if(pastAttempt) {
-                ws.innerHTML = `<div class="p-8 text-center bg-gray-50 rounded-2xl border border-gray-200 flex flex-col items-center"><div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 mb-4"><i data-lucide="award" class="w-10 h-10"></i></div><h3 class="text-xl font-bold text-gray-800 mb-2">Quiz Completed!</h3><p class="text-sm text-gray-500 mb-4">آپ نے لیسن ${lessonNumber} کا کوئز پہلے ہی حل کر لیا ہے۔ سکور: ${pastAttempt.score}</p></div>`;
-                if (typeof lucide !== 'undefined') lucide.createIcons(); return;
+                ws.innerHTML = `
+                    <div class="p-8 text-center bg-gray-50 rounded-2xl border border-gray-200 flex flex-col items-center">
+                        <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 mb-4">
+                            <i data-lucide="award" class="w-10 h-10"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Quiz Completed!</h3>
+                        <p class="text-sm text-gray-500 mb-4">آپ نے لیسن ${lessonNumber} کا کوئز پہلے ہی حل کر لیا ہے۔</p>
+                    </div>
+                `;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+                return;
             }
-            ws.innerHTML = `<p class="text-sm text-gray-400 text-center py-8 animate-pulse">Loading Multiple Questions...</p>`;
+
+            ws.innerHTML = `<p class="text-sm text-gray-400 text-center py-8 animate-pulse">Loading Quiz Questions...</p>`;
+            
             try {
-                let { data: questions } = await supabaseClientInstance.from('quizzes').select('*').eq('lesson_number', lessonNumber);
-                if(!questions || questions.length === 0) { ws.innerHTML = `<p class="text-sm text-gray-400 text-center py-8">No questions found.</p>`; return; }
+                let { data: questions } = await supabaseClientInstance
+                    .from('quizzes')
+                    .select('*')
+                    .eq('lesson_number', lessonNumber);
+                    
+                if(!questions || questions.length === 0) {
+                    ws.innerHTML = `<p class="text-sm text-gray-400 text-center py-8">No questions found.</p>`;
+                    return;
+                }
+
                 globalState.quizCache = questions;
-                let html = `<h3 class="font-bold text-lg text-gray-800 mb-4">Assessment Matrix</h3><form id="active-quiz-form" onsubmit="submitQuizAssessment(event, ${lessonNumber})" class="space-y-6">`;
+                
+                let html = `
+                    <h3 class="font-bold text-lg text-gray-800 mb-4">Assessment</h3>
+                    <form id="active-quiz-form" onsubmit="submitQuizAssessment(event, ${lessonNumber})" class="space-y-6">
+                `;
+                
                 questions.forEach((q, idx) => {
                     html += `
                         <div class="bg-gray-50 p-5 rounded-xl border border-gray-100">
                             <p class="font-bold text-sm text-gray-800 mb-3">${idx + 1}. ${q.question}</p>
                             <div class="space-y-2">
-                                <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer"><input type="radio" name="q_${q.id}" value="A" required> <span>${q.opt_a || 'Option A'}</span></label>
-                                <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer"><input type="radio" name="q_${q.id}" value="B" required> <span>${q.opt_b || 'Option B'}</span></label>
-                                <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer"><input type="radio" name="q_${q.id}" value="C" required> <span>${q.opt_c || 'Option C'}</span></label>
-                                <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer"><input type="radio" name="q_${q.id}" value="D" required> <span>${q.opt_d || 'Option D'}</span></label>
+                                <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
+                                    <input type="radio" name="q_${q.id}" value="A" required> <span>${q.opt_a || 'Option A'}</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
+                                    <input type="radio" name="q_${q.id}" value="B" required> <span>${q.opt_b || 'Option B'}</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
+                                    <input type="radio" name="q_${q.id}" value="C" required> <span>${q.opt_c || 'Option C'}</span>
+                                </label>
+                                <label class="flex items-center gap-3 text-sm p-2 hover:bg-white rounded cursor-pointer">
+                                    <input type="radio" name="q_${q.id}" value="D" required> <span>${q.opt_d || 'Option D'}</span>
+                                </label>
                             </div>
-                        </div>`;
+                        </div>
+                    `;
                 });
+                
                 html += `<button type="submit" class="w-full py-3 bg-brand-red text-white font-bold rounded-xl shadow-md">Submit Answers</button></form>`;
                 ws.innerHTML = html;
-            } catch (err) {}
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            } catch (err) {
+                ws.innerHTML = `<p class="text-sm text-red-500">Error loading quiz.</p>`;
+            }
         }
 
         async function submitQuizAssessment(e, lessonNumber) {
             e.preventDefault();
-            const formData = new FormData(e.target);
+            const form = e.target;
+            const formData = new FormData(form);
             let score = 0;
-            globalState.quizCache.forEach(q => { if(formData.get(`q_${q.id}`) === q.correct_opt) score++; });
-            const payload = { student_id: globalState.sessionUser.id, lesson_number: lessonNumber, score: score, total_questions: globalState.quizCache.length };
-            const { error } = await supabaseClientInstance.from('quiz_attempts').insert([payload]);
-            if (error) {
-                const { error: retryError } = await supabaseClientInstance.from('quiz_attempts').insert([{ ...payload, lesson_id: lessonNumber }]);
-                if(retryError) alert("Error: " + retryError.message); else successQuiz(score);
-            } else { successQuiz(score); }
-        }
-
-        function successQuiz(score) { alert("Quiz submitted! Score: " + score); refreshQuizListUI(); fetchActivityHistory(); }
-
-        function displayScreenLayer(targetId) { 
-            ["global-loader", "app-container", "auth-shield-container"].forEach(id => { 
-                const el = document.getElementById(id); 
-                if (el) el.classList.add("hidden-layer"); 
-            }); 
-            const target = document.getElementById(targetId); 
-            if (target) target.classList.remove("hidden-layer"); 
-        }
-
-        function toggleMobileSidebar() { 
-            const sb = document.getElementById("main-sidebar"); 
-            if (sb) sb.classList.toggle("-translate-x-full"); 
-        }
-
-        function switchView(viewId) {
-            const sb = document.getElementById("main-sidebar"); 
-            if (sb && !sb.classList.contains("-translate-x-full")) sb.classList.add("-translate-x-full");
-            document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
-            const target = document.getElementById(viewId); 
-            if (target) target.classList.remove("hidden-layer");
             
-            const navLinks = document.querySelectorAll(".nav-link");
-            navLinks.forEach(link => {
-                link.className = "nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all";
-            });
-            const activeBtn = Array.from(navLinks).find(btn => btn.getAttribute("onclick").includes(viewId));
-            if(activeBtn) {
-                activeBtn.className = "nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all text-white bg-brand-red shadow-lg";
-            }
-            
-            const footer = document.getElementById('main-footer'); 
-            if (footer) footer.style.display = (viewId === 'student-dashboard') ? 'block' : 'none';
-        }
-
-        function populateProfileInputsUIFields() { 
-            const p = globalState.profileData;
-            if(!p) return;
-            document.getElementById("prof-fullname").value = p.full_name || '';
-            document.getElementById("prof-fathername").value = p.father_name || '';
-            document.getElementById("prof-mobile").value = p.mobile_no || '';
-            document.getElementById("prof-city").value = p.city || '';
-            document.getElementById("prof-address").value = p.address || '';
-            document.getElementById("prof-gender").value = p.gender || 'Male';
-            document.getElementById("prof-dob").value = p.dob || '';
-            document.getElementById("prof-education").value = p.education_level || 'Matric';
-        }
-
-        function syncProfileUILayoutRepresentations() { 
-            const p = globalState.profileData;
-            if(!p) return;
-            const displayName = p.full_name || "Premium Student";
-            const avatarUrl = p.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=DC2626&color=fff`;
-            
-            document.getElementById("sb-username").textContent = displayName;
-            document.getElementById("sb-role").textContent = p.role === 'super_admin' ? 'Super Admin' : 'Student';
-            document.getElementById("sb-avatar").src = avatarUrl;
-            document.getElementById("prof-avatar-preview").src = avatarUrl;
-            
-            const titleEl = document.getElementById("dash-welcome-title");
-            if(titleEl) titleEl.textContent = `Welcome back, ${displayName}!`;
-            
-            document.getElementById("meta-student-id").textContent = p.id;
-            
-            if(p.role === 'super_admin') {
-                document.getElementById("admin-nav-item").classList.remove("hidden");
-            }
-        }
-
-        async function saveUserProfileDataState(e) { 
-            e.preventDefault();
-            if(!globalState.sessionUser) return;
-            const payload = {
-                id: globalState.sessionUser.id,
-                full_name: document.getElementById("prof-fullname").value,
-                father_name: document.getElementById("prof-fathername").value,
-                mobile_no: document.getElementById("prof-mobile").value,
-                city: document.getElementById("prof-city").value,
-                address: document.getElementById("prof-address").value,
-                gender: document.getElementById("prof-gender").value,
-                dob: document.getElementById("prof-dob").value,
-                education_level: document.getElementById("prof-education").value
-            };
-            
-            const { error } = await supabaseClientInstance.from('profiles').upsert(payload);
-            if(error) {
-                triggerToastNotification(error.message, false);
-            } else {
-                globalState.profileData = { ...globalState.profileData, ...payload };
-                syncProfileUILayoutRepresentations();
-                triggerToastNotification("Profile Saved Successfully!");
-                await evaluateAnalyticsAggregatesMetricsContainers();
-            }
-        }
-
-        async function handleAvatarSelect(e) { 
-            const file = e.target.files[0];
-            if(!file || !globalState.sessionUser) return;
-            const reader = new FileReader();
-            reader.onload = async function(event) {
-                const base64 = event.target.result;
-                document.getElementById("prof-avatar-preview").src = base64;
-                const { error } = await supabaseClientInstance.from('profiles').update({ avatar_url: base64 }).eq('id', globalState.sessionUser.id);
-                if(!error) {
-                    globalState.profileData.avatar_url = base64;
-                    syncProfileUILayoutRepresentations();
-                    triggerToastNotification("Avatar picture updated!");
+            globalState.quizCache.forEach(q => {
+                if(formData.get(`q_${q.id}`) === q.correct_opt) {
+                    score++;
                 }
-            };
-            reader.readAsDataURL(file);
+            });
+            
+            const { error } = await supabaseClientInstance.from('quiz_attempts').insert([{
+                student_id: globalState.sessionUser.id,
+                lesson_number: lessonNumber, 
+                score: score,
+                total_questions: globalState.quizCache.length
+            }]);
+            
+            if (error) {
+                const { error: retryError } = await supabaseClientInstance.from('quiz_attempts').insert([{
+                    student_id: globalState.sessionUser.id,
+                    lesson_id: lessonNumber,
+                    score: score,
+                    total_questions: globalState.quizCache.length
+                }]);
+                if(retryError) alert("Error: " + retryError.message);
+                else {
+                    alert("Quiz submitted successfully! Score: " + score);
+                    await calculateAndUpdateDashboardQuizzesScore();
+                    refreshQuizListUI();
+                }
+            } else {
+                alert("Quiz submitted successfully! Score: " + score);
+                await calculateAndUpdateDashboardQuizzesScore();
+                refreshQuizListUI();
+            }
+        }
+
+        // --- CALCULATE AND UPDATE DASHBOARD SCORE ---
+        async function calculateAndUpdateDashboardQuizzesScore() {
+            if(!globalState.sessionUser) return;
+            try {
+                let { data: attempts } = await supabaseClientInstance
+                    .from('quiz_attempts')
+                    .select('score, total_questions')
+                    .eq('student_id', globalState.sessionUser.id);
+                
+                const avgScoreEl = document.getElementById('dash-avg-quiz-score');
+                if(!avgScoreEl) return;
+
+                if(!attempts || attempts.length === 0) {
+                    avgScoreEl.textContent = "0/0";
+                    return;
+                }
+
+                let totalScore = 0;
+                let totalQuestions = 0;
+                attempts.forEach(a => {
+                    totalScore += a.score;
+                    totalQuestions += a.total_questions;
+                });
+
+                avgScoreEl.textContent = `${totalScore}/${totalQuestions}`;
+            } catch(e) {
+                console.error("Score metrics error:", e);
+            }
+        }
+
+        // --- LEADERBOARD LOGIC MATRIX ---
+        async function fetchLeaderboardMatrix() {
+            try {
+                let { data: activities, error } = await supabaseClientInstance
+                    .from('daily_activity')
+                    .select('student_id, active_minutes, last_seen')
+                    .order('active_minutes', { ascending: false })
+                    .limit(5);
+
+                if (error) throw error;
+
+                const targetBody = document.getElementById('leaderboard-target-rows');
+                if(!targetBody) return;
+                targetBody.innerHTML = '';
+
+                if(!activities || activities.length === 0) {
+                    targetBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-400">کوئی ریکارڈ موجود نہیں ہے۔</td></tr>`;
+                    return;
+                }
+
+                for(let i=0; i<activities.length; i++) {
+                    const act = activities[i];
+                    let { data: profile } = await supabaseClientInstance
+                        .from('profiles')
+                        .select('full_name')
+                        .eq('id', act.student_id)
+                        .single();
+                    
+                    const studentName = profile ? profile.full_name : "Premium Scholar";
+                    const isOnline = new Date(act.last_seen) > new Date(Date.now() - 5 * 60000);
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50 transition-colors";
+                    tr.innerHTML = `
+                        <td class="py-3 px-2 font-bold text-gray-800 flex items-center gap-1.5">
+                            ${i === 0 ? '<i data-lucide="trophy" class="w-4 h-4 text-amber-500"></i>' : ''}
+                            ${i === 1 ? '<i data-lucide="medal" class="w-4 h-4 text-slate-400"></i>' : ''}
+                            ${i === 2 ? '<i data-lucide="award" class="w-4 h-4 text-amber-700"></i>' : ''}
+                            ${i > 2 ? `#${i + 1}` : ''}
+                        </td>
+                        <td class="py-3 text-gray-900 font-bold">${studentName}</td>
+                        <td class="py-3 text-center font-mono font-bold text-brand-red">${act.active_minutes} Mins</td>
+                        <td class="py-3 text-right">
+                            <span class="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-bold rounded-full ${isOnline ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400'}">
+                                <span class="w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-ping' : 'bg-gray-400'}"></span>
+                                ${isOnline ? 'Active Now' : 'Offline'}
+                            </span>
+                        </td>
+                    `;
+                    targetBody.appendChild(tr);
+                }
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            } catch(e) {
+                console.error("Leaderboard error:", e);
+            }
+        }
+
+        // --- INACTIVITY ALERTS SYSTEM ---
+        function startTabInactivityAlertSystem() {
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    tabInactivityTimer = setTimeout(() => {
+                        triggerToastNotification("انتباہ: آپ نے لیمنگ انٹرفیس چھوڑ دیا ہے۔ براہ کرم واپس آئیں!", false);
+                    }, 30000); // 30 seconds alert
+                } else {
+                    if (tabInactivityTimer) {
+                        clearTimeout(tabInactivityTimer);
+                    }
+                }
+            });
+        }
+            
+        // --- HISTORY & ACTIVITY TRACKING ---
+        async function calculateAndDisplayStreak() {
+            const { data: activity } = await supabaseClientInstance
+                .from('daily_activity')
+                .select('date')
+                .eq('student_id', globalState.sessionUser.id)
+                .order('date', { ascending: false });
+
+            if (!activity || activity.length === 0) return;
+
+            let streak = 0;
+            let totalDaysActive = activity.length;
+            let today = new Date();
+            today.setHours(0,0,0,0);
+
+            for (let i = 0; i < activity.length; i++) {
+                let activityDate = new Date(activity[i].date);
+                activityDate.setHours(0,0,0,0);
+                let expectedDate = new Date(today);
+                expectedDate.setDate(today.getDate() - i);
+                if (activityDate.toDateString() === expectedDate.toDateString()) { streak++; } else { break; }
+            }
+            
+            const streakEl = document.getElementById("stat-current-streak");
+            if(streakEl) streakEl.textContent = `${streak} Days`;
+            const attendanceEl = document.getElementById("stat-attendance-rate");
+            if(attendanceEl) { attendanceEl.textContent = `${Math.min((totalDaysActive / 60) * 100, 100).toFixed(0)}%`; }
         }
         
-        const appAuth = {
-            handlePrimarySubmission: async (e) => { 
-                e.preventDefault(); 
-                const email=document.getElementById("auth-email").value; 
-                const password=document.getElementById("auth-password").value; 
-                const {data,error}=await supabaseClientInstance.auth.signInWithPassword({email,password}); 
-                if(error){
-                    const up=await supabaseClientInstance.auth.signUp({email,password}); 
-                    if(up.data && up.data.user) {
-                        triggerToastNotification("Verification Mail sent or account registered successfully! Try logging in.");
-                    } else {
-                        triggerToastNotification(error.message, false);
-                    }
-                } else{
-                    globalState.sessionUser=data.user; 
-                    pullProfileContextAndInitialize(data.user.id);
-                } 
-            },
-            logout: async () => { 
-                await supabaseClientInstance.auth.signOut(); 
-                location.reload(); 
-            }
-        };
+        async function fetchActivityHistory() {
+            if (!globalState.sessionUser) return;
+            let { data: history } = await supabaseClientInstance
+                .from('daily_activity')
+                .select('*')
+                .eq('student_id', globalState.sessionUser.id)
+                .order('date', { ascending: false });
 
-        async function syncClassroomSyllabusEngine() { 
-            try {
-                let { data: lessons } = await supabaseClientInstance.from('lessons').select('*').order('lesson_number', { ascending: true });
-                if(lessons) {
-                    globalState.lessonsCollection = lessons;
-                    await evaluateAnalyticsAggregatesMetricsContainers();
-                    renderClassroomSyllabusTreeLayout();
-                }
-            } catch(e) { console.error("Syllabus Load Failed", e); }
-        }
+            const list = document.getElementById('activity-history-list');
+            if (!list) return;
 
-        function renderClassroomSyllabusTreeLayout() { 
-            const container = document.getElementById("classroom-lessons-stack");
-            if(!container) return;
-            container.innerHTML = '';
-            
-            globalState.lessonsCollection.forEach(les => {
-                const isCompleted = globalState.progressMatrix.some(p => p.lesson_id === les.id || p.lesson_number === les.lesson_number);
-                const btn = document.createElement("button");
-                btn.className = `w-full text-left p-3 rounded-xl border text-xs font-semibold flex items-center justify-between transition-all ${isCompleted ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-white border-gray-200 hover:border-brand-red text-gray-700'}`;
-                btn.onclick = () => mountActiveLessonToStagePlayer(les);
-                btn.innerHTML = `
-                    <div class="truncate pr-2">
-                        <span class="block text-[10px] text-gray-400 uppercase font-black">Module ${les.lesson_number}</span>
-                        <span class="truncate">${les.title}</span>
+            list.innerHTML = history.map(h => {
+                let parsedDate = new Date(h.date).toLocaleDateString('ur-PK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                let lecturesHtml = h.lectures_watched.length > 0 
+                    ? h.lectures_watched.map(l => `<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs inline-block m-0.5">${l}</span>`).join('') 
+                    : '<span class="text-xs text-gray-400">کوئی لیکچر نہیں دیکھا گیا</span>';
+
+                return `
+                <div class="activity-card p-4 bg-white border border-gray-100 rounded-xl shadow-sm space-y-2 hover:border-brand-red transition-all">
+                    <div class="flex justify-between items-center border-b border-gray-50 pb-2">
+                        <h4 class="font-bold text-sm text-gray-800"><i data-lucide="calendar" class="w-4 h-4 inline mr-1 text-brand-red"></i> ${parsedDate}</h4>
+                        <span class="text-xs font-bold bg-red-50 text-brand-red px-2 py-1 rounded-full">${h.active_minutes} Mins Active</span>
                     </div>
-                    ${isCompleted ? '<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>' : '<i data-lucide="play" class="w-4 h-4 text-gray-400 shrink-0"></i>'}
-                `;
-                container.appendChild(btn);
-            });
-            if(typeof lucide !== 'undefined') lucide.createIcons({ root: container });
-        }
-
-        function mountActiveLessonToStagePlayer(lesson) { 
-            activeLessonUnderWatch = lesson;
-            const player = document.getElementById("gdrive-video-player");
-            player.src = lesson.iframe_url;
-            
-            document.getElementById("player-lesson-title").textContent = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
-            document.getElementById("player-lesson-desc").textContent = lesson.description;
-            
-            const fullscreenBtn = document.getElementById("drive-fullscreen-btn");
-            if(lesson.watch_url) {
-                fullscreenBtn.href = lesson.watch_url;
-                fullscreenBtn.classList.remove("hidden");
-            } else {
-                fullscreenBtn.classList.add("hidden");
-            }
-            
-            updateWatchProgressBarUIState(0);
-            
-            if(activeWatchInterval) clearInterval(activeWatchInterval);
-            let simulatedPercent = simulatedWatchPercentages[lesson.id] || 0;
-            
-            activeWatchInterval = setInterval(() => {
-                if(simulatedPercent < 100) {
-                    simulatedPercent += Math.floor(Math.random() * 5) + 2; 
-                    if(simulatedPercent > 100) simulatedPercent = 100;
-                    simulatedWatchPercentages[lesson.id] = simulatedPercent;
-                    updateWatchProgressBarUIState(simulatedPercent);
-                    
-                    if(simulatedPercent >= 90) {
-                        unlockAssignmentGate(lesson);
-                    }
-                }
-            }, 6000); 
-            
-            logLectureActivity(lesson.title);
-        }
-
-        function unlockAssignmentGate(lesson) {
-            const gate = document.getElementById("assignment-gate-container");
-            gate.innerHTML = `
-                <h3 class="text-base font-bold text-gray-800 flex items-center space-x-2">
-                    <i data-lucide="file-check" class="text-emerald-600 w-5 h-5"></i><span>Daily Secure Assignment Gateway</span>
-                </h3>
-                <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div>
-                        <p class="text-xs text-emerald-800 font-bold">آپ کی واچ پروگریس کلوژر ویلیڈیٹ ہو چکی ہے۔</p>
-                        <p class="text-[11px] text-emerald-600">Click button below to open official submission panel.</p>
+                    <div class="pt-1">
+                        <p class="text-xs text-gray-500 font-bold uppercase mb-1">Lectures Accessed:</p>
+                        <div class="flex flex-wrap">${lecturesHtml}</div>
                     </div>
-                    <button onclick="showAssignmentPopup(${lesson.lesson_number})" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow">Open Submit Gate</button>
                 </div>
-            `;
-            if (typeof lucide !== 'undefined') lucide.createIcons({ root: gate });
-        }
-
-        function showAssignmentPopup(lessonNumber) { 
-            const modal = document.getElementById("assignment-modal");
-            modal.classList.remove("hidden-layer");
+            `}).join('');
             
-            const waBtn = document.getElementById("wa-submit-btn");
-            const studentName = globalState.profileData?.full_name || "Unknown Scholar";
-            const studentEmail = globalState.profileData?.email || "No Email";
-            
-            const message = `السلام علیکم سر رضوان!\nمیں نے کمپیوٹر کورس کا لیسن نمبر ${lessonNumber} کامیابی سے مکمل دیکھ لیا ہے۔\n\nمیرا نام: ${studentName}\nای میل: ${studentEmail}\n\nیہ رہا میرا اسائنمنٹ ٹاسک ڈاکومنٹ:`;
-            waBtn.href = `https://wa.me/923041783870?text=${encodeURIComponent(message)}`;
-            
-            saveLessonCompletedProgress(lessonNumber);
-        }
-
-        async function saveLessonCompletedProgress(lessonNumber) {
-            if(!globalState.sessionUser) return;
-            const payload = {
-                student_id: globalState.sessionUser.id,
-                lesson_number: lessonNumber,
-                lesson_id: globalState.lessonsCollection.find(l => l.lesson_number === lessonNumber)?.id,
-                completed_at: new Date().toISOString()
-            };
-            
-            const { error } = await supabaseClientInstance.from('student_progress').upsert(payload);
-            if(!error) {
-                await evaluateAnalyticsAggregatesMetricsContainers();
-                renderClassroomSyllabusTreeLayout();
+            if(history.length > 0 && history[0].date === new Date().toISOString().split('T')[0]) {
+                todayActiveMinutes = history[0].active_minutes;
+                const hrsUI = document.getElementById('stat-study-hours');
+                if(hrsUI) hrsUI.textContent = `${todayActiveMinutes} mins`;
             }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
-        function closeAssignmentModal() { 
-            document.getElementById("assignment-modal").classList.add("hidden-layer");
-        }
-
-        function updateWatchProgressBarUIState(pct) { 
-            document.getElementById("lesson-watch-percentage-text").textContent = `${pct}% Stream Checked`;
-            document.getElementById("lesson-watch-progress-bar").style.width = `${pct}%`;
-        }
-
-        async function evaluateAnalyticsAggregatesMetricsContainers() { 
-            if(!globalState.sessionUser) return;
-            try {
-                const { data: progress } = await supabaseClientInstance.from('student_progress').select('*').eq('student_id', globalState.sessionUser.id);
-                if(progress) {
-                    globalState.progressMatrix = progress;
-                    
-                    const totalLessonsCount = Math.max(globalState.lessonsCollection.length, 47);
-                    const completedCount = progress.length;
-                    
-                    document.getElementById("dash-course-progress-badge").textContent = `${completedCount}/${totalLessonsCount} Modules`;
-                    
-                    const percentage = Math.round((completedCount / totalLessonsCount) * 100) || 0;
-                    document.getElementById("dash-progress-bar-fill").style.width = `${percentage}%`;
-                    document.getElementById("stat-attendance-rate").textContent = `${percentage}%`;
-                    
-                    const certBtn = document.getElementById("download-cert-btn");
-                    if(completedCount >= totalLessonsCount) {
-                        certBtn.disabled = false;
-                        certBtn.className = "w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all";
-                        certBtn.textContent = "Download Verified Certificate";
-                        certBtn.onclick = generateCertifiedCredentialPDF;
-                    } else {
-                        certBtn.disabled = true;
-                        certBtn.className = "w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed";
-                        certBtn.textContent = "Certificate Locked";
-                    }
-                }
-            } catch(e) { console.error("Analytics metrics resolution error", e); }
-        }
-
-        async function trackActivity() { 
-            if(!globalState.sessionUser) return;
-            todayActiveMinutes += 1;
-            document.getElementById("stat-study-hours").textContent = `${todayActiveMinutes} mins`;
+        async function trackActivity() {
+            if (!globalState.sessionUser) return;
+            todayActiveMinutes++; 
+            const today = new Date().toISOString().split('T')[0];
             
-            const todayStr = new Date().toISOString().split('T')[0];
-            const payload = {
-                student_id: globalState.sessionUser.id,
-                date: todayStr,
-                active_minutes: todayActiveMinutes,
-                last_seen: new Date().toISOString()
-            };
-            
-            await supabaseClientInstance.from('daily_activity').upsert(payload, { onConflict: 'student_id,date' });
-        }
-
-        async function logLectureActivity(lessonTitle) { 
-            if(!globalState.sessionUser) return;
-            const todayStr = new Date().toISOString().split('T')[0];
             await supabaseClientInstance.from('daily_activity').upsert({
                 student_id: globalState.sessionUser.id,
-                date: todayStr,
-                last_lecture_watched: lessonTitle,
+                date: today,
+                active_minutes: todayActiveMinutes,
                 last_seen: new Date().toISOString()
-            }, { onConflict: 'student_id,date' });
-        }
+            }, { onConflict: 'student_id, date' });
 
-        async function calculateAndDisplayStreak() { 
-            if(!globalState.sessionUser) return;
-            try {
-                const { data: activities } = await supabaseClientInstance
-                    .from('daily_activity')
-                    .select('date')
-                    .eq('student_id', globalState.sessionUser.id)
-                    .order('date', { ascending: false });
-                
-                if(activities && activities.length > 0) {
-                    let currentStreak = 0;
-                    let longestStreak = 0;
-                    let tempStreak = 0;
-                    
-                    const activeDates = [...new Set(activities.map(a => a.date))].map(d => new Date(d));
-                    
-                    let today = new Date();
-                    today.setHours(0,0,0,0);
-                    let yesterday = new Date(today);
-                    yesterday.setDate(yesterday.getDate() - 1);
-                    
-                    let hasToday = activeDates.some(d => d.getTime() === today.getTime());
-                    let hasYesterday = activeDates.some(d => d.getTime() === yesterday.getTime());
-                    
-                    if (hasToday || hasYesterday) {
-                        let checkDate = hasToday ? today : yesterday;
-                        while(activeDates.some(d => d.getTime() === checkDate.getTime())) {
-                            currentStreak++;
-                            checkDate.setDate(checkDate.getDate() - 1);
-                        }
-                    }
-                    
-                    if(activeDates.length > 0) {
-                        let sortedDates = activeDates.sort((a,b) => b - a);
-                        tempStreak = 1;
-                        for(let i = 0; i < sortedDates.length - 1; i++) {
-                            let diff = (sortedDates[i] - sortedDates[i+1]) / (1000 * 60 * 60 * 24);
-                            if(diff === 1) {
-                                tempStreak++;
-                            } else if (diff > 1) {
-                                if(tempStreak > longestStreak) longestStreak = tempStreak;
-                                tempStreak = 1;
-                            }
-                        }
-                        if(tempStreak > longestStreak) longestStreak = tempStreak;
-                    }
-                    
-                    document.getElementById("stat-current-streak").textContent = `${currentStreak} Days`;
-                    document.getElementById("stat-longest-streak").textContent = `${Math.max(longestStreak, currentStreak)} Days`;
-                }
-            } catch(e) { console.error("Streak count error", e); }
+            const hrsUI = document.getElementById('stat-study-hours');
+            if(hrsUI) hrsUI.textContent = `${todayActiveMinutes} mins`;
+            if (todayActiveMinutes % 2 === 0) {
+                fetchActivityHistory(); 
+                fetchLeaderboardMatrix();
+            }
         }
+        
+        function startRealTimeActivityTracker() { setInterval(trackActivity, 60000); }
 
-        async function updateAdminDashboard() { 
+        async function logLectureActivity(lessonTitle) {
+            if (!globalState.sessionUser) return;
+            const today = new Date().toISOString().split('T')[0];
+            let timeAccessed = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            let logString = `${lessonTitle} (at ${timeAccessed})`;
+            
+            let { data: row } = await supabaseClientInstance.from('daily_activity').select('lectures_watched').eq('student_id', globalState.sessionUser.id).eq('date', today).single();
+            let list = row ? row.lectures_watched : [];
+            let alreadyWatched = list.some(l => l.includes(lessonTitle));
+
+            if (!alreadyWatched) {
+                list.push(logString);
+                await supabaseClientInstance.from('daily_activity').upsert({ student_id: globalState.sessionUser.id, date: today, lectures_watched: list }, { onConflict: 'student_id, date' });
+                fetchActivityHistory();
+            }
+        }
+        
+        async function updateAdminDashboard() {
             try {
-                const { count: usersCount } = await supabaseClientInstance.from('profiles').select('*', { count: 'exact', head: true });
-                document.getElementById("admin-total-students").textContent = usersCount || 0;
-                
+                const { count: totalStudents } = await supabaseClientInstance.from('profiles').select('*', { count: 'exact', head: true });
                 const fiveMinsAgo = new Date(Date.now() - 5 * 60000).toISOString();
-                const { data: liveData } = await supabaseClientInstance.from('daily_activity').select('student_id').gt('last_seen', fiveMinsAgo);
-                
-                const uniqueLive = new Set(liveData?.map(d => d.student_id));
-                document.getElementById("admin-active-students").textContent = uniqueLive.size || 0;
-            } catch(e) {}
+                const { count: activeStudents } = await supabaseClientInstance.from('daily_activity').select('*', { count: 'exact', head: true }).gte('last_seen', fiveMinsAgo);
+
+                if(document.getElementById('admin-total-students')) document.getElementById('admin-total-students').textContent = totalStudents || 0;
+                if(document.getElementById('admin-active-students')) document.getElementById('admin-active-students').textContent = activeStudents || 0;
+            } catch (err) {}
         }
+        setInterval(updateAdminDashboard, 30000);
 
         const adminConsole = {
-            createLesson: async (e) => { 
+            createLesson: async (e) => {
                 e.preventDefault();
-                const payload = {
-                    title: document.getElementById("adm-les-title").value,
-                    lesson_number: parseInt(document.getElementById("adm-les-number").value),
-                    iframe_url: document.getElementById("adm-les-iframe").value,
-                    watch_url: document.getElementById("adm-les-watch").value,
-                    description: document.getElementById("adm-les-desc").value,
-                    course_id: globalState.activeCourseId
-                };
-                
-                const { error } = await supabaseClientInstance.from('lessons').insert([payload]);
-                if(error) {
-                    alert("Error: " + error.message);
-                } else {
-                    triggerToastNotification("New syllabus lesson node published!");
-                    document.getElementById("admin-lesson-form").reset();
-                    await syncClassroomSyllabusEngine();
-                }
+                const lesson_number = parseInt(document.getElementById("adm-les-num").value);
+                const title = document.getElementById("adm-les-title").value.trim();
+                const gdrive_id = document.getElementById("adm-les-gdrive").value.trim();
+                const duration = parseInt(document.getElementById("adm-les-duration").value);
+                const description = document.getElementById("adm-les-desc").value.trim();
+
+                try {
+                    const { data, error } = await supabaseClientInstance.from('lessons').insert([{ lesson_number, title, google_drive_video_id: gdrive_id, estimated_duration: duration, description }]);
+                    if (error) { alert("اپلوڈ میں ایرر ہے: " + error.message); } 
+                    else {
+                        triggerToastNotification("کامیابی: لیکچر اپلوڈ ہو گیا!");
+                        document.getElementById("admin-lesson-form").reset();
+                    }
+                } catch (err) {}
             },
             createQuizQuestion: async (e) => {
                 e.preventDefault();
-                const payload = { 
-                    lesson_number: parseInt(document.getElementById("adm-quiz-les-num").value), 
-                    question: document.getElementById("adm-quiz-qtext").value, 
-                    opt_a: document.getElementById("adm-quiz-opt-a").value, 
-                    opt_b: document.getElementById("adm-quiz-opt-b").value, 
-                    opt_c: document.getElementById("adm-quiz-opt-c").value, 
-                    opt_d: document.getElementById("adm-quiz-opt-d").value, 
-                    correct_opt: document.getElementById("adm-quiz-correct").value 
-                };
-                const { error } = await supabaseClientInstance.from('quizzes').insert([payload]);
-                if(error) alert("Error: " + error.message); 
-                else { 
-                    triggerToastNotification("Multiple supported: Question added."); 
-                    document.getElementById("admin-quiz-form").reset(); 
-                }
+                const lesson_number = parseInt(document.getElementById("adm-quiz-les-num").value);
+                const question = document.getElementById("adm-quiz-qtext").value.trim();
+                const opt_a = document.getElementById("adm-quiz-opt-a").value.trim();
+                const opt_b = document.getElementById("adm-quiz-opt-b").value.trim();
+                const opt_c = document.getElementById("adm-quiz-opt-c").value.trim();
+                const opt_d = document.getElementById("adm-quiz-opt-d").value.trim();
+                const correct_opt = document.getElementById("adm-quiz-correct").value;
+
+                try {
+                    const { error } = await supabaseClientInstance.from('quizzes').insert([{
+                        lesson_number, question, opt_a, opt_b, opt_c, opt_d, correct_opt
+                    }]);
+                    
+                    if(error) { alert("ایرر: " + error.message); }
+                    else {
+                        triggerToastNotification(`کامیابی: Lesson ${lesson_number} کا کوئز سوال ایڈ ہو گیا۔`);
+                        document.getElementById("admin-quiz-form").reset();
+                    }
+                } catch(err) {}
             }
         };
 
-        function runClockEngine() { 
+        async function unlockAssignmentManually(lessonId) {
+            if(!confirm("کیا آپ واقعی اسائنمنٹ ان لاک کرنا چاہتے ہیں؟")) return;
+            try {
+                await supabaseClientInstance.from('lesson_progress').upsert({
+                    student_id: globalState.sessionUser.id, lesson_id: lessonId, is_completed: true
+                });
+                triggerToastNotification("اسائنمنٹ مکمل مارک ہو گئی ہے۔");
+                syncClassroomSyllabusEngine(); 
+            } catch(err) {}
+        }
+
+        // --- CLOCK CONTROLLER ---
+        function runClockEngine() {
             setInterval(() => {
                 const now = new Date();
                 const deadline = new Date();
-                deadline.setHours(22, 0, 0, 0); 
-                
+                deadline.setHours(22, 0, 0, 0); // 10:00 PM
                 let diff = deadline - now;
-                if(diff < 0) {
-                    document.getElementById("assignment-countdown").textContent = "Closing Parameter Met";
+                const element = document.getElementById("assignment-countdown");
+                if (!element) return;
+                if (diff < 0) {
+                    element.textContent = "Lock frame active.";
                 } else {
-                    const hours = String(Math.floor(diff / 3600000)).padStart(2, '0');
-                    const mins = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-                    const secs = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-                    document.getElementById("assignment-countdown").textContent = `${hours}:${mins}:${secs} Left`;
+                    const hrs = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+                    const mins = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+                    const secs = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+                    element.textContent = `${hrs}:${mins}:${secs} Remaining`;
                 }
             }, 1000);
         }
-
-        function generateCertifiedCredentialPDF() {
-            const studentName = globalState.profileData?.full_name || "Premium Student";
-            document.getElementById("cert-student-name").textContent = studentName;
-            document.getElementById("cert-date").textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            
-            const target = document.getElementById("certificate-template");
-            html2canvas(target, { useCORS: true, logging: false }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `${studentName.replace(/\s+/g, '_')}_EP_Certificate.png`;
-                link.href = canvas.toDataURL();
-                link.click();
-            });
-        }
     </script>
 
-    <!-- Standard Premium Footer Layout -->
     <footer id="main-footer" class="mt-16 bg-white border-t border-gray-100 relative overflow-hidden transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 py-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="bg-red-50 p-2 rounded-xl text-brand-red border border-red-100">
-                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+        
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-gradient-to-b from-red-500/5 to-transparent blur-[140px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-6 pt-16 pb-8 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 xl:gap-16 pb-12 border-b border-gray-100">
+            
+            <div class="space-y-5">
+                <div onclick="switchView('student-dashboard')" class="flex items-center space-x-3 group cursor-pointer w-fit">
+                    <div class="bg-brand-red p-2.5 rounded-xl text-white shadow-md shadow-red-500/10 transform transition-transform duration-500 group-hover:rotate-12">
+                        <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                    </div>
+                    <span class="font-black text-lg tracking-tight text-brand-red uppercase">Education Point</span>
                 </div>
-                <div>
-                    <h4 class="font-extrabold text-sm tracking-tight text-gray-900 uppercase">Education Point</h4>
-                    <p class="text-[10px] text-gray-400 font-semibold tracking-wider uppercase">Premium LMS Framework</p>
+                <p class="text-xs text-gray-500 leading-relaxed font-medium">
+                    Making learning simple, accessible, and effective through interactive frameworks, premium assets, and modern digital ecosystems. Dedicated to delivering practical enterprise skill sets.
+                </p>
+                <div class="p-4 bg-gray-50/50 border border-gray-100 rounded-2xl space-y-1.5 hover:border-red-100 transition-colors duration-300">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Founder & CEO</p>
+                    <p class="text-xs font-bold text-gray-800">Muhammad Rizwan</p>
+                    <p class="text-[11px] text-gray-500 leading-relaxed">Dedicated to making quality education accessible, providing premium tools to help students build confidence and achieve success.</p>
                 </div>
             </div>
-            <div class="text-center md:text-right">
-                <p class="text-xs text-gray-500 font-medium">Developed and Maintained by <span class="font-extrabold text-brand-red">Wani</span></p>
-                <p class="text-[10px] text-gray-400 mt-0.5">© 2026 Education Point. All Rights Reserved.</p>
+
+            <div class="space-y-4">
+                <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Connect Matrix Link</h4>
+                <div class="flex flex-col gap-3">
+                    <a href="https://whatsapp.com/channel/0029Vb7bYUSJUM2eWSlWfo36" target="_blank" 
+                       class="group relative w-full px-4 py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs font-bold shadow-lg shadow-emerald-600/10 transition-all duration-300 transform hover:scale-[1.01] hover:-translate-y-0.5 overflow-hidden flex items-center justify-between">
+                        <div class="flex items-center space-x-2.5 relative z-10">
+                            <div class="relative flex h-2.5 w-2.5">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+                            </div>
+                            <span class="tracking-wide">Join WhatsApp Channel</span>
+                        </div>
+                        <i data-lucide="bell-ring" class="w-4 h-4 text-emerald-100/80 animate-pulse relative z-10"></i>
+                    </a>
+                    
+                    <a href="https://wa.me/923314220506?text=Hello%20Education%20Point%20Support" target="_blank" 
+                       class="group w-full px-4 py-3.5 bg-gray-50 border border-gray-200/80 hover:border-emerald-500 hover:bg-emerald-50/30 text-gray-700 hover:text-emerald-700 rounded-xl text-xs font-bold transition-all duration-300 transform hover:scale-[1.01] flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-emerald-100 group-hover:bg-emerald-500 p-1.5 rounded-lg transition-colors duration-300 text-emerald-600 group-hover:text-white">
+                                <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+                            </div>
+                            <span class="tracking-wide text-gray-600 group-hover:text-emerald-700">0331 4220506</span>
+                        </div>
+                        <span class="text-[10px] uppercase font-bold text-gray-400 group-hover:text-emerald-500 transition-colors">Direct Chat</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Syllabus Node Assets</h4>
+                <ul class="space-y-3 text-xs font-medium text-gray-600">
+                    <li>
+                        <button onclick="switchView('classroom-portal')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                            <i data-lucide="book-open" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                            <span>High-Quality Video Lectures</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchView('classroom-portal')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                            <i data-lucide="file-check" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                            <span>Real-World Assignments Matrix</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchView('quiz-session')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                            <i data-lucide="help-circle" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                            <span>Interactive Quizzes Node</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchView('profile-completion-view')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                            <i data-lucide="award" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                            <span>Verified Course Certificates</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">LMS User Ecosystem</h4>
+                <ul class="space-y-3 text-xs font-medium text-gray-600">
+                    <li>
+                        <button onclick="switchView('student-dashboard')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                            <span>Student Cloud Terminal</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchView('profile-completion-view')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                            <i data-lucide="user-cog" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                            <span>Identity Profile Context</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchView('quiz-session')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                            <i data-lucide="file-bar-chart" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                            <span>Academic Performance Log</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchView('student-dashboard')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                            <span>Secure Encryption Matrix</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-center sm:text-left space-y-1">
+                <p class="text-[11px] font-semibold text-gray-400">&copy; 2026 Education Point Platforms. All Rights Reserved.</p>
+                <p class="text-[9px] font-mono text-gray-400">System Core V-2.0 Realtime</p>
             </div>
         </div>
+    </div>
     </footer> 
 </body>
 </html>
