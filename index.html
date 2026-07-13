@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#DC2626">
 
     <title>Education Point LMS | Premium Production Framework</title>
@@ -32,18 +32,18 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
        <script>
-        // Service Worker Registration
+        // Service Worker Registration for PWA Fixes
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('SW Registered:', reg))
+                .then(reg => console.log('SW Registered Successfully:', reg.scope))
                 .catch(err => console.log('SW Registration Failed:', err));
             });
         }
 
-        // Notification Request
+        // Notification Request Initialization
         function requestNotificationPermission() {
-            if ("Notification" in window) {
+            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
                         console.log("Notification permission granted.");
@@ -71,17 +71,21 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #F1F1F1; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #DC2626; border-radius: 4px; }
         .page-layer { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .hidden-layer { display: none !important; opacity: 0; transform: translateY(10px); }
+        .hidden-layer { display: none !important; opacity: 0; transform: translateY(10px); pointer-events: none; }
         
         /* Certificate Print Font */
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Great+Vibes&display=swap');
+
+        /* Custom Quiz Radio Buttons */
+        .quiz-radio:checked + div { border-color: #3B82F6; background-color: #EFF6FF; }
+        .quiz-radio:checked + div .radio-dot { background-color: #3B82F6; border-color: #3B82F6; }
     </style>
 </head>
 <body class="bg-gray-50 text-brand-darkText custom-scrollbar font-sans antialiased secure-shield" 
       oncontextmenu="return false;" 
       onload="requestNotificationPermission()">
 
-    <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
+    <div id="global-loader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white transition-opacity duration-500">
         <div class="w-16 h-16 border-4 border-brand-red border-t-transparent rounded-full animate-spin"></div>
         <h2 class="mt-4 text-xl font-bold tracking-wider text-brand-red uppercase">Education Point</h2>
         <p class="text-sm text-gray-400 mt-1">Initializing Secure Environment...</p>
@@ -89,7 +93,7 @@
 
     <div id="app-container" class="min-h-screen flex flex-col md:flex-row relative hidden-layer page-layer">
         
-        <aside id="main-sidebar" class="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col fixed md:sticky top-0 h-auto md:h-screen z-40 transition-transform duration-300 transform md:transform-none -translate-x-full md:translate-x-0">
+        <aside id="main-sidebar" class="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col fixed md:sticky top-0 h-auto md:h-screen z-40 transition-transform duration-300 transform md:transform-none -translate-x-full md:translate-x-0 shadow-lg md:shadow-none">
             <div class="p-5 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <div class="bg-brand-red p-2 rounded-lg text-white"><i data-lucide="graduation-cap" class="w-6 h-6"></i></div>
@@ -119,7 +123,7 @@
                 <button onclick="switchView('reports-center')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
                     <i data-lucide="file-bar-chart" class="w-5 h-5"></i><span>Reports Engine</span>
                 </button>
-                <button id="admin-nav-item" onclick="switchView('admin-console')" class="nav-link w-full hidden flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-red-700 bg-red-50 hover:bg-red-100 transition-all border border-red-200">
+                <button id="admin-nav-item" onclick="switchView('admin-console')" class="nav-link w-full hidden flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-red-700 bg-red-50 hover:bg-red-100 transition-all border border-red-200 mt-4">
                     <i data-lucide="shield-alert" class="w-5 h-5"></i><span>Super Admin Panel</span>
                 </button>
             </nav>
@@ -132,13 +136,26 @@
         </aside>
 
         <main class="flex-1 min-w-0 flex flex-col min-h-screen relative">
-            <header class="bg-white border-b border-gray-100 p-4 flex items-center justify-between md:hidden sticky top-0 z-30">
-                <button onclick="toggleMobileSidebar()" class="text-gray-700"><i data-lucide="menu" class="w-6 h-6"></i></button>
-                <span class="font-black tracking-tight text-brand-red">EDUCATION POINT</span>
-                <div class="w-6 h-6"></div>
+            <header class="bg-white border-b border-gray-100 p-4 flex items-center justify-between sticky top-0 z-30">
+                <div class="flex items-center space-x-3 md:hidden">
+                    <button onclick="toggleMobileSidebar()" class="text-gray-700"><i data-lucide="menu" class="w-6 h-6"></i></button>
+                    <span class="font-black tracking-tight text-brand-red">EDUCATION POINT</span>
+                </div>
+                <div class="hidden md:flex items-center text-sm text-gray-500 font-medium">
+                    <i data-lucide="globe" class="w-4 h-4 mr-2"></i> Cloud Synced & Secure
+                </div>
+                
+                <div class="relative">
+                    <button onclick="toggleNotificationsUI()" class="relative p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-600 transition-colors">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span id="notif-badge" class="absolute top-0 right-0 w-2.5 h-2.5 bg-brand-red rounded-full border-2 border-white hidden"></span>
+                    </button>
+                </div>
             </header>
 
             <div class="p-4 md:p-8 flex-1 overflow-y-auto">
+                
+                <!-- DASHBOARD -->
                 <section id="student-dashboard" class="view-layer page-layer space-y-6">
                     <div class="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
                         <div class="relative z-10 space-y-2 max-w-xl">
@@ -230,13 +247,14 @@
                                     <div class="flex justify-between"><span>Database Student Identification:</span><span class="font-mono font-bold text-gray-800" id="meta-student-id">--</span></div>
                                 </div>
                                 <div id="certificate-delivery-wrapper" class="pt-2">
-                                    <button id="download-cert-btn" disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">Certificate Locked (Complete 47 Lessons)</button>
+                                    <button id="download-cert-btn" disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">Certificate Locked (Complete Modules)</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
+                <!-- PROFILE PORTAL -->
                 <section id="profile-completion-view" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         
@@ -316,9 +334,11 @@
                     </div>
                 </section>
 
+                <!-- CLASSROOM PORTAL -->
                 <section id="classroom-portal" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="flex flex-col xl:flex-row gap-6">
                         <div class="flex-1 space-y-4">
+                            <!-- Video Player -->
                             <div class="bg-black rounded-2xl overflow-hidden shadow-xl w-full relative border-4 border-white pb-[56.25%]"> 
                                 <iframe id="gdrive-video-player" class="absolute top-0 left-0 w-full h-full bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
                             </div>
@@ -358,16 +378,23 @@
                                 </div>
                             </div>
 
-                            <!-- Quiz Integration -->
-                            <div id="quiz-gate-container" class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4 hidden">
-                                <h3 class="font-bold text-gray-800 flex items-center"><i data-lucide="help-circle" class="text-blue-600 w-5 h-5 mr-2"></i> Quick Test Assessment</h3>
-                                <div id="quiz-questions-render" class="space-y-6"></div>
-                                <button onclick="evaluateQuiz()" id="btn-submit-quiz" class="py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg w-full md:w-auto px-6 hidden">Submit Test</button>
-                                <div id="quiz-result-display" class="hidden font-bold text-lg text-center p-4 rounded-xl"></div>
+                            <!-- NEW: Dedicated Quiz Launcher Button -->
+                            <div id="quiz-launcher-container" class="bg-white p-6 rounded-2xl border border-blue-200 shadow-sm space-y-4 hidden relative overflow-hidden">
+                                <div class="relative z-10">
+                                    <h3 class="font-black text-blue-900 text-lg flex items-center mb-1">
+                                        <i data-lucide="clipboard-list" class="text-blue-600 w-6 h-6 mr-2"></i> Module Assessment Test
+                                    </h3>
+                                    <p class="text-sm text-blue-700 mb-4">You must pass this interactive test to complete the current module requirement.</p>
+                                    <button onclick="openDedicatedQuizUI()" class="w-full md:w-auto py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2 transform hover:scale-[1.02]">
+                                        <i data-lucide="play-circle" class="w-5 h-5"></i> <span>Start Assessment Now</span>
+                                    </button>
+                                </div>
+                                <i data-lucide="help-circle" class="absolute right-[-20px] bottom-[-20px] w-40 h-40 text-blue-50 pointer-events-none transform -rotate-12"></i>
                             </div>
 
                         </div>
 
+                        <!-- Sidebar List -->
                         <div class="w-full xl:w-80 bg-white rounded-2xl border border-gray-200 shadow-sm p-4 h-auto xl:h-[calc(100vh-120px)] flex flex-col">
                             <h3 class="font-bold text-gray-800 text-base pb-3 border-b border-gray-100 flex items-center space-x-2">
                                 <i data-lucide="list-video" class="text-brand-red w-5 h-5"></i><span>Computer Course Syllabus Node</span>
@@ -377,7 +404,42 @@
                         </div>
                     </div>
                 </section>
+                
+                <!-- NEW: DEDICATED QUIZ VIEW (FULL SCREEN) -->
+                <section id="quiz-dedicated-view" class="view-layer page-layer hidden-layer fixed inset-0 z-50 bg-gray-50 overflow-y-auto">
+                    <div class="max-w-4xl mx-auto my-6 md:my-12 px-4">
+                        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200 relative">
+                            
+                            <!-- Header -->
+                            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 md:p-8 text-white flex justify-between items-center relative overflow-hidden">
+                                <div class="relative z-10">
+                                    <span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold tracking-widest uppercase mb-3 inline-block border border-white/30">Official Assessment Test</span>
+                                    <h2 class="text-2xl md:text-3xl font-black tracking-tight" id="quiz-ui-title">Loading Quiz...</h2>
+                                </div>
+                                <button onclick="closeDedicatedQuizUI()" class="relative z-10 p-2.5 bg-white/10 hover:bg-white/20 rounded-full transition-all border border-white/20 backdrop-blur-md">
+                                    <i data-lucide="x" class="w-6 h-6 text-white"></i>
+                                </button>
+                                <div class="absolute right-0 top-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+                            </div>
+                            
+                            <!-- Content -->
+                            <div class="p-6 md:p-8">
+                                <div id="quiz-already-attempted-msg" class="hidden font-bold text-lg text-center p-8 rounded-2xl border-2 mb-6"></div>
+                                
+                                <form id="quiz-questions-render" class="space-y-6"></form>
+                                
+                                <div id="quiz-actions-footer" class="pt-8 mt-8 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+                                    <p class="text-xs text-gray-400 font-medium tracking-wide"><i data-lucide="shield" class="w-4 h-4 inline text-blue-500"></i> Protected Academic Integrity Engine</p>
+                                    <button type="button" onclick="evaluateQuiz()" id="btn-submit-quiz" class="w-full sm:w-auto py-3.5 px-8 bg-brand-red hover:bg-brand-hover text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm tracking-wide transform hover:-translate-y-0.5">
+                                        <i data-lucide="check-square" class="w-5 h-5"></i> Submit Final Answers
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
+                <!-- REPORTS -->
                 <section id="reports-center" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                         <h2 class="text-xl font-bold tracking-tight text-gray-900 mb-1">Academic Audit Reporting Station</h2>
@@ -391,6 +453,7 @@
                     </div>
                 </section>
 
+                <!-- ADMIN CONSOLE -->
                 <section id="admin-console" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
                         <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
@@ -419,7 +482,7 @@
                         </div>
 
                         <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-6">
-                            <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Publish New Classroom Module Node Target</h3>
+                            <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Publish New Classroom Module</h3>
                             <form id="admin-lesson-form" onsubmit="adminConsole.createLesson(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="space-y-1">
                                     <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Sequential Index Number *</label>
@@ -434,7 +497,7 @@
                                     <input type="text" id="adm-les-gdrive" placeholder="e.g. 1A_xXBt9vQ... (Extract the ID from link)" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-mono" required>
                                 </div>
                                 <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Estimated Running Runtime Duration Metrics (Seconds) *</label>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Estimated Running Runtime Metrics (Seconds) *</label>
                                     <input type="number" id="adm-les-duration" placeholder="e.g. 1800 for 30 minute calculations" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
                                 </div>
                                 <div class="sm:col-span-2 space-y-1">
@@ -447,7 +510,7 @@
                             </form>
                         </div>
 
-                        <!-- Add Quiz Integration -->
+                        <!-- Quiz Integration Admin -->
                         <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 mt-6">
                             <h3 class="font-bold text-blue-800 mb-3 uppercase text-sm">Add Quick Test (Quiz) to Lesson</h3>
                             <form id="admin-quiz-form" onsubmit="adminConsole.createQuiz(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -466,7 +529,7 @@
                                     <option value="C">Option C</option>
                                     <option value="D">Option D</option>
                                 </select>
-                                <button type="submit" class="sm:col-span-2 py-3 bg-blue-600 text-white font-bold text-xs rounded-xl">Add Question to Test</button>
+                                <button type="submit" class="sm:col-span-2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition-colors">Add Question to Test</button>
                             </form>
                         </div>
 
@@ -476,6 +539,7 @@
         </main>
     </div>
 
+    <!-- AUTH SHIELD -->
     <div id="auth-shield-container" class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-red-50 to-neutral-100 p-4 hidden-layer page-layer">
         <div class="w-full max-w-md bg-white rounded-3xl border border-gray-200 shadow-2xl p-6 md:p-8 space-y-6">
             <div class="text-center space-y-2">
@@ -499,6 +563,7 @@
         </div>
     </div>
 
+    <!-- CERTIFICATE RENDER ZONE -->
     <div id="certificate-render-zone" class="absolute top-[-9999px] left-[-9999px]">
         <div id="certificate-template" class="w-[1000px] h-[700px] bg-white border-[16px] border-[#1e3a8a] p-12 relative flex flex-col items-center justify-center text-center font-serif shadow-2xl" style="background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');">
             <div class="absolute top-4 left-4 w-16 h-16 border-t-4 border-l-4 border-brand-red"></div>
@@ -538,6 +603,7 @@
         </div>
     </div>
 
+    <!-- CORE SCRIPTS -->
     <script>
         // --- SECURITY ANTI-COPY SCRIPT ---
         document.addEventListener('keydown', function(e) {
@@ -567,37 +633,49 @@
         };
         let todayActiveMinutes = 0;
         let loginTimeRecorded = false;
+        let notificationInterval = null;
 
         // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
         document.addEventListener("DOMContentLoaded", async () => {
             if (typeof lucide !== 'undefined') lucide.createIcons();
             runClockEngine();
+            
+            // Fail-safe for PWA loading stuck issue
+            setTimeout(() => {
+                const loader = document.getElementById("global-loader");
+                if (loader && !loader.classList.contains("hidden-layer")) {
+                    loader.classList.add("hidden-layer");
+                    if(!globalState.sessionUser) displayScreenLayer("auth-shield-container");
+                }
+            }, 6000); // 6 Sec Hard Timeout Failsafe
+
             await evaluateSessionContextState();
             startRealTimeActivityTracker(); 
         });
 
         async function evaluateSessionContextState() {
             try {
-                if (!supabaseClientInstance) return;
+                if (!supabaseClientInstance) throw new Error("Supabase missing");
                 const { data: { session }, error } = await supabaseClientInstance.auth.getSession();
                 if (session) {
                     globalState.sessionUser = session.user;
                     await pullProfileContextAndInitialize(session.user.id);
                     recordLoginTime();
+                    startNotificationService(); // Start Real-time Notifications
                 } else {
                     displayScreenLayer("auth-shield-container");
                 }
             } catch (err) {
+                console.error(err);
                 displayScreenLayer("auth-shield-container");
             } finally {
                 const loader = document.getElementById("global-loader");
-                if (loader) loader.classList.add("hidden");
+                if (loader) loader.classList.add("hidden-layer");
             }
         }
 
         function recordLoginTime() {
             if(!loginTimeRecorded) {
-                console.log("User logged in at: " + new Date().toLocaleTimeString());
                 loginTimeRecorded = true;
             }
         }
@@ -666,7 +744,6 @@
             } catch(err) { alert("Error: " + err.message); }
         }
 
-        // --- AVATAR UPLOAD LOGIC ---
         async function handleAvatarSelect(e) {
             const file = e.target.files[0];
             if(!file || !globalState.sessionUser) return;
@@ -705,27 +782,20 @@
         }
 
         function switchView(viewId) {
-            // 1. سائیڈ بار کو خود بخود بند کریں (اگر موبائل پر کھلا ہے)
             const sb = document.getElementById("main-sidebar");
             if (sb && !sb.classList.contains("-translate-x-full")) {
                 sb.classList.add("-translate-x-full");
             }
-
-            // 2. تمام ویوز کو ہائیڈ کریں
             document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
-            
-            // 3. مطلوبہ ویو کو دکھائیں
             const target = document.getElementById(viewId);
             if (target) target.classList.remove("hidden-layer");
 
-            // 4. فوٹر کا لاجک
             const footer = document.getElementById('main-footer');
             if (footer) {
-                footer.style.display = (viewId === 'student-dashboard') ? 'block' : 'none';
+                footer.style.display = (viewId === 'quiz-dedicated-view') ? 'none' : 'block';
             }
+            if(typeof lucide !== 'undefined') lucide.createIcons();
         }
-        
-        switchView('student-dashboard'); 
 
         function syncProfileUILayoutRepresentations() {
             if(!globalState.profileData) return;
@@ -737,7 +807,6 @@
             if(globalState.profileData.role === 'super_admin' && adminNav) adminNav.classList.remove("hidden");
         }
 
-        // --- AUTH ---
         const appAuth = {
             handlePrimarySubmission: async (e) => {
                 e.preventDefault();
@@ -750,7 +819,9 @@
                         if (upData) { alert("اکاؤنٹ بن گیا ہے! اب دوبارہ لاگ ان کریں۔"); location.reload(); }
                     } else if(data.user) {
                         globalState.sessionUser = data.user;
+                        displayScreenLayer('global-loader');
                         await pullProfileContextAndInitialize(data.user.id);
+                        startNotificationService();
                     }
                 } catch(err) { alert(err.message); }
             },
@@ -760,7 +831,6 @@
             }
         };
 
-        // --- BUSINESS LOGIC & CLASSROOM ---
         async function syncClassroomSyllabusEngine() {
             try {
                 let { data: lessons, error: lessonError } = await supabaseClientInstance
@@ -771,7 +841,6 @@
                 if (lessonError) throw lessonError;
                 globalState.lessonsCollection = lessons || [];
 
-                // Populate Admin Dropdown for Quiz
                 const select = document.getElementById("adm-quiz-lesson");
                 if (select) {
                     select.innerHTML = '<option value="">Select Lesson...</option>' + globalState.lessonsCollection.map(l => `<option value="${l.id}">Lesson ${l.lesson_number}: ${l.title}</option>`).join('');
@@ -833,8 +902,8 @@
 
         async function mountActiveLessonToStagePlayer(lesson, logContainer) {
             globalState.currentActiveLessonId = lesson.id;
-
             document.getElementById("player-lesson-title").textContent = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
+            document.getElementById("quiz-ui-title").textContent = `Lesson ${lesson.lesson_number} Test`;
             document.getElementById("player-lesson-desc").textContent = lesson.description || "";
             document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
             
@@ -850,11 +919,9 @@
             const percentage = logContainer ? logContainer.watch_percentage : 0;
             updateWatchProgressBarUIState(percentage);
             
-            // Check Submissions and Load Quizzes
             await checkAssignmentStatus(lesson.id);
-            await loadQuizForLesson(lesson.id);
+            await prepareDedicatedQuizData(lesson.id);
             
-            // Log real-time lesson interaction
             logLectureActivity(lesson.title);
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
@@ -868,7 +935,6 @@
             }
         }
 
-        // --- ASSIGNMENT SYSTEM ---
         async function submitAssignment() {
             const fileInput = document.getElementById('assignment-file');
             const file = fileInput.files[0];
@@ -881,7 +947,6 @@
                 const fileExt = file.name.split('.').pop();
                 const filePath = `${globalState.sessionUser.id}/${globalState.currentActiveLessonId}_${Date.now()}.${fileExt}`;
                 
-                // Ensure you have created a public bucket named 'assignments' in Supabase
                 const { error: uploadErr } = await supabaseClientInstance.storage.from('assignments').upload(filePath, file);
                 if (uploadErr) throw uploadErr;
 
@@ -894,7 +959,6 @@
                 }]);
                 if (dbErr) throw dbErr;
 
-                // Also Mark Lesson as Completed 
                 await supabaseClientInstance.from('lesson_progress').upsert({
                     student_id: globalState.sessionUser.id,
                     lesson_id: globalState.currentActiveLessonId,
@@ -917,8 +981,7 @@
             
             const gate = document.getElementById("assignment-gate-container");
             if (data) {
-                gate.innerHTML = `<div class="p-4 bg-emerald-50 border-emerald-200 border rounded-xl text-emerald-800 font-bold flex items-center"><i data-lucide="check-circle" class="mr-2 w-5 h-5"></i> Assignment Submitted</div>`;
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                gate.innerHTML = `<div class="p-4 bg-emerald-50 border-emerald-200 border rounded-xl text-emerald-800 font-bold flex items-center"><i data-lucide="check-circle" class="mr-2 w-5 h-5 text-emerald-600"></i> Document Submitted</div>`;
             } else {
                 gate.innerHTML = `
                     <h3 class="font-bold text-gray-800 flex items-center"><i data-lucide="upload-cloud" class="text-brand-red w-5 h-5 mr-2"></i> Secure Assignment Gateway</h3>
@@ -928,102 +991,154 @@
                         <button onclick="submitAssignment()" id="btn-submit-ass" class="py-2 bg-brand-red hover:bg-brand-hover text-white font-bold rounded-lg w-full md:w-auto px-6">Submit Assignment Securely</button>
                     </div>
                 `;
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // --- NEW DEDICATED QUIZ SYSTEM ---
+        async function prepareDedicatedQuizData(lessonId) {
+            const launcher = document.getElementById("quiz-launcher-container");
+            const qRender = document.getElementById("quiz-questions-render");
+            const btnSubmit = document.getElementById("btn-submit-quiz");
+            const msgBox = document.getElementById("quiz-already-attempted-msg");
+            const footer = document.getElementById("quiz-actions-footer");
+
+            launcher.classList.add("hidden");
+
+            const { data: questions, error: qErr } = await supabaseClientInstance
+                .from('quizzes').select('*').eq('lesson_id', lessonId);
+
+            if (qErr || !questions || questions.length === 0) return;
+
+            const { data: attempt } = await supabaseClientInstance
+                .from('quiz_attempts').select('*')
+                .eq('lesson_id', lessonId).eq('student_id', globalState.sessionUser.id).maybeSingle();
+
+            launcher.classList.remove("hidden"); // Show launcher button under assignment
+            globalState.currentQuizQuestions = questions;
+
+            if (attempt) {
+                // Already done state
+                msgBox.classList.remove("hidden");
+                footer.classList.add("hidden");
+                msgBox.className = `font-bold text-lg text-center p-6 rounded-2xl ${attempt.percentage >= 50 ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`;
+                msgBox.innerHTML = `
+                    <i data-lucide="${attempt.percentage >= 50 ? 'check-circle' : 'x-circle'}" class="w-12 h-12 mx-auto mb-3 ${attempt.percentage >= 50 ? 'text-emerald-500' : 'text-red-500'}"></i>
+                    <p>آپ یہ ٹیسٹ پہلے دے چکے ہیں۔</p>
+                    <div class="mt-4 text-2xl font-black">سکور: ${attempt.score} / ${attempt.total_questions} (${attempt.percentage}%)</div>
+                `;
+                qRender.innerHTML = "";
+            } else {
+                // Setup new test UI
+                msgBox.classList.add("hidden");
+                footer.classList.remove("hidden");
+                btnSubmit.disabled = false;
+                
+                qRender.innerHTML = questions.map((q, i) => `
+                    <div class="p-6 bg-white border-2 border-gray-100 rounded-2xl shadow-sm hover:border-blue-200 transition-colors">
+                        <p class="font-black text-gray-800 mb-4 text-lg"><span class="text-blue-600 mr-1">Q${i+1}.</span> ${q.question}</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            ${['A', 'B', 'C', 'D'].map(opt => `
+                                <label class="relative cursor-pointer group">
+                                    <input type="radio" name="q_${q.id}" value="${opt}" class="quiz-radio absolute opacity-0 w-0 h-0"> 
+                                    <div class="flex items-center p-4 border-2 border-gray-100 rounded-xl transition-all group-hover:border-blue-300">
+                                        <div class="radio-dot w-5 h-5 rounded-full border-2 border-gray-300 mr-3 transition-colors flex items-center justify-center"></div>
+                                        <span class="font-medium text-gray-700">${q['option_' + opt.toLowerCase()]}</span>
+                                    </div>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function openDedicatedQuizUI() { switchView('quiz-dedicated-view'); }
+        function closeDedicatedQuizUI() { switchView('classroom-portal'); }
+
+        async function evaluateQuiz() {
+            const btnSubmit = document.getElementById("btn-submit-quiz");
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i data-lucide="loader" class="w-5 h-5 animate-spin"></i> Submitting...`;
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+            
+            let score = 0;
+            const total = globalState.currentQuizQuestions.length;
+            
+            globalState.currentQuizQuestions.forEach(q => {
+                const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
+                if (selected && selected.value.toUpperCase() === q.correct_option.toUpperCase()) score++;
+            });
+
+            const percentage = (score / total) * 100;
+            
+            const { error } = await supabaseClientInstance.from('quiz_attempts').insert([{
+                lesson_id: globalState.currentActiveLessonId,
+                student_id: globalState.sessionUser.id,
+                score: score,
+                total_questions: total,
+                percentage: percentage
+            }]);
+
+            if (error) {
+                alert("ڈیٹا سیو کرنے میں مسئلہ ہوا: " + error.message);
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `<i data-lucide="check-square" class="w-5 h-5"></i> Submit Final Answers`;
+            } else {
+                await prepareDedicatedQuizData(globalState.currentActiveLessonId);
+                fetchActivityHistory();
+                alert("کوئز کامیابی سے جمع ہو گیا!");
             }
         }
 
-        // --- QUICK TEST (QUIZ) SYSTEM ---
-        async function loadQuizForLesson(lessonId) {
-    const quizContainer = document.getElementById("quiz-gate-container");
-    const qRender = document.getElementById("quiz-questions-render");
-    const btnSubmit = document.getElementById("btn-submit-quiz");
-    const resDisplay = document.getElementById("quiz-result-display");
+        // --- NOTIFICATIONS SYSTEM (Real-time polling fix) ---
+        function startNotificationService() {
+            if(notificationInterval) clearInterval(notificationInterval);
+            fetchRealtimeNotifications();
+            notificationInterval = setInterval(fetchRealtimeNotifications, 30000); // Check every 30s
+        }
 
-    // ابتدائی حالت
-    quizContainer.classList.add("hidden");
+        async function fetchRealtimeNotifications() {
+            if (!globalState.sessionUser) return;
+            try {
+                // Table must exist as shown in screenshot
+                const { data, error } = await supabaseClientInstance
+                    .from('notifications')
+                    .select('*')
+                    .eq('student_id', globalState.sessionUser.id)
+                    .eq('is_read', false);
+                
+                if(data && data.length > 0) {
+                    const badge = document.getElementById('notif-badge');
+                    if(badge) badge.classList.remove('hidden');
 
-    // 1. کوئز سوالات حاصل کریں
-    const { data: questions, error: qErr } = await supabaseClientInstance
-        .from('quizzes')
-        .select('*')
-        .eq('lesson_id', lessonId);
+                    if (Notification.permission === "granted") {
+                        data.forEach(async (n) => {
+                            new Notification("Education Point Update", { 
+                                body: n.message || "You have a new notification", 
+                                icon: "https://i.ibb.co/d44ds7rw/1783870808728.png" 
+                            });
+                            // Mark as read immediately after firing to avoid spam
+                            await supabaseClientInstance.from('notifications').update({is_read: true}).eq('id', n.id);
+                        });
+                    }
+                } else {
+                    const badge = document.getElementById('notif-badge');
+                    if(badge) badge.classList.add('hidden');
+                }
+            } catch (err) {
+                console.log("Notification fetch skipped:", err.message);
+            }
+        }
 
-    if (qErr || !questions || questions.length === 0) return;
+        function toggleNotificationsUI() {
+            alert("No new extensive notifications right now."); 
+            const badge = document.getElementById('notif-badge');
+            if(badge) badge.classList.add('hidden');
+        }
 
-    // 2. چیک کریں کہ کیا طالب علم پہلے کوئز دے چکا ہے
-    const { data: attempt } = await supabaseClientInstance
-        .from('quiz_attempts')
-        .select('*')
-        .eq('lesson_id', lessonId)
-        .eq('student_id', globalState.sessionUser.id)
-        .maybeSingle();
-
-    quizContainer.classList.remove("hidden");
-    globalState.currentQuizQuestions = questions;
-
-    if (attempt) {
-        // پہلے سے اٹمپٹڈ ہے
-        resDisplay.classList.remove("hidden");
-        btnSubmit.classList.add("hidden");
-        resDisplay.className = `font-bold text-lg text-center p-4 rounded-xl ${attempt.percentage >= 50 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`;
-        resDisplay.innerHTML = `آپ یہ ٹیسٹ پہلے دے چکے ہیں۔ سکور: ${attempt.score}/${attempt.total_questions} (${attempt.percentage}%)`;
-        qRender.innerHTML = "";
-    } else {
-        // کوئز دکھائیں
-        btnSubmit.classList.remove("hidden");
-        btnSubmit.disabled = false;
-        resDisplay.classList.add("hidden");
-        qRender.innerHTML = questions.map((q, i) => `
-            <div class="p-4 bg-gray-50 border rounded-xl mb-4">
-                <p class="font-bold text-gray-800 mb-3">Q${i+1}: ${q.question}</p>
-                <div class="space-y-2 text-sm">
-                    ${['A', 'B', 'C', 'D'].map(opt => `
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="q_${q.id}" value="${opt}"> 
-                            <span>${q['option_' + opt.toLowerCase()]}</span>
-                        </label>
-                    `).join('')}
-                </div>
-            </div>
-        `).join('');
-    }
-}
-
-async function evaluateQuiz() {
-    const btnSubmit = document.getElementById("btn-submit-quiz");
-    btnSubmit.disabled = true;
-    
-    let score = 0;
-    const total = globalState.currentQuizQuestions.length;
-    
-    globalState.currentQuizQuestions.forEach(q => {
-        const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
-        if (selected && selected.value.toUpperCase() === q.correct_option.toUpperCase()) score++;
-    });
-
-    const percentage = (score / total) * 100;
-    
-    // Supabase میں انسرٹ
-    const { error } = await supabaseClientInstance.from('quiz_attempts').insert([{
-        lesson_id: globalState.currentActiveLessonId,
-        student_id: globalState.sessionUser.id,
-        score: score,
-        total_questions: total,
-        percentage: percentage
-    }]);
-
-    if (error) {
-        alert("ڈیٹا سیو کرنے میں مسئلہ ہوا: " + error.message);
-        btnSubmit.disabled = false;
-    } else {
-        alert("کوئز کامیابی سے جمع ہو گیا!");
-        await loadQuizForLesson(globalState.currentActiveLessonId);
-        fetchActivityHistory();
-    }
-}
-
-
-
+        // --- ANALYTICS & STATS ---
         async function evaluateAnalyticsAggregatesMetricsContainers() {
             if (!globalState.sessionUser) return;
 
@@ -1054,7 +1169,6 @@ async function evaluateQuiz() {
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
-        // --- REAL TIME ATTENDANCE & HISTORY TRACKING ---
         async function calculateAndDisplayStreak() {
             const { data: activity } = await supabaseClientInstance
                 .from('daily_activity')
@@ -1140,7 +1254,6 @@ async function evaluateQuiz() {
 
         async function trackActivity() {
             if (!globalState.sessionUser) return;
-            
             todayActiveMinutes++; 
             const today = new Date().toISOString().split('T')[0];
             
@@ -1153,17 +1266,13 @@ async function evaluateQuiz() {
 
             const hrsUI = document.getElementById('stat-study-hours');
             if(hrsUI) hrsUI.textContent = `${todayActiveMinutes} mins`;
-            
             if (todayActiveMinutes % 2 === 0) fetchActivityHistory(); 
         }
         
-        function startRealTimeActivityTracker() {
-            setInterval(trackActivity, 60000); 
-        }
+        function startRealTimeActivityTracker() { setInterval(trackActivity, 60000); }
 
         async function logLectureActivity(lessonTitle) {
             if (!globalState.sessionUser) return;
-
             const today = new Date().toISOString().split('T')[0];
             let timeAccessed = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             let logString = `${lessonTitle} (at ${timeAccessed})`;
@@ -1180,37 +1289,24 @@ async function evaluateQuiz() {
 
             if (!alreadyWatched) {
                 list.push(logString);
-                
                 await supabaseClientInstance.from('daily_activity').upsert({
                     student_id: globalState.sessionUser.id,
                     date: today,
                     lectures_watched: list
                 }, { onConflict: 'student_id, date' });
-
                 fetchActivityHistory();
             }
         }
         
         async function updateAdminDashboard() {
             try {
-                const { count: totalStudents } = await supabaseClientInstance
-                    .from('profiles')
-                    .select('*', { count: 'exact', head: true });
-
+                const { count: totalStudents } = await supabaseClientInstance.from('profiles').select('*', { count: 'exact', head: true });
                 const fiveMinsAgo = new Date(Date.now() - 5 * 60000).toISOString();
-                const { count: activeStudents } = await supabaseClientInstance
-                    .from('daily_activity')
-                    .select('*', { count: 'exact', head: true })
-                    .gte('last_seen', fiveMinsAgo);
+                const { count: activeStudents } = await supabaseClientInstance.from('daily_activity').select('*', { count: 'exact', head: true }).gte('last_seen', fiveMinsAgo);
 
-                if(document.getElementById('admin-total-students')) 
-                    document.getElementById('admin-total-students').textContent = totalStudents || 0;
-                if(document.getElementById('admin-active-students')) 
-                    document.getElementById('admin-active-students').textContent = activeStudents || 0;
-                    
-            } catch (err) {
-                console.error("Admin stats update failed:", err);
-            }
+                if(document.getElementById('admin-total-students')) document.getElementById('admin-total-students').textContent = totalStudents || 0;
+                if(document.getElementById('admin-active-students')) document.getElementById('admin-active-students').textContent = activeStudents || 0;
+            } catch (err) { console.error("Admin stats fail:", err); }
         }
         setInterval(updateAdminDashboard, 30000);
 
@@ -1220,7 +1316,6 @@ async function evaluateQuiz() {
             document.getElementById('cert-date').textContent = new Date().toLocaleDateString();
             
             const certNode = document.getElementById('certificate-template');
-            
             certNode.parentElement.classList.remove('absolute', 'top-[-9999px]');
             certNode.parentElement.classList.add('fixed', 'inset-0', 'z-[9999]', 'flex', 'items-center', 'justify-center', 'bg-white');
             
@@ -1231,7 +1326,6 @@ async function evaluateQuiz() {
                 link.download = `EducationPoint_Certificate_${studentName.replace(' ', '_')}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                
                 certNode.parentElement.classList.remove('fixed', 'inset-0', 'z-[9999]', 'flex', 'items-center', 'justify-center', 'bg-white');
                 certNode.parentElement.classList.add('absolute', 'top-[-9999px]');
             });
@@ -1240,8 +1334,6 @@ async function evaluateQuiz() {
         const adminConsole = {
             createLesson: async (e) => {
                 e.preventDefault();
-                console.log("Publishing started..."); 
-
                 const lesson_number = parseInt(document.getElementById("adm-les-num").value);
                 const title = document.getElementById("adm-les-title").value.trim();
                 const gdrive_id = document.getElementById("adm-les-gdrive").value.trim();
@@ -1249,28 +1341,10 @@ async function evaluateQuiz() {
                 const description = document.getElementById("adm-les-desc").value.trim();
 
                 try {
-                    const { data, error } = await supabaseClientInstance
-                        .from('lessons')
-                        .insert([
-                            { 
-                                lesson_number: lesson_number, 
-                                title: title, 
-                                google_drive_video_id: gdrive_id, 
-                                estimated_duration: duration, 
-                                description: description 
-                            }
-                        ]);
-
-                    if (error) {
-                        alert("اپلوڈ میں ایرر ہے: " + error.message);
-                    } else {
-                        alert("کامیابی: لیکچر اپلوڈ ہو گیا!");
-                        document.getElementById("admin-lesson-form").reset();
-                        syncClassroomSyllabusEngine(); 
-                    }
-                } catch (err) {
-                    console.error("System Error:", err);
-                }
+                    const { error } = await supabaseClientInstance.from('lessons').insert([{ lesson_number, title, google_drive_video_id: gdrive_id, estimated_duration: duration, description }]);
+                    if (error) { alert("اپلوڈ میں ایرر ہے: " + error.message); } 
+                    else { alert("کامیابی: لیکچر اپلوڈ ہو گیا!"); document.getElementById("admin-lesson-form").reset(); syncClassroomSyllabusEngine(); }
+                } catch (err) { console.error(err); }
             },
             createQuiz: async (e) => {
                 e.preventDefault();
@@ -1287,12 +1361,11 @@ async function evaluateQuiz() {
             }
         };
 
-        // --- CLOCK CONTROLLER ---
         function runClockEngine() {
             setInterval(() => {
                 const now = new Date();
                 const deadline = new Date();
-                deadline.setHours(22, 0, 0, 0); // 10:00 PM (22:00)
+                deadline.setHours(22, 0, 0, 0); 
                 let diff = deadline - now;
                 const element = document.getElementById("assignment-countdown");
                 if (!element) return;
@@ -1424,7 +1497,7 @@ async function evaluateQuiz() {
             <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="text-center sm:text-left space-y-1">
                     <p class="text-[11px] font-semibold text-gray-400">&copy; 2026 Education Point Platforms. All Rights Reserved.</p>
-                    <p class="text-[9px] font-mono text-gray-400">System Core v4.2.0 | Secure Connection</p>
+                    <p class="text-[9px] font-mono text-gray-400">System Core v4.3.0 | Secure Connection</p>
                 </div>
             </div>
         </div>
