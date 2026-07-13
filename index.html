@@ -643,7 +643,19 @@
             const sb = document.getElementById("main-sidebar");
             if (sb) sb.classList.toggle("-translate-x-full");
         }
-
+function switchView(viewName) {
+    const footer = document.getElementById('main-footer');
+    
+    // تمام ویوز کو ہائیڈ کرنے کے بعد یہ چیک لگائیں
+    if (viewName === 'home') {
+        footer.style.display = 'block'; // یا 'flex' جو بھی آپ کے لے آؤٹ کے مطابق ہو
+    } else {
+        footer.style.display = 'none';
+    }
+    
+    // یہاں آپ کا باقی کا کوڈ جو ویوز سوئچ کرتا ہے
+        }
+        
         function switchView(viewId) {
             document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
             const target = document.getElementById(viewId);
@@ -1088,7 +1100,8 @@
         }
     </script>
 </body>
-    <footer class="mt-16 bg-white border-t border-gray-100 relative overflow-hidden transition-all duration-300">
+    <footer id="main-footer" class="mt-16 bg-white border-t border-gray-100 relative overflow-hidden transition-all duration-300">
+        
     <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-gradient-to-b from-red-500/5 to-transparent blur-[140px] pointer-events-none"></div>
 
     <div class="max-w-7xl mx-auto px-6 pt-16 pb-8 relative z-10">
