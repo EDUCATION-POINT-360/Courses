@@ -1,0 +1,15 @@
+{
+  "name": "Education Point LMS",
+  "short_name": "EduPoint",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#DC2626",
+  "icons": [
+    {
+      "src": "https://i.ibb.co/d44ds7rw/1783870808728.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
