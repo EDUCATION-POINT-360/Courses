@@ -1232,6 +1232,105 @@
         }
         setInterval(updateAdminDashboard, 30000);
 
+                const adminConsole = {
+            createLesson: async (e) => {
+                e.preventDefault();
+                const lesson_number = parseInt(document.getElementById("adm-les-num").value);
+                const title = document.getElementById("adm-les-title").value.trim();
+                const gdrive_id = document.getElementById("adm-les-gdrive").value.trim();
+                const duration = parseInt(document.getElementById("adm-les-duration").value);
+                const description = document.getElementById("adm-les-desc").value.trim();
+
+                try {
+                    const { data, error } = await supabaseClientInstance.from('lessons').insert([{ lesson_number, title, google_drive_video_id: gdrive_id, estimated_duration: duration, description }]);
+                    if (error) { alert("اپلوڈ میں ایرر ہے: " + error.message); } 
+                    else {
+                        triggerToastNotification("کامیابی: لیکچر اپلوڈ ہو گیا!");
+                        document.getElementById("admin-lesson-form").reset();
+                    }
+                } catch (err) {}
+            },
+            createQuizQuestion: async (e) => {
+                e.preventDefault();
+                const lesson_number = parseInt(document.getElementById("adm-quiz-les-num").value);
+                const question = document.getElementById("adm-quiz-qtext").value.trim();
+                const opt_a = document.getElementById("adm-quiz-opt-a").value.trim();
+                const opt_b = document.getElementById("adm-quiz-opt-b").value.trim();
+                const opt_c = document.getElementById("adm-quiz-opt-c").value.trim();
+                const opt_d = document.getElementById("adm-quiz-opt-d").value.trim();
+                const correct_opt = document.getElementById("adm-quiz-correct").value;
+
+                try {
+                    const { error } = await supabaseClientInstance.from('quizzes').insert([{
+                        lesson_number, question, opt_a, opt_b, opt_c, opt_d, correct_opt
+                    }]);
+                    
+                    if(error) { 
+                        alert("ایرر: " + error.message); 
+                    } else {
+                        triggerToastNotification(`کامیابی: Lesson ${lesson_number} کا کوئز سوال ایڈ ہو گیا۔`);
+                        document.getElementById("admin-quiz-form").reset();
+                    }
+                } catch(err) {
+                    console.error(err);
+                }
+            }
+        }; // <-- THIS CLOSING BRACE & SEMICOLON WAS MISSING
+
+        async function unlockAssignmentManually(lessonId) {
+            if(!confirm("کیا آپ واقعی اسائنمنٹ ان لاک کرنا چاہتے ہیں؟")) return;
+            // ... structural remainder of your function
+
+
+        
+            const adminConsole = {
+            createLesson: async (e) => {
+                e.preventDefault();
+                const lesson_number = parseInt(document.getElementById("adm-les-num").value);
+                const title = document.getElementById("adm-les-title").value.trim();
+                const gdrive_id = document.getElementById("adm-les-gdrive").value.trim();
+                const duration = parseInt(document.getElementById("adm-les-duration").value);
+                const description = document.getElementById("adm-les-desc").value.trim();
+
+                try {
+                    const { data, error } = await supabaseClientInstance.from('lessons').insert([{ lesson_number, title, google_drive_video_id: gdrive_id, estimated_duration: duration, description }]);
+                    if (error) { alert("اپلوڈ میں ایرر ہے: " + error.message); } 
+                    else {
+                        triggerToastNotification("کامیابی: لیکچر اپلوڈ ہو گیا!");
+                        document.getElementById("admin-lesson-form").reset();
+                    }
+                } catch (err) {}
+            },
+            createQuizQuestion: async (e) => {
+                e.preventDefault();
+                const lesson_number = parseInt(document.getElementById("adm-quiz-les-num").value);
+                const question = document.getElementById("adm-quiz-qtext").value.trim();
+                const opt_a = document.getElementById("adm-quiz-opt-a").value.trim();
+                const opt_b = document.getElementById("adm-quiz-opt-b").value.trim();
+                const opt_c = document.getElementById("adm-quiz-opt-c").value.trim();
+                const opt_d = document.getElementById("adm-quiz-opt-d").value.trim();
+                const correct_opt = document.getElementById("adm-quiz-correct").value;
+
+                try {
+                    const { error } = await supabaseClientInstance.from('quizzes').insert([{
+                        lesson_number, question, opt_a, opt_b, opt_c, opt_d, correct_opt
+                    }]);
+                    
+                    if(error) { 
+                        alert("ایرر: " + error.message); 
+                    } else {
+                        triggerToastNotification(`کامیابی: Lesson ${lesson_number} کا کوئز سوال ایڈ ہو گیا۔`);
+                        document.getElementById("admin-quiz-form").reset();
+                    }
+                } catch(err) {
+                    console.error(err);
+                }
+            }
+        }; // <-- THIS CLOSING BRACE & SEMICOLON WAS MISSING
+
+        async function unlockAssignmentManually(lessonId) {
+            if(!confirm("کیا آپ واقعی اسائنمنٹ ان لاک کرنا چاہتے ہیں؟")) return;
+            // ... structural remainder of your function
         const adminConsole = {
             createLesson: async (e) => {
                 e.preventDefault();
@@ -1247,40 +1346,40 @@
                     else {
                         triggerToastNotification("کامیابی: لیکچر اپلوڈ ہو گیا!");
                         document.getElementById("admin-lesson-form").reset();
-                        // Realtime will auto sync
                     }
                 } catch (err) {}
             },
             createQuizQuestion: async (e) => {
-    e.preventDefault();
-    const lesson_number = parseInt(document.getElementById("adm-quiz-les-num").value);
-    const question = document.getElementById("adm-quiz-qtext").value.trim();
-    const opt_a = document.getElementById("adm-quiz-opt-a").value.trim();
-    const opt_b = document.getElementById("adm-quiz-opt-b").value.trim();
-    const opt_c = document.getElementById("adm-quiz-opt-c").value.trim();
-    const opt_d = document.getElementById("adm-quiz-opt-d").value.trim();
-    const correct_opt = document.getElementById("adm-quiz-correct").value; // اس ویری ایبل کو یقینی بنائیں
+                e.preventDefault();
+                const lesson_number = parseInt(document.getElementById("adm-quiz-les-num").value);
+                const question = document.getElementById("adm-quiz-qtext").value.trim();
+                const opt_a = document.getElementById("adm-quiz-opt-a").value.trim();
+                const opt_b = document.getElementById("adm-quiz-opt-b").value.trim();
+                const opt_c = document.getElementById("adm-quiz-opt-c").value.trim();
+                const opt_d = document.getElementById("adm-quiz-opt-d").value.trim();
+                const correct_opt = document.getElementById("adm-quiz-correct").value;
 
-    try {
-        // یہاں کالم کا نام 'correct_opt' ہی ہونا چاہیے جو ڈیٹا بیس میں بنایا ہے
-        const { error } = await supabaseClientInstance.from('quizzes').insert([{
-            lesson_number, question, opt_a, opt_b, opt_c, opt_d, correct_opt
-        }]);
-        
-        if(error) { 
-            alert("ایرر: " + error.message); 
-        } else {
-            triggerToastNotification(`کامیابی: Lesson ${lesson_number} کا کوئز سوال ایڈ ہو گیا۔`);
-            document.getElementById("admin-quiz-form").reset();
-        }
-    } catch(err) {
-        console.error(err);
-    }
-}
-
+                try {
+                    const { error } = await supabaseClientInstance.from('quizzes').insert([{
+                        lesson_number, question, opt_a, opt_b, opt_c, opt_d, correct_opt
+                    }]);
+                    
+                    if(error) { 
+                        alert("ایرر: " + error.message); 
+                    } else {
+                        triggerToastNotification(`کامیابی: Lesson ${lesson_number} کا کوئز سوال ایڈ ہو گیا۔`);
+                        document.getElementById("admin-quiz-form").reset();
+                    }
+                } catch(err) {
+                    console.error(err);
+                }
+            }
+        }; // <-- THIS CLOSING BRACE & SEMICOLON WAS MISSING
 
         async function unlockAssignmentManually(lessonId) {
             if(!confirm("کیا آپ واقعی اسائنمنٹ ان لاک کرنا چاہتے ہیں؟")) return;
+            // ... structural remainder of your function
+
             try {
                 await supabaseClientInstance.from('lesson_progress').upsert({
                     student_id: globalState.sessionUser.id, lesson_id: lessonId, is_completed: true
