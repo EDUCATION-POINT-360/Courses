@@ -1228,28 +1228,39 @@ async function submitQuizAssessment(e, lessonId) {
                 } catch (err) {}
             },
             createQuizQuestion: async (e) => {
-                e.preventDefault();
-                const lesson_number = parseInt(document.getElementById("adm-quiz-les-num").value);
-                const question = document.getElementById("adm-quiz-qtext").value.trim();
-                const opt_a = document.getElementById("adm-quiz-opt-a").value.trim();
-                const opt_b = document.getElementById("adm-quiz-opt-b").value.trim();
-                const opt_c = document.getElementById("adm-quiz-opt-c").value.trim();
-                const opt_d = document.getElementById("adm-quiz-opt-d").value.trim();
-                const correct_opt = document.getElementById("adm-quiz-correct").value;
+    e.preventDefault();
+    const lesson_number = parseInt(document.getElementById("adm-quiz-les-num").value);
+    const question = document.getElementById("adm-quiz-qtext").value.trim();
+    const opt_a = document.getElementById("adm-quiz-opt-a").value.trim();
+    const opt_b = document.getElementById("adm-quiz-opt-b").value.trim();
+    const opt_c = document.getElementById("adm-quiz-opt-c").value.trim();
+    const opt_d = document.getElementById("adm-quiz-opt-d").value.trim();
+    
+    // یہاں درست کالم کا نام استعمال کریں
+    const correct_option = document.getElementById("adm-quiz-correct").value;
 
-                try {
-                    const { error } = await supabaseClientInstance.from('quizzes').insert([{
-                        lesson_number, question, opt_a, opt_b, opt_c, opt_d, correct_opt
-                    }]);
-                    
-                    if(error) { alert("ایرر: " + error.message); }
-                    else {
-                        triggerToastNotification(`کامیابی: Lesson ${lesson_number} کا کوئز سوال ایڈ ہو گیا۔`);
-                        document.getElementById("admin-quiz-form").reset();
-                    }
-                } catch(err) {}
-            }
-        };
+    try {
+        const { error } = await supabaseClientInstance.from('quizzes').insert([{
+            lesson_number: lesson_number, // یہ بھی چیک کر لیں کہ ٹیبل میں lesson_number ہے
+            question: question,
+            option_a: opt_a,
+            option_b: opt_b,
+            option_c: opt_c,
+            option_d: opt_d,
+            correct_option: correct_option // <--- اہم: یہ نام ڈیٹا بیس کالم سے میچ ہونا چاہیے
+        }]);
+        
+        if(error) { 
+            alert("ایرر: " + error.message); 
+        } else {
+            triggerToastNotification(`کامیابی: Lesson ${lesson_number} کا کوئز سوال ایڈ ہو گیا۔`);
+            document.getElementById("admin-quiz-form").reset();
+        }
+    } catch(err) {
+        console.error(err);
+    }
+}
+
 
         async function unlockAssignmentManually(lessonId) {
             if(!confirm("کیا آپ واقعی اسائنمنٹ ان لاک کرنا چاہتے ہیں؟")) return;
