@@ -105,12 +105,12 @@
 
     <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
-    <div id="notification-panel" class="hidden-layer fixed top-16 right-4 md:right-8 md:top-20 z-[9999] w-80 bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all">
+    <div id="notification-panel" class="hidden-layer fixed top-16 right-4 md:right-8 md:top-20 z-[9999] w-80 md:w-96 bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all">
         <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
             <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2"><i data-lucide="bell" class="w-4 h-4 text-brand-red"></i> Notifications</h3>
             <button onclick="markAllNotificationsRead()" class="text-[10px] uppercase tracking-wider text-brand-red font-black hover:text-red-700 transition-colors">Mark all read</button>
         </div>
-        <div id="notif-list" class="max-h-80 overflow-y-auto custom-scrollbar p-2 bg-white">
+        <div id="notif-list" class="max-h-[28rem] overflow-y-auto custom-scrollbar p-3 bg-white space-y-2">
             <p class="text-xs text-gray-400 p-4 text-center">Loading notifications...</p>
         </div>
     </div>
@@ -467,6 +467,27 @@
                                 </div>
                             </form>
                         </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-6">
+                            <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Push Custom Real-Time Notification</h3>
+                            <form id="admin-notif-form" onsubmit="adminConsole.createNotification(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="space-y-1 sm:col-span-2">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Notification Title *</label>
+                                    <input type="text" id="adm-notif-title" placeholder="Important Update / Announcement" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
+                                </div>
+                                <div class="space-y-1 sm:col-span-2">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Message Body *</label>
+                                    <textarea id="adm-notif-message" placeholder="Type notification details here..." class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs" rows="2" required></textarea>
+                                </div>
+                                <div class="space-y-1 sm:col-span-2">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Image URL (Optional Thumbnail)</label>
+                                    <input type="url" id="adm-notif-image" placeholder="https://example.com/image.png" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-mono">
+                                </div>
+                                <div class="sm:col-span-2 pt-2">
+                                    <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Send Notification Broadcast</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </section>
             </div>
@@ -613,6 +634,11 @@
             await evaluateSessionContextState();
             startRealTimeActivityTracker(); 
             initRealTimeSubscriptions();
+            
+            // Request Notification Permission on load
+            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
         });
 
         function initRealTimeSubscriptions() {
@@ -632,8 +658,16 @@
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
                     const n = payload.new;
                     if(!n.user_id || (globalState.sessionUser && n.user_id === globalState.sessionUser.id)) {
-                        triggerToastNotification(n.message);
+                        triggerToastNotification(n.title || "New Notification Received");
                         fetchNotifications(); 
+                        
+                        // Show native device/browser notification
+                        if ("Notification" in window && Notification.permission === "granted") {
+                            new Notification(n.title || "Education Point Update", {
+                                body: n.message,
+                                icon: n.image_url || "https://i.ibb.co/d44ds7rw/1783870808728.png"
+                            });
+                        }
                     }
                 })
                 .subscribe();
@@ -854,13 +888,17 @@
                 const isRead = readNotifs.includes(n.id);
                 if(!isRead) unreadCount++;
                 
+                let titleHtml = n.title ? `<h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">${n.title}</h4>` : `<h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">Platform Update</h4>`;
+                let imageHtml = n.image_url ? `<div class="mt-2 ml-6 rounded-lg overflow-hidden border border-gray-200"><img src="${n.image_url}" class="w-full h-auto object-cover max-h-32"></div>` : '';
+
                 return `
                     <div class="p-3 mb-2 rounded-xl ${isRead ? 'bg-white text-gray-500' : 'bg-red-50 text-gray-900 border border-red-100'} transition-colors shadow-sm">
                         <div class="flex items-center gap-2 mb-1">
-                            <i data-lucide="${isRead ? 'check-circle' : 'bell-ring'}" class="w-4 h-4 ${isRead ? 'text-gray-400' : 'text-brand-red'}"></i>
-                            <h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">Platform Update</h4>
+                            <i data-lucide="${isRead ? 'check-circle' : 'bell-ring'}" class="w-4 h-4 ${isRead ? 'text-gray-400' : 'text-brand-red'} shrink-0"></i>
+                            ${titleHtml}
                         </div>
                         <p class="text-xs leading-relaxed ml-6">${n.message || ''}</p>
+                        ${imageHtml}
                     </div>
                 `;
             }).join('') || '<p class="text-xs text-gray-400 p-4 text-center">No notifications yet.</p>';
@@ -889,7 +927,7 @@
             renderNotificationsUI();
         }
 
-        // --- REAL-TIME LEADERBOARD ENGINE ---
+        // --- REAL-TIME LEADERBOARD ENGINE WITH ONLINE STATUS ---
         async function fetchLeaderboard() {
             try {
                 // Fetch profiles for names and avatars
@@ -897,21 +935,33 @@
                     .from('profiles')
                     .select('id, full_name, avatar_url');
                 
-                // Fetch active minutes history
+                // Fetch active minutes history and last_seen
                 const { data: activity, error: actErr } = await supabaseClientInstance
                     .from('daily_activity')
-                    .select('student_id, active_minutes');
+                    .select('student_id, active_minutes, last_seen');
                 
                 if (profileErr || actErr) throw new Error("Could not fetch leaderboard data.");
                 
-                let aggregatedMinutes = {};
+                let aggregatedActivity = {};
                 activity.forEach(act => {
-                    if(!aggregatedMinutes[act.student_id]) aggregatedMinutes[act.student_id] = 0;
-                    aggregatedMinutes[act.student_id] += act.active_minutes || 0;
+                    if(!aggregatedActivity[act.student_id]) aggregatedActivity[act.student_id] = { mins: 0, last_seen: null };
+                    aggregatedActivity[act.student_id].mins += act.active_minutes || 0;
+                    
+                    if(!aggregatedActivity[act.student_id].last_seen || new Date(act.last_seen) > new Date(aggregatedActivity[act.student_id].last_seen)) {
+                        aggregatedActivity[act.student_id].last_seen = act.last_seen;
+                    }
                 });
 
                 let leaderboard = profiles
-                    .map(p => ({ ...p, total_minutes: aggregatedMinutes[p.id] || 0 }))
+                    .map(p => {
+                        const acts = aggregatedActivity[p.id] || { mins: 0, last_seen: null };
+                        let isOnline = false;
+                        if(acts.last_seen) {
+                            const diffMins = (new Date() - new Date(acts.last_seen)) / 60000;
+                            if(diffMins <= 5) isOnline = true; // active within last 5 mins
+                        }
+                        return { ...p, total_minutes: acts.mins, isOnline };
+                    })
                     .filter(p => p.total_minutes > 0)
                     .sort((a, b) => b.total_minutes - a.total_minutes)
                     .slice(0, 10);
@@ -932,18 +982,30 @@
                     else rankVisual = `<div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center font-bold text-sm text-gray-500 border border-gray-200">${idx + 1}</div>`;
 
                     const isMe = globalState.sessionUser && user.id === globalState.sessionUser.id;
+                    
+                    const statusDot = user.isOnline 
+                        ? `<span class="flex h-2.5 w-2.5 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span></span>`
+                        : `<span class="h-2.5 w-2.5 rounded-full bg-gray-300"></span>`;
+                    const statusText = user.isOnline 
+                        ? `<span class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest ml-1.5">Online</span>`
+                        : `<span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest ml-1.5">Offline</span>`;
 
                     return `
                         <div class="flex items-center p-4 hover:bg-red-50/50 transition-colors ${isMe ? 'bg-red-50/30' : ''}">
                             <div class="w-16 text-center flex justify-center">${rankVisual}</div>
                             <div class="ml-2 flex items-center gap-4 flex-1">
-                                <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=User&background=DC2626&color=fff'}" class="w-12 h-12 rounded-full object-cover border-2 ${isMe ? 'border-brand-red shadow-md' : 'border-gray-200'}">
+                                <div class="relative">
+                                    <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=User&background=DC2626&color=fff'}" class="w-12 h-12 rounded-full object-cover border-2 ${isMe ? 'border-brand-red shadow-md' : 'border-gray-200'}">
+                                    <div class="absolute bottom-0 right-0 border border-white rounded-full bg-white flex items-center justify-center">
+                                        ${statusDot}
+                                    </div>
+                                </div>
                                 <div>
                                     <span class="font-bold text-gray-800 text-sm uppercase block flex items-center gap-2">
                                         ${user.full_name || 'Anonymous Student'}
                                         ${isMe ? '<span class="px-2 py-0.5 bg-brand-red text-white text-[9px] rounded-full tracking-widest uppercase">You</span>' : ''}
                                     </span>
-                                    <span class="text-xs text-gray-500 font-medium">Education Point Scholar</span>
+                                    <span class="flex items-center mt-0.5">${statusText}</span>
                                 </div>
                             </div>
                             <div class="text-right pr-4">
@@ -1312,6 +1374,7 @@
                     else {
                         // Push Global Notification
                         await supabaseClientInstance.from('notifications').insert([{
+                            title: "New Module Available",
                             message: `Lesson ${lesson_number}: ${title} is now live! Watch and complete your assignments.`,
                             user_id: null
                         }]);
@@ -1320,6 +1383,30 @@
                         document.getElementById("admin-lesson-form").reset();
                     }
                 } catch (err) {}
+            },
+            createNotification: async (e) => {
+                e.preventDefault();
+                const title = document.getElementById("adm-notif-title").value.trim();
+                const message = document.getElementById("adm-notif-message").value.trim();
+                const image_url = document.getElementById("adm-notif-image").value.trim();
+
+                try {
+                    const { error } = await supabaseClientInstance.from('notifications').insert([{
+                        title: title,
+                        message: message,
+                        image_url: image_url || null,
+                        user_id: null // Global broadcast
+                    }]);
+                    
+                    if (error) {
+                        alert("نوٹیفکیشن اپلوڈ میں ایرر ہے: " + error.message);
+                    } else {
+                        triggerToastNotification("کامیابی: نوٹیفکیشن تمام سٹوڈنٹس کو بھیج دیا گیا ہے!");
+                        document.getElementById("admin-notif-form").reset();
+                    }
+                } catch (err) {
+                    alert("System Error: " + err.message);
+                }
             }
         };
 
