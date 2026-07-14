@@ -626,53 +626,54 @@
                 setTimeout(() => toast.remove(), 300);
             }, 5000);
         }
+// 1. سروس ورکر رجسٹر کریں
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+        .catch(err => console.error('SW Error:', err));
+}
 
-        // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
-        document.addEventListener("DOMContentLoaded", async () => {
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-            runClockEngine();
-            await evaluateSessionContextState();
-            startRealTimeActivityTracker(); 
-            initRealTimeSubscriptions();
+// 2. نوٹیفکیشن اجازت طلب کریں
+async function requestNotifPermission() {
+    if ("Notification" in window && Notification.permission === "default") {
+        await Notification.requestPermission();
+    }
+}
+
+// 3. ریئل ٹائم سبسکرپشن (فائنل ورژن)
+function initRealTimeSubscriptions() {
+    if (!supabaseClientInstance) return;
+
+    supabaseClientInstance
+        .channel('public:notifications')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
+            const n = payload.new;
             
-            // Request Notification Permission on load
-            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-                Notification.requestPermission();
+            // اگر نوٹیفکیشن سب کے لیے ہے یا خاص یوزر کے لیے
+            if(!n.user_id || (globalState.sessionUser && n.user_id === globalState.sessionUser.id)) {
+                
+                // A. ایپ کے اندر ٹوسٹ دکھائیں
+                triggerToastNotification(n.title || "New Update");
+
+                // B. سسٹم نوٹیفکیشن بار (موبائل/پی سی)
+                if (Notification.permission === 'granted') {
+                    new Notification(n.title || "Education Point", {
+                        body: n.message || "You have a new update.",
+                        icon: n.image_url || "https://i.ibb.co/d44ds7rw/1783870808728.png",
+                        badge: "https://i.ibb.co/d44ds7rw/1783870808728.png",
+                        tag: 'ep-notification' // ایک ہی نوٹیفکیشن بار بار نہیں آئے گی
+                    });
+                }
             }
-        });
+        })
+        .subscribe();
+}
 
-        function initRealTimeSubscriptions() {
-            if (!supabaseClientInstance) return;
-            
-            // Listen to New Lessons
-            supabaseClientInstance
-                .channel('public:lessons')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'lessons' }, payload => {
-                    syncClassroomSyllabusEngine(); 
-                })
-                .subscribe();
-
-            // Listen to Real-Time Notifications
-            supabaseClientInstance
-                .channel('public:notifications')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
-                    const n = payload.new;
-                    if(!n.user_id || (globalState.sessionUser && n.user_id === globalState.sessionUser.id)) {
-                        triggerToastNotification(n.title || "New Notification Received");
-                        fetchNotifications(); 
-                        
-                        // Show native device/browser notification
-                        if ("Notification" in window && Notification.permission === "granted") {
-                            new Notification(n.title || "Education Point Update", {
-                                body: n.message,
-                                icon: n.image_url || "https://i.ibb.co/d44ds7rw/1783870808728.png"
-                            });
-                        }
-                    }
-                })
-                .subscribe();
-        }
-
+// ایپ لوڈ ہوتے ہی پرمیشن مانگیں
+document.addEventListener("DOMContentLoaded", () => {
+    requestNotifPermission();
+    initRealTimeSubscriptions();
+});
+        
         async function evaluateSessionContextState() {
             try {
                 if (!supabaseClientInstance) return;
