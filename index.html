@@ -601,7 +601,10 @@
         let todayActiveMinutes = 0;
         let loginTimeRecorded = false;
 
-        // --- TOAST NOTIFICATION ENGINE ---
+        
+    
+
+// --- TOAST NOTIFICATION ENGINE ---
         function triggerToastNotification(message, isSuccess = true) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -626,54 +629,52 @@
                 setTimeout(() => toast.remove(), 300);
             }, 5000);
         }
-        // 1. سروس ورکر رجسٹریشن
 
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
-        .then(() => console.log('SW Registered'))
-        .catch(err => console.error('SW Error:', err));
-}
-
-// 2. نوٹیفکیشن پرمیشن اور ریئل ٹائم
-async function initializeNotificationSystem() {
-    // پرمیشن مانگیں
-    if ("Notification" in window && Notification.permission !== "granted") {
-        await Notification.requestPermission();
-    }
-
-    if (!supabaseClientInstance) return;
-
-    // Supabase Realtime Subscription
-    supabaseClientInstance
-        .channel('public:notifications')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
-            const n = payload.new;
+        // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
+        document.addEventListener("DOMContentLoaded", async () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            runClockEngine();
+            await evaluateSessionContextState();
+            startRealTimeActivityTracker(); 
+            initRealTimeSubscriptions();
             
-            // UI Toast (اگر ایپ کھلی ہے)
-            if (typeof triggerToastNotification === 'function') {
-                triggerToastNotification(n.title || "New Update");
+            // Request Notification Permission on load
+            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
             }
+        });
 
-            // سسٹم نوٹیفکیشن (اگر ایپ بیک گراؤنڈ میں ہے یا کھلی ہے)
-            if (Notification.permission === 'granted') {
-                new Notification(n.title || "Education Point", {
-                    body: n.message || "You have a new update.",
-                    icon: n.image_url || "https://i.ibb.co/d44ds7rw/1783870808728.png",
-                    tag: 'ep-notification'
-                });
-            }
+        function initRealTimeSubscriptions() {
+            if (!supabaseClientInstance) return;
             
-            // UI لسٹ کو اپ ڈیٹ کریں
-            globalState.notifications.unshift(n);
-            if(typeof renderNotificationsUI === 'function') renderNotificationsUI();
-        })
-        .subscribe();
-}
+            // Listen to New Lessons
+            supabaseClientInstance
+                .channel('public:lessons')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'lessons' }, payload => {
+                    syncClassroomSyllabusEngine(); 
+                })
+                .subscribe();
 
-// ڈوم لوڈ ہونے پر چلائیں
-document.addEventListener("DOMContentLoaded", () => {
-    initializeNotificationSystem();
-});
+            // Listen to Real-Time Notifications
+            supabaseClientInstance
+                .channel('public:notifications')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
+                    const n = payload.new;
+                    if(!n.user_id || (globalState.sessionUser && n.user_id === globalState.sessionUser.id)) {
+                        triggerToastNotification(n.title || "New Notification Received");
+                        fetchNotifications(); 
+                        
+                        // Show native device/browser notification
+                        if ("Notification" in window && Notification.permission === "granted") {
+                            new Notification(n.title || "Education Point Update", {
+                                body: n.message,
+                                icon: n.image_url || "https://i.ibb.co/d44ds7rw/1783870808728.png"
+                            });
+                        }
+                    }
+                })
+                .subscribe();
+        }
 
         async function evaluateSessionContextState() {
             try {
