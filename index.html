@@ -69,12 +69,7 @@
   }
 }
 </script>
-<script>if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
-        .then(() => console.log('SW Registered'))
-        .catch(err => console.error('SW Error:', err));
-}
-</script>
+
     <style>
         /* SECURITY CLASSES */
         .secure-shield {
@@ -633,6 +628,11 @@
         }
         // 1. سروس ورکر رجسٹریشن
 
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+        .then(() => console.log('SW Registered'))
+        .catch(err => console.error('SW Error:', err));
+}
 
 // 2. نوٹیفکیشن پرمیشن اور ریئل ٹائم
 async function initializeNotificationSystem() {
