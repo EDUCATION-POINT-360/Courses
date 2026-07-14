@@ -856,76 +856,88 @@
             }
         };
 
-        // --- REAL-TIME NOTIFICATIONS ENGINE ---
-        async function fetchNotifications() {
-            if (!globalState.sessionUser) return;
-            try {
-                // Fetch notifications globally (user_id IS NULL) or assigned specifically to this user
-                const { data } = await supabaseClientInstance
-                    .from('notifications')
-                    .select('*')
-                    .or(`user_id.is.null,user_id.eq.${globalState.sessionUser.id}`)
-                    .order('created_at', { ascending: false })
-                    .limit(20);
-                
-                globalState.notifications = data || [];
-                renderNotificationsUI();
-            } catch (err) {
-                console.error("Notifications Fetch Error:", err);
-            }
-        }
+// --- REAL-TIME NOTIFICATIONS ENGINE (GLOBAL) ---
+async function fetchNotifications() {
+    // یوزر سیشن کی شرط ہٹا دی تاکہ سب کو ڈیٹا مل سکے
+    try {
+        const { data } = await supabaseClientInstance
+            .from('notifications')
+            .select('*')
+            // تمام نوٹیفکیشنز لوڈ ہوں گی، چاہے وہ کسی بھی یوزر کے لیے ہوں
+            .order('created_at', { ascending: false })
+            .limit(20);
+        
+        globalState.notifications = data || [];
+        renderNotificationsUI();
+    } catch (err) {
+        console.error("Notifications Fetch Error:", err);
+    }
+}
 
-        function renderNotificationsUI() {
-            const list = document.getElementById('notif-list');
-            const badges = document.querySelectorAll('.notif-badge-indicator');
-            
-            if(!list) return;
-            
-            let readNotifs = JSON.parse(localStorage.getItem(`read_notifs_${globalState.sessionUser.id}`) || '[]');
-            let unreadCount = 0;
-            
-            list.innerHTML = globalState.notifications.map(n => {
-                const isRead = readNotifs.includes(n.id);
-                if(!isRead) unreadCount++;
-                
-                let titleHtml = n.title ? `<h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">${n.title}</h4>` : `<h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">Platform Update</h4>`;
-                let imageHtml = n.image_url ? `<div class="mt-2 ml-6 rounded-lg overflow-hidden border border-gray-200"><img src="${n.image_url}" class="w-full h-auto object-cover max-h-32"></div>` : '';
+function renderNotificationsUI() {
+    const list = document.getElementById('notif-list');
+    const badges = document.querySelectorAll('.notif-badge-indicator');
+    
+    if(!list) return;
+    
+    // سب کے لیے کامن ریڈ نوٹیفکیشنز (اگر آپ چاہتے ہیں کہ صرف لاگ ان یوزر کا اپنا الگ ہو تو یہ کوڈ ویسا ہی رہے گا)
+    let readNotifs = JSON.parse(localStorage.getItem('read_notifs_all') || '[]');
+    let unreadCount = 0;
+    
+    list.innerHTML = globalState.notifications.map(n => {
+        const isRead = readNotifs.includes(n.id);
+        if(!isRead) unreadCount++;
+        
+        let titleHtml = n.title ? `<h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">${n.title}</h4>` : `<h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">Platform Update</h4>`;
+        let imageHtml = n.image_url ? `<div class="mt-2 ml-6 rounded-lg overflow-hidden border border-gray-200"><img src="${n.image_url}" class="w-full h-auto object-cover max-h-32"></div>` : '';
 
-                return `
-                    <div class="p-3 mb-2 rounded-xl ${isRead ? 'bg-white text-gray-500' : 'bg-red-50 text-gray-900 border border-red-100'} transition-colors shadow-sm">
-                        <div class="flex items-center gap-2 mb-1">
-                            <i data-lucide="${isRead ? 'check-circle' : 'bell-ring'}" class="w-4 h-4 ${isRead ? 'text-gray-400' : 'text-brand-red'} shrink-0"></i>
-                            ${titleHtml}
-                        </div>
-                        <p class="text-xs leading-relaxed ml-6">${n.message || ''}</p>
-                        ${imageHtml}
-                    </div>
-                `;
-            }).join('') || '<p class="text-xs text-gray-400 p-4 text-center">No notifications yet.</p>';
-            
-            badges.forEach(badge => {
-                if(unreadCount > 0) badge.classList.remove('hidden-layer');
-                else badge.classList.add('hidden-layer');
-            });
-            
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-        }
+        return `
+            <div class="p-3 mb-2 rounded-xl ${isRead ? 'bg-white text-gray-500' : 'bg-red-50 text-gray-900 border border-red-100'} transition-colors shadow-sm">
+                <div class="flex items-center gap-2 mb-1">
+                    <i data-lucide="${isRead ? 'check-circle' : 'bell-ring'}" class="w-4 h-4 ${isRead ? 'text-gray-400' : 'text-brand-red'} shrink-0"></i>
+                    ${titleHtml}
+                </div>
+                <p class="text-xs leading-relaxed ml-6">${n.message || ''}</p>
+                ${imageHtml}
+            </div>
+        `;
+    }).join('') || '<p class="text-xs text-gray-400 p-4 text-center">No notifications yet.</p>';
+    
+    badges.forEach(badge => {
+        if(unreadCount > 0) badge.classList.remove('hidden-layer');
+        else badge.classList.add('hidden-layer');
+    });
+    
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
 
-        function toggleNotifications() {
-            const panel = document.getElementById('notification-panel');
-            panel.classList.toggle('hidden-layer');
-            if(!panel.classList.contains('hidden-layer')) {
-                // Pre-fetch fresh notifications just in case when opening
-                fetchNotifications();
-            }
-        }
-
-        function markAllNotificationsRead() {
-            if(!globalState.sessionUser || globalState.notifications.length === 0) return;
-            const ids = globalState.notifications.map(n => n.id);
-            localStorage.setItem(`read_notifs_${globalState.sessionUser.id}`, JSON.stringify(ids));
+// ریئل ٹائم سبسکرپشن جو ہر کسی کے لیے کام کرے گی
+function initRealTimeSubscriptions() {
+    supabaseClientInstance
+        .channel('public:notifications')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
+            console.log("New Global Notification:", payload.new);
+            // نئی نوٹیفکیشن آنے پر سٹیٹ اپ ڈیٹ کریں
+            globalState.notifications.unshift(payload.new);
             renderNotificationsUI();
-        }
+        })
+        .subscribe();
+}
+
+function toggleNotifications() {
+    const panel = document.getElementById('notification-panel');
+    panel.classList.toggle('hidden-layer');
+    if(!panel.classList.contains('hidden-layer')) {
+        fetchNotifications();
+    }
+}
+
+function markAllNotificationsRead() {
+    if(globalState.notifications.length === 0) return;
+    const ids = globalState.notifications.map(n => n.id);
+    localStorage.setItem('read_notifs_all', JSON.stringify(ids));
+    renderNotificationsUI();
+}
 
         // --- REAL-TIME LEADERBOARD ENGINE WITH ONLINE STATUS ---
         async function fetchLeaderboard() {
