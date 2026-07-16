@@ -3,16 +3,16 @@
 <head>
     <meta name="google-adsense-account" content="ca-pub-2204631154740736">
     <meta property="og:title" content="Education Point | Premium Production LMS">
-<meta property="og:description" content="Master Computer Skills, Freelancing, and Web Architecture at Education Point. Join the most advanced student portal today.">
-<meta property="og:image" content="https://i.ibb.co/s94dWvck/1784024048811-removebg-preview.png">
-<meta property="og:url" content="https://epcourse.netlify.app">
-<meta property="og:type" content="website">
+    <meta property="og:description" content="Master Computer Skills, Freelancing, and Web Architecture at Education Point. Join the most advanced student portal today.">
+    <meta property="og:image" content="https://i.ibb.co/s94dWvck/1784024048811-removebg-preview.png">
+    <meta property="og:url" content="https://epcourse.netlify.app">
+    <meta property="og:type" content="website">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#FF0000">
     
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <title>Education Point LMS | Premium Production Framework</title>
     <link rel="icon" href="https://i.ibb.co/s94dWvck/1784024048811-removebg-preview.png" type="image/png" />
@@ -113,10 +113,14 @@
 
     <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
+    <!-- NOTIFICATION PANEL WITH CLOSE BUTTON -->
     <div id="notification-panel" class="hidden-layer fixed top-16 right-4 md:right-8 md:top-20 z-[9999] w-80 md:w-96 bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all">
         <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
             <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2"><i data-lucide="bell" class="w-4 h-4 text-brand-red"></i> Notifications</h3>
-            <button onclick="markAllNotificationsRead()" class="text-[10px] uppercase tracking-wider text-brand-red font-black hover:text-red-700 transition-colors">Mark all read</button>
+            <div class="flex items-center gap-3">
+                <button onclick="markAllNotificationsRead()" class="text-[10px] uppercase tracking-wider text-brand-red font-black hover:text-red-700 transition-colors">Mark all read</button>
+                <button onclick="toggleNotifications()" class="text-gray-400 hover:text-gray-600 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
         </div>
         <div id="notif-list" class="max-h-[28rem] overflow-y-auto custom-scrollbar p-3 bg-white space-y-2">
             <p class="text-xs text-gray-400 p-4 text-center">Loading notifications...</p>
@@ -622,10 +626,7 @@
         let todayActiveMinutes = 0;
         let loginTimeRecorded = false;
 
-        
-    
-
-// --- TOAST NOTIFICATION ENGINE ---
+        // --- TOAST NOTIFICATION ENGINE ---
         function triggerToastNotification(message, isSuccess = true) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -659,9 +660,21 @@
             startRealTimeActivityTracker(); 
             initRealTimeSubscriptions();
             
+            // Initial state set for back prevention mapping
+            window.history.replaceState({ viewId: 'student-dashboard' }, '');
+
             // Request Notification Permission on load
             if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
                 Notification.requestPermission();
+            }
+        });
+
+        // --- ADVANCED BACK NAVIGATION SHIELD ---
+        window.addEventListener('popstate', function (event) {
+            if (event.state && event.state.viewId) {
+                executeViewSwitchLogic(event.state.viewId, false);
+            } else {
+                executeViewSwitchLogic('student-dashboard', false);
             }
         });
 
@@ -827,6 +840,10 @@
         }
 
         function switchView(viewId) {
+            executeViewSwitchLogic(viewId, true);
+        }
+
+        function executeViewSwitchLogic(viewId, shouldPushState = true) {
             const sb = document.getElementById("main-sidebar");
             if (sb && !sb.classList.contains("-translate-x-full")) {
                 sb.classList.add("-translate-x-full");
@@ -844,6 +861,11 @@
 
             if(viewId === 'leaderboard-view') {
                 fetchLeaderboard();
+            }
+
+            // Push window history node state map parameters dynamically to intercept back events
+            if (shouldPushState) {
+                window.history.pushState({ viewId: viewId }, '');
             }
         }
         
@@ -880,98 +902,80 @@
             }
         };
 
-// --- REAL-TIME NOTIFICATIONS ENGINE (GLOBAL) ---
-async function fetchNotifications() {
-    // یوزر سیشن کی شرط ہٹا دی تاکہ سب کو ڈیٹا مل سکے
-    try {
-        const { data } = await supabaseClientInstance
-            .from('notifications')
-            .select('*')
-            // تمام نوٹیفکیشنز لوڈ ہوں گی، چاہے وہ کسی بھی یوزر کے لیے ہوں
-            .order('created_at', { ascending: false })
-            .limit(20);
-        
-        globalState.notifications = data || [];
-        renderNotificationsUI();
-    } catch (err) {
-        console.error("Notifications Fetch Error:", err);
-    }
-}
+        // --- REAL-TIME NOTIFICATIONS ENGINE (GLOBAL) ---
+        async function fetchNotifications() {
+            try {
+                const { data } = await supabaseClientInstance
+                    .from('notifications')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+                
+                globalState.notifications = data || [];
+                renderNotificationsUI();
+            } catch (err) {
+                console.error("Notifications Fetch Error:", err);
+            }
+        }
 
-function renderNotificationsUI() {
-    const list = document.getElementById('notif-list');
-    const badges = document.querySelectorAll('.notif-badge-indicator');
-    
-    if(!list) return;
-    
-    // سب کے لیے کامن ریڈ نوٹیفکیشنز (اگر آپ چاہتے ہیں کہ صرف لاگ ان یوزر کا اپنا الگ ہو تو یہ کوڈ ویسا ہی رہے گا)
-    let readNotifs = JSON.parse(localStorage.getItem('read_notifs_all') || '[]');
-    let unreadCount = 0;
-    
-    list.innerHTML = globalState.notifications.map(n => {
-        const isRead = readNotifs.includes(n.id);
-        if(!isRead) unreadCount++;
-        
-        let titleHtml = n.title ? `<h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">${n.title}</h4>` : `<h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">Platform Update</h4>`;
-        let imageHtml = n.image_url ? `<div class="mt-2 ml-6 rounded-lg overflow-hidden border border-gray-200"><img src="${n.image_url}" class="w-full h-auto object-cover max-h-32"></div>` : '';
+        function renderNotificationsUI() {
+            const list = document.getElementById('notif-list');
+            const badges = document.querySelectorAll('.notif-badge-indicator');
+            
+            if(!list) return;
+            
+            let readNotifs = JSON.parse(localStorage.getItem('read_notifs_all') || '[]');
+            let unreadCount = 0;
+            
+            list.innerHTML = globalState.notifications.map(n => {
+                const isRead = readNotifs.includes(n.id);
+                if(!isRead) unreadCount++;
+                
+                let titleHtml = n.title ? `<h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">${n.title}</h4>` : `<h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">Platform Update</h4>`;
+                let imageHtml = n.image_url ? `<div class="mt-2 ml-6 rounded-lg overflow-hidden border border-gray-200"><img src="${n.image_url}" class="w-full h-auto object-cover max-h-32"></div>` : '';
 
-        return `
-            <div class="p-3 mb-2 rounded-xl ${isRead ? 'bg-white text-gray-500' : 'bg-red-50 text-gray-900 border border-red-100'} transition-colors shadow-sm">
-                <div class="flex items-center gap-2 mb-1">
-                    <i data-lucide="${isRead ? 'check-circle' : 'bell-ring'}" class="w-4 h-4 ${isRead ? 'text-gray-400' : 'text-brand-red'} shrink-0"></i>
-                    ${titleHtml}
-                </div>
-                <p class="text-xs leading-relaxed ml-6">${n.message || ''}</p>
-                ${imageHtml}
-            </div>
-        `;
-    }).join('') || '<p class="text-xs text-gray-400 p-4 text-center">No notifications yet.</p>';
-    
-    badges.forEach(badge => {
-        if(unreadCount > 0) badge.classList.remove('hidden-layer');
-        else badge.classList.add('hidden-layer');
-    });
-    
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-}
+                return `
+                    <div class="p-3 mb-2 rounded-xl ${isRead ? 'bg-white text-gray-500' : 'bg-red-50 text-gray-900 border border-red-100'} transition-colors shadow-sm">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i data-lucide="${isRead ? 'check-circle' : 'bell-ring'}" class="w-4 h-4 ${isRead ? 'text-gray-400' : 'text-brand-red'} shrink-0"></i>
+                            ${titleHtml}
+                        </div>
+                        <p class="text-xs leading-relaxed ml-6">${n.message || ''}</p>
+                        ${imageHtml}
+                    </div>
+                `;
+            }).join('') || '<p class="text-xs text-gray-400 p-4 text-center">No notifications yet.</p>';
+            
+            badges.forEach(badge => {
+                if(unreadCount > 0) badge.classList.remove('hidden-layer');
+                else badge.classList.add('hidden-layer');
+            });
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
 
-// ریئل ٹائم سبسکرپشن جو ہر کسی کے لیے کام کرے گی
-function initRealTimeSubscriptions() {
-    supabaseClientInstance
-        .channel('public:notifications')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
-            console.log("New Global Notification:", payload.new);
-            // نئی نوٹیفکیشن آنے پر سٹیٹ اپ ڈیٹ کریں
-            globalState.notifications.unshift(payload.new);
+        function toggleNotifications() {
+            const panel = document.getElementById('notification-panel');
+            panel.classList.toggle('hidden-layer');
+            if(!panel.classList.contains('hidden-layer')) {
+                fetchNotifications();
+            }
+        }
+
+        function markAllNotificationsRead() {
+            if(globalState.notifications.length === 0) return;
+            const ids = globalState.notifications.map(n => n.id);
+            localStorage.setItem('read_notifs_all', JSON.stringify(ids));
             renderNotificationsUI();
-        })
-        .subscribe();
-}
-
-function toggleNotifications() {
-    const panel = document.getElementById('notification-panel');
-    panel.classList.toggle('hidden-layer');
-    if(!panel.classList.contains('hidden-layer')) {
-        fetchNotifications();
-    }
-}
-
-function markAllNotificationsRead() {
-    if(globalState.notifications.length === 0) return;
-    const ids = globalState.notifications.map(n => n.id);
-    localStorage.setItem('read_notifs_all', JSON.stringify(ids));
-    renderNotificationsUI();
-}
+        }
 
         // --- REAL-TIME LEADERBOARD ENGINE WITH ONLINE STATUS ---
         async function fetchLeaderboard() {
             try {
-                // Fetch profiles for names and avatars
                 const { data: profiles, error: profileErr } = await supabaseClientInstance
                     .from('profiles')
                     .select('id, full_name, avatar_url');
                 
-                // Fetch active minutes history and last_seen
                 const { data: activity, error: actErr } = await supabaseClientInstance
                     .from('daily_activity')
                     .select('student_id, active_minutes, last_seen');
@@ -994,7 +998,7 @@ function markAllNotificationsRead() {
                         let isOnline = false;
                         if(acts.last_seen) {
                             const diffMins = (new Date() - new Date(acts.last_seen)) / 60000;
-                            if(diffMins <= 5) isOnline = true; // active within last 5 mins
+                            if(diffMins <= 5) isOnline = true; 
                         }
                         return { ...p, total_minutes: acts.mins, isOnline };
                     })
@@ -1202,7 +1206,7 @@ function markAllNotificationsRead() {
         }
 
         // --- HISTORY & ACTIVITY TRACKING ---
-                async function calculateAndDisplayStreak() {
+        async function calculateAndDisplayStreak() {
             if (!globalState.sessionUser) return;
             
             const { data: activity, error } = await supabaseClientInstance
@@ -1217,12 +1221,10 @@ function markAllNotificationsRead() {
                 return;
             }
 
-            // Step 1: Filter unique, valid dates and sort them descending
             const uniqueDates = Array.from(new Set(activity.map(a => a.date)))
                 .map(dStr => new Date(dStr))
                 .sort((a, b) => b - a);
 
-            // Normalize time helper to prevent time zone mismatch breaks
             const normalizeDate = (d) => {
                 const normalized = new Date(d);
                 normalized.setHours(0, 0, 0, 0);
@@ -1237,11 +1239,9 @@ function markAllNotificationsRead() {
             let longestStreak = 0;
             let tempStreak = 0;
 
-            // Step 2: Check if the user is active today or was active yesterday to maintain current streak
             const mostRecentActiveDate = normalizeDate(uniqueDates[0]);
             const isStreakActive = (mostRecentActiveDate.getTime() === today.getTime() || mostRecentActiveDate.getTime() === yesterday.getTime());
 
-            // Step 3: Calculate streaks mathematically
             if (uniqueDates.length > 0) {
                 tempStreak = 1;
                 longestStreak = 1;
@@ -1250,15 +1250,12 @@ function markAllNotificationsRead() {
                     const current = normalizeDate(uniqueDates[i]);
                     const next = normalizeDate(uniqueDates[i + 1]);
                     
-                    // Calculate absolute difference in days
                     const diffTime = Math.abs(current - next);
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
                     if (diffDays === 1) {
-                        // Consecutive day sequence matches!
                         tempStreak++;
                     } else if (diffDays > 1) {
-                        // Sequence broke, save the highest temp run and reset
                         if (tempStreak > longestStreak) {
                             longestStreak = tempStreak;
                         }
@@ -1266,14 +1263,11 @@ function markAllNotificationsRead() {
                     }
                 }
                 
-                // Final check for the last loop sequence
                 if (tempStreak > longestStreak) {
                     longestStreak = tempStreak;
                 }
                 
-                // If streak is mathematically continuous but user hasn't logged in for >1 day, current streak is 0
                 if (isStreakActive) {
-                    // Current streak is calculated from the modern run starting from the most recent session backward
                     let runningCurrentStreak = 0;
                     let expectedDate = mostRecentActiveDate;
 
@@ -1292,7 +1286,6 @@ function markAllNotificationsRead() {
                 }
             }
 
-            // Step 4: Display on Screen UI
             const streakEl = document.getElementById("stat-current-streak");
             const longestEl = document.getElementById("stat-longest-streak");
             const attendanceEl = document.getElementById("stat-attendance-rate");
@@ -1306,7 +1299,6 @@ function markAllNotificationsRead() {
             }
         }
 
-        
         async function fetchActivityHistory() {
             if (!globalState.sessionUser) return;
             let { data: history } = await supabaseClientInstance
@@ -1360,7 +1352,6 @@ function markAllNotificationsRead() {
             const hrsUI = document.getElementById('stat-study-hours');
             if(hrsUI) hrsUI.textContent = `${todayActiveMinutes} mins`;
             
-            // Periodically refresh the leaderboard internally
             if (todayActiveMinutes % 5 === 0) fetchLeaderboard(); 
         }
         
@@ -1408,7 +1399,6 @@ function markAllNotificationsRead() {
                     const { data, error } = await supabaseClientInstance.from('lessons').insert([{ lesson_number, title, google_drive_video_id: gdrive_id, estimated_duration: duration, description }]);
                     if (error) { alert("اپلوڈ میں ایرر ہے: " + error.message); } 
                     else {
-                        // Push Global Notification
                         await supabaseClientInstance.from('notifications').insert([{
                             title: "New Module Available",
                             message: `Lesson ${lesson_number}: ${title} is now live! Watch and complete your assignments.`,
@@ -1431,7 +1421,7 @@ function markAllNotificationsRead() {
                         title: title,
                         message: message,
                         image_url: image_url || null,
-                        user_id: null // Global broadcast
+                        user_id: null 
                     }]);
                     
                     if (error) {
@@ -1462,7 +1452,7 @@ function markAllNotificationsRead() {
             setInterval(() => {
                 const now = new Date();
                 const deadline = new Date();
-                deadline.setHours(22, 0, 0, 0); // 10:00 PM
+                deadline.setHours(22, 0, 0, 0); 
                 let diff = deadline - now;
                 const element = document.getElementById("assignment-countdown");
                 if (!element) return;
