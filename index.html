@@ -87,11 +87,11 @@
             user-select: none;
         }
         .premium-logo {
-    color: #B91C1C;
-    text-shadow: 0 0 10px rgba(185, 28, 28, 0.5); /* ہلکی ریڈ چمک */
-    font-weight: 800;
-    letter-spacing: -1px;
-            }
+            color: #B91C1C;
+            text-shadow: 0 0 10px rgba(185, 28, 28, 0.5); /* ہلکی ریڈ چمک */
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
         
         .glass-panel {
             background: rgba(255, 255, 255, 0.85);
@@ -113,13 +113,17 @@
 
     <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
-    <!-- NOTIFICATION PANEL WITH CLOSE BUTTON -->
+    <!-- Notification Panel with Close Button -->
     <div id="notification-panel" class="hidden-layer fixed top-16 right-4 md:right-8 md:top-20 z-[9999] w-80 md:w-96 bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all">
         <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-            <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2"><i data-lucide="bell" class="w-4 h-4 text-brand-red"></i> Notifications</h3>
+            <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                <i data-lucide="bell" class="w-4 h-4 text-brand-red"></i> Notifications
+            </h3>
             <div class="flex items-center gap-3">
                 <button onclick="markAllNotificationsRead()" class="text-[10px] uppercase tracking-wider text-brand-red font-black hover:text-red-700 transition-colors">Mark all read</button>
-                <button onclick="toggleNotifications()" class="text-gray-400 hover:text-gray-600 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <button onclick="toggleNotifications()" class="text-gray-400 hover:text-brand-red transition-colors" aria-label="Close notifications">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
             </div>
         </div>
         <div id="notif-list" class="max-h-[28rem] overflow-y-auto custom-scrollbar p-3 bg-white space-y-2">
@@ -139,7 +143,7 @@
             <div class="p-5 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <div class="bg-brand-red p-2 rounded-lg text-white"><i data-lucide="graduation-cap" class="w-6 h-6"></i></div>
-                    <span class="font-black text-xl tracking-tight text-brand-red">EDUCATION POINT</span>
+                    <span class="font-black text-xl tracking-tight text-brand-red font-black">EDUCATION POINT</span>
                 </div>
                 <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-500"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
@@ -153,19 +157,19 @@
             </div>
 
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
-                <button onclick="switchView('student-dashboard')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all text-white bg-brand-red">
+                <button onclick="switchView('student-dashboard')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all text-white bg-brand-red" id="nav-student-dashboard">
                     <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Dashboard</span>
                 </button>
-                <button onclick="switchView('classroom-portal')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
+                <button onclick="switchView('classroom-portal')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all" id="nav-classroom-portal">
                     <i data-lucide="book-open" class="w-5 h-5"></i><span>Daily Classroom</span>
                 </button>
-                <button onclick="switchView('profile-completion-view')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
+                <button onclick="switchView('profile-completion-view')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all" id="nav-profile-completion-view">
                     <i data-lucide="user-cog" class="w-5 h-5"></i><span>My Profile & History</span>
                 </button>
-                <button onclick="switchView('leaderboard-view')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
+                <button onclick="switchView('leaderboard-view')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all" id="nav-leaderboard-view">
                     <i data-lucide="trophy" class="w-5 h-5"></i><span>Top Leaderboard</span>
                 </button>
-                <button id="admin-nav-item" onclick="switchView('admin-console')" class="nav-link w-full hidden flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-red-700 bg-red-50 hover:bg-red-100 transition-all border border-red-200">
+                <button id="admin-nav-item" onclick="switchView('admin-console')" class="nav-link w-full hidden flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-red-700 bg-red-50 hover:bg-red-100 transition-all border border-red-200" id="nav-admin-console">
                     <i data-lucide="shield-alert" class="w-5 h-5"></i><span>Super Admin Panel</span>
                 </button>
             </nav>
@@ -181,7 +185,7 @@
             
             <header class="bg-white border-b border-gray-100 p-4 flex items-center justify-between md:hidden sticky top-0 z-30">
                 <button onclick="toggleMobileSidebar()" class="text-gray-700"><i data-lucide="menu" class="w-6 h-6"></i></button>
-                <span class="font-black tracking-tight text-brand-red text-lg">EDUCATION POINT</span>
+                <span class="font-black tracking-tight text-brand-red text-lg font-black">EDUCATION POINT</span>
                 <button onclick="toggleNotifications()" class="relative text-gray-700 focus:outline-none">
                     <i data-lucide="bell" class="w-6 h-6"></i>
                     <span class="notif-badge-indicator absolute top-0 right-0 w-2.5 h-2.5 bg-brand-red rounded-full hidden-layer border border-white"></span>
@@ -206,7 +210,7 @@
                         </div>
                         <i data-lucide="sparkles" class="absolute right-6 bottom-4 w-32 h-32 text-white/5 pointer-events-none"></i>
                     </div>
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
                             <div class="p-3 bg-red-100 text-brand-red rounded-xl"><i data-lucide="zap" class="w-6 h-6"></i></div>
                             <div>
@@ -293,70 +297,68 @@
                         </div>
                     </div>
                 </section>
-<section id="profile-completion-view" class="view-layer page-layer hidden-layer p-6 md:p-8 space-y-6">
-    <div class="max-w-4xl mx-auto bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
-        <!-- Header -->
-        <div class="flex items-center gap-6 mb-8 pb-8 border-b border-gray-100">
-            <div class="relative group">
-                <div class="w-24 h-24 rounded-full border-4 border-gray-50 shadow-inner overflow-hidden">
-                    <img id="prof-avatar-preview" src="https://ui-avatars.com/api/?name=Student&background=DC2626&color=fff" class="w-full h-full object-cover">
-                </div>
-                <label class="absolute bottom-0 right-0 p-2 bg-brand-red text-white rounded-full cursor-pointer shadow-lg hover:scale-105 transition-transform">
-                    <i data-lucide="camera" class="w-4 h-4"></i>
-                    <input type="file" id="prof-avatar-input" class="hidden" onchange="handleAvatarSelect(event)">
-                </label>
-            </div>
-            <div>
-                <h2 class="text-2xl font-black text-gray-900">Personal Identity</h2>
-                <p class="text-sm text-gray-500">Manage your account information and profile display.</p>
-            </div>
-        </div>
 
-        <!-- Profile Form -->
-        <form id="profile-form" onsubmit="saveUserProfileDataState(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Full Name *</label><input type="text" id="prof-fullname" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
-            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Father's Name *</label><input type="text" id="prof-fathername" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
-            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Mobile Number *</label><input type="text" id="prof-mobile" placeholder="03XXXXXXXXX" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
-            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">City *</label><input type="text" id="prof-city" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
-            <div class="sm:col-span-2 space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Complete Address *</label><input type="text" id="prof-address" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
-            <div class="space-y-1">
-                <label class="text-xs font-bold text-gray-500 uppercase">Gender *</label>
-                <select id="prof-gender" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Date of Birth *</label><input type="date" id="prof-dob" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required></div>
-            <div class="sm:col-span-2 space-y-1">
-                <label class="text-xs font-bold text-gray-500 uppercase">Education Level *</label>
-                <select id="prof-education" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
-                    <option value="Matric">Matric</option>
-                    <option value="Intermediate">Intermediate (F.Sc / FA / ICS / Inter)</option>
-                    <option value="Bachelors">Bachelors</option>
-                    <option value="Masters">Masters</option>
-                </select>
-            </div>
-            <div class="sm:col-span-2 pt-2">
-                <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-hover text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow transition-all">Save Profile Data Securely</button>
-            </div>
-        </form>
-    </div>
-    
-                        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-[calc(100vh-140px)] flex flex-col">
-                            <h2 class="text-lg font-bold text-gray-800 border-b border-gray-100 pb-3 flex items-center space-x-2"><i data-lucide="history" class="text-brand-red w-5 h-5"></i><span>Activity History (Real-Time)</span></h2>
-                            <p class="text-xs text-gray-500 mt-2">Your daily active time spent learning on Education Point.</p>
-                            <div id="activity-history-list" class="flex-1 overflow-y-auto custom-scrollbar mt-4 space-y-3"></div>
+                <section id="profile-completion-view" class="view-layer page-layer hidden-layer p-6 md:p-8 space-y-6">
+                    <div class="max-w-4xl mx-auto bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
+                        <div class="flex items-center gap-6 mb-8 pb-8 border-b border-gray-100">
+                            <div class="relative group">
+                                <div class="w-24 h-24 rounded-full border-4 border-gray-50 shadow-inner overflow-hidden">
+                                    <img id="prof-avatar-preview" src="https://ui-avatars.com/api/?name=Student&background=DC2626&color=fff" class="w-full h-full object-cover">
+                                </div>
+                                <label class="absolute bottom-0 right-0 p-2 bg-brand-red text-white rounded-full cursor-pointer shadow-lg hover:scale-105 transition-transform">
+                                    <i data-lucide="camera" class="w-4 h-4"></i>
+                                    <input type="file" id="prof-avatar-input" class="hidden" onchange="handleAvatarSelect(event)">
+                                </label>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-black text-gray-900">Personal Identity</h2>
+                                <p class="text-sm text-gray-500">Manage your account information and profile display.</p>
+                            </div>
                         </div>
-            </div>
-</section>
 
-                
+                        <form id="profile-form" onsubmit="saveUserProfileDataState(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Full Name *</label><input type="text" id="prof-fullname" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
+                            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Father's Name *</label><input type="text" id="prof-fathername" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
+                            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Mobile Number *</label><input type="text" id="prof-mobile" placeholder="03XXXXXXXXX" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
+                            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">City *</label><input type="text" id="prof-city" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
+                            <div class="sm:col-span-2 space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Complete Address *</label><input type="text" id="prof-address" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Gender *</label>
+                                <select id="prof-gender" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Date of Birth *</label><input type="date" id="prof-dob" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required></div>
+                            <div class="sm:col-span-2 space-y-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Education Level *</label>
+                                <select id="prof-education" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                    <option value="Matric">Matric</option>
+                                    <option value="Intermediate">Intermediate (F.Sc / FA / ICS / Inter)</option>
+                                    <option value="Bachelors">Bachelors</option>
+                                    <option value="Masters">Masters</option>
+                                </select>
+                            </div>
+                            <div class="sm:col-span-2 pt-2">
+                                <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-hover text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow transition-all">Save Profile Data Securely</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm max-w-4xl mx-auto flex flex-col">
+                        <h2 class="text-lg font-bold text-gray-800 border-b border-gray-100 pb-3 flex items-center space-x-2"><i data-lucide="history" class="text-brand-red w-5 h-5"></i><span>Activity History (Real-Time)</span></h2>
+                        <p class="text-xs text-gray-500 mt-2">Your daily active time spent learning on Education Point.</p>
+                        <div id="activity-history-list" class="overflow-y-auto custom-scrollbar mt-4 space-y-3 max-h-96"></div>
+                    </div>
+                </section>
 
                 <section id="classroom-portal" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="flex flex-col xl:flex-row gap-6">
                         <div class="flex-1 space-y-4">
-                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl w-full relative border-4 border-white pb-[56.25%]"> <iframe id="gdrive-video-player" class="absolute top-0 left-0 w-full h-full bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                            <!-- GOOGLE DRIVE VIDEO SCREEN RATIO FIXED (using modern aspect-video wrapper) -->
+                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl w-full relative border-4 border-white aspect-video">
+                                <iframe id="gdrive-video-player" class="absolute top-0 left-0 w-full h-full bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
                             </div>
                             
                             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
@@ -405,37 +407,37 @@
                 </section>
 
                 <section id="leaderboard-view" class="view-layer page-layer hidden-layer p-4 md:p-8 space-y-6">
-    <div class="relative overflow-hidden bg-gradient-to-br from-amber-500 to-amber-700 rounded-[2rem] p-8 md:p-10 text-white shadow-2xl shadow-amber-900/20">
-        <div class="relative z-10 max-w-xl space-y-3">
-            <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest">
-                <i data-lucide="medal" class="w-3 h-3"></i> Elite Scholar Board
-            </div>
-            <h2 class="text-3xl md:text-4xl font-black tracking-tight">Top Active Scholars</h2>
-            <p class="text-amber-100 text-sm md:text-base leading-relaxed">
-                Celebrating the most dedicated students. Rankings are calculated based on your total active learning minutes.
-            </p>
-        </div>
-        <i data-lucide="award" class="absolute -right-6 -bottom-6 w-40 h-40 text-white/10 rotate-12 pointer-events-none"></i>
-    </div>
+                    <div class="relative overflow-hidden bg-gradient-to-br from-amber-500 to-amber-700 rounded-[2rem] p-8 md:p-10 text-white shadow-2xl shadow-amber-900/20">
+                        <div class="relative z-10 max-w-xl space-y-3">
+                            <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest">
+                                <i data-lucide="medal" class="w-3 h-3"></i> Elite Scholar Board
+                            </div>
+                            <h2 class="text-3xl md:text-4xl font-black tracking-tight">Top Active Scholars</h2>
+                            <p class="text-amber-100 text-sm md:text-base leading-relaxed">
+                                Celebrating the most dedicated students. Rankings are calculated based on your total active learning minutes.
+                            </p>
+                        </div>
+                        <i data-lucide="award" class="absolute -right-6 -bottom-6 w-40 h-40 text-white/10 rotate-12 pointer-events-none"></i>
+                    </div>
 
-    <div class="max-w-4xl mx-auto bg-white rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
-        <div class="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-            <h3 class="font-black text-gray-900 flex items-center gap-2">
-                <i data-lucide="bar-chart-3" class="w-5 h-5 text-amber-500"></i> Real-Time Rankings
-            </h3>
-            <button onclick="fetchLeaderboard()" class="group px-4 py-2 bg-white border border-gray-200 hover:border-amber-500 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-amber-600 transition-all shadow-sm flex items-center gap-2">
-                <i data-lucide="refresh-cw" class="w-3 h-3 group-hover:rotate-180 transition-transform duration-500"></i> Refresh
-            </button>
-        </div>
+                    <div class="max-w-4xl mx-auto bg-white rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
+                        <div class="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                            <h3 class="font-black text-gray-900 flex items-center gap-2">
+                                <i data-lucide="bar-chart-3" class="w-5 h-5 text-amber-500"></i> Real-Time Rankings
+                            </h3>
+                            <button onclick="fetchLeaderboard()" class="group px-4 py-2 bg-white border border-gray-200 hover:border-amber-500 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-amber-600 transition-all shadow-sm flex items-center gap-2">
+                                <i data-lucide="refresh-cw" class="w-3 h-3 group-hover:rotate-180 transition-transform duration-500"></i> Refresh
+                            </button>
+                        </div>
 
-        <div id="leaderboard-list" class="divide-y divide-gray-50">
-            <div class="p-12 text-center text-gray-400">
-                <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p class="text-sm font-bold uppercase tracking-widest text-gray-500">Syncing Network Data...</p>
-            </div>
-        </div>
-    </div>
-</section>
+                        <div id="leaderboard-list" class="divide-y divide-gray-50">
+                            <div class="p-12 text-center text-gray-400">
+                                <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                                <p class="text-sm font-bold uppercase tracking-widest text-gray-500">Syncing Network Data...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
                 <section id="admin-console" class="view-layer page-layer hidden-layer space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
@@ -660,22 +662,21 @@
             startRealTimeActivityTracker(); 
             initRealTimeSubscriptions();
             
-            // Initial state set for back prevention mapping
-            window.history.replaceState({ viewId: 'student-dashboard' }, '');
-
             // Request Notification Permission on load
             if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
                 Notification.requestPermission();
             }
-        });
 
-        // --- ADVANCED BACK NAVIGATION SHIELD ---
-        window.addEventListener('popstate', function (event) {
-            if (event.state && event.state.viewId) {
-                executeViewSwitchLogic(event.state.viewId, false);
-            } else {
-                executeViewSwitchLogic('student-dashboard', false);
-            }
+            // Initialize History States for SPA Back Button
+            window.addEventListener('popstate', (event) => {
+                if (event.state && event.state.viewId) {
+                    switchView(event.state.viewId, false);
+                } else {
+                    switchView('student-dashboard', false);
+                }
+            });
+            // Replace initial history state
+            history.replaceState({ viewId: 'student-dashboard' }, "", "#student-dashboard");
         });
 
         function initRealTimeSubscriptions() {
@@ -760,7 +761,7 @@
                 }
 
                 displayScreenLayer("app-container");
-                switchView("student-dashboard");
+                switchView("student-dashboard", false);
             } catch(err) {
                 displayScreenLayer("auth-shield-container");
             }
@@ -839,11 +840,8 @@
             if (sb) sb.classList.toggle("-translate-x-full");
         }
 
-        function switchView(viewId) {
-            executeViewSwitchLogic(viewId, true);
-        }
-
-        function executeViewSwitchLogic(viewId, shouldPushState = true) {
+        // --- BACK BUTTON FRIENDLY VIEW ROUTER ---
+        function switchView(viewId, pushState = true) {
             const sb = document.getElementById("main-sidebar");
             if (sb && !sb.classList.contains("-translate-x-full")) {
                 sb.classList.add("-translate-x-full");
@@ -854,6 +852,17 @@
             const target = document.getElementById(viewId);
             if (target) target.classList.remove("hidden-layer");
 
+            // Update Navigation sidebar highlighting
+            document.querySelectorAll(".nav-link").forEach(btn => {
+                btn.classList.remove("text-white", "bg-brand-red");
+                btn.classList.add("text-gray-600", "hover:bg-gray-100");
+            });
+            const activeNavBtn = document.getElementById(`nav-${viewId}`);
+            if (activeNavBtn) {
+                activeNavBtn.classList.remove("text-gray-600", "hover:bg-gray-100");
+                activeNavBtn.classList.add("text-white", "bg-brand-red");
+            }
+
             const footer = document.getElementById('main-footer');
             if (footer) {
                 footer.style.display = (viewId === 'student-dashboard') ? 'block' : 'none';
@@ -863,9 +872,9 @@
                 fetchLeaderboard();
             }
 
-            // Push window history node state map parameters dynamically to intercept back events
-            if (shouldPushState) {
-                window.history.pushState({ viewId: viewId }, '');
+            // Push State for Router
+            if (pushState) {
+                history.pushState({ viewId: viewId }, "", `#${viewId}`);
             }
         }
         
@@ -998,7 +1007,7 @@
                         let isOnline = false;
                         if(acts.last_seen) {
                             const diffMins = (new Date() - new Date(acts.last_seen)) / 60000;
-                            if(diffMins <= 5) isOnline = true; 
+                            if(diffMins <= 5) isOnline = true; // active within last 5 mins
                         }
                         return { ...p, total_minutes: acts.mins, isOnline };
                     })
@@ -1421,7 +1430,7 @@
                         title: title,
                         message: message,
                         image_url: image_url || null,
-                        user_id: null 
+                        user_id: null
                     }]);
                     
                     if (error) {
@@ -1480,7 +1489,7 @@
                     <div class="bg-brand-red p-2.5 rounded-xl text-white shadow-md shadow-red-500/10 transform transition-transform duration-500 group-hover:rotate-12">
                         <i data-lucide="graduation-cap" class="w-5 h-5"></i>
                     </div>
-                    <span class="font-black text-lg tracking-tight text-brand-red uppercase">Education Point</span>
+                    <span class="font-black text-lg tracking-tight text-brand-red uppercase font-black">Education Point</span>
                 </div>
                 <p class="text-xs text-gray-500 leading-relaxed font-medium">
                     Making learning simple, accessible, and effective through interactive frameworks, premium assets, and modern digital ecosystems. Dedicated to delivering practical enterprise skill sets.
