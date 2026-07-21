@@ -1,2 +1,1593 @@
-Under Maintenance 
-Please Wait 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="google-adsense-account" content="ca-pub-2204631154740736">
+    <meta property="og:title" content="Education Point | Premium Production LMS">
+    <meta property="og:description" content="Master Computer Skills, Freelancing, and Web Architecture at Education Point. Join the most advanced student portal today.">
+    <meta property="og:image" content="https://i.ibb.co/s94dWvck/1784024048811-removebg-preview.png">
+    <meta property="og:url" content="https://epcourse.netlify.app">
+    <meta property="og:type" content="website">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#FF0000">
+    
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <title>Education Point LMS | Premium Production Framework</title>
+    <link rel="icon" href="https://i.ibb.co/s94dWvck/1784024048811-removebg-preview.png" type="image/png" />
+    <link rel="manifest" href="/manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#DC2626',
+                            hover: '#B91C1C',
+                            surface: '#FFFFFF',
+                            bgLight: '#F9FAFB',
+                            darkText: '#111827'
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(() => console.log('SW Registered'))
+            .catch(err => console.error('SW Error:', err));
+        }
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2204631154740736" crossorigin="anonymous"></script>
+    
+    <style>
+        /* SECURITY CLASSES */
+        .secure-shield {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .premium-logo {
+            color: #B91C1C;
+            text-shadow: 0 0 10px rgba(185, 28, 28, 0.5); 
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(220, 38, 38, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #F1F1F1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #DC2626; border-radius: 4px; }
+        .page-layer { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hidden-layer { display: none !important; opacity: 0; transform: translateY(10px); }
+        
+        /* Certificate Print Font */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Great+Vibes&display=swap');
+    </style>
+</head>
+<body class="bg-gray-50 text-brand-darkText custom-scrollbar font-sans antialiased secure-shield" oncontextmenu="return false;">
+
+    <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- NOTIFICATION PANEL WITH CLOSE BUTTON -->
+    <div id="notification-panel" class="hidden-layer fixed top-16 right-4 md:right-8 md:top-20 z-[9999] w-80 md:w-96 bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all">
+        <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+            <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2"><i data-lucide="bell" class="w-4 h-4 text-brand-red"></i> Notifications</h3>
+            <div class="flex items-center gap-3">
+                <button onclick="markAllNotificationsRead()" class="text-[10px] uppercase tracking-wider text-brand-red font-black hover:text-red-700 transition-colors">Mark all read</button>
+                <button onclick="toggleNotifications()" class="text-gray-400 hover:text-gray-600 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+        </div>
+        <div id="notif-list" class="max-h-[28rem] overflow-y-auto custom-scrollbar p-3 bg-white space-y-2">
+            <p class="text-xs text-gray-400 p-4 text-center">Loading notifications...</p>
+        </div>
+    </div>
+
+    <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
+        <div class="w-16 h-16 border-4 border-brand-red border-t-transparent rounded-full animate-spin"></div>
+        <h2 class="mt-4 text-xl font-bold tracking-wider text-brand-red uppercase">Education Point</h2>
+        <p class="text-sm text-gray-400 mt-1">Initializing Secure Environment...</p>
+    </div>
+
+    <div id="app-container" class="min-h-screen flex flex-col md:flex-row relative hidden-layer page-layer">
+        
+        <aside id="main-sidebar" class="w-full md:w-64 bg-white border-r border-gray-200 flex flex-col fixed md:sticky top-0 h-auto md:h-screen z-40 transition-transform duration-300 transform md:transform-none -translate-x-full md:translate-x-0">
+            <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-brand-red p-2 rounded-lg text-white"><i data-lucide="graduation-cap" class="w-6 h-6"></i></div>
+                    <span class="font-black text-xl tracking-tight text-brand-red">EDUCATION POINT</span>
+                </div>
+                <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-500"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            
+            <div class="p-4 mx-4 my-3 bg-red-50 rounded-xl flex items-center space-x-3">
+                <img id="sb-avatar" src="https://ui-avatars.com/api/?name=Student&background=DC2626&color=fff" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-brand-red object-cover">
+                <div class="overflow-hidden">
+                    <h4 id="sb-username" class="font-bold text-sm text-gray-800 truncate">Loading...</h4>
+                    <p id="sb-role" class="text-xs text-brand-red font-medium tracking-wide uppercase">Student</p>
+                </div>
+            </div>
+
+            <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
+                <button onclick="switchView('student-dashboard')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all text-white bg-brand-red">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Dashboard</span>
+                </button>
+                <button onclick="switchView('classroom-portal')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
+                    <i data-lucide="book-open" class="w-5 h-5"></i><span>Daily Classroom</span>
+                </button>
+                <button onclick="switchView('profile-completion-view')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
+                    <i data-lucide="user-cog" class="w-5 h-5"></i><span>My Profile & History</span>
+                </button>
+                <button onclick="switchView('leaderboard-view')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-gray-600 hover:bg-gray-100 transition-all">
+                    <i data-lucide="trophy" class="w-5 h-5"></i><span>Top Leaderboard</span>
+                </button>
+                <button id="admin-nav-item" onclick="switchView('admin-console')" class="nav-link w-full hidden flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm text-red-700 bg-red-50 hover:bg-red-100 transition-all border border-red-200">
+                    <i data-lucide="shield-alert" class="w-5 h-5"></i><span>Super Admin Panel</span>
+                </button>
+            </nav>
+
+            <div class="p-4 border-t border-gray-100">
+                <button onclick="appAuth.logout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-red-50 hover:text-brand-red rounded-xl text-sm font-semibold transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4"></i><span>Sign Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 min-w-0 flex flex-col min-h-screen relative">
+            
+            <header class="bg-white border-b border-gray-100 p-4 flex items-center justify-between md:hidden sticky top-0 z-30">
+                <button onclick="toggleMobileSidebar()" class="text-gray-700"><i data-lucide="menu" class="w-6 h-6"></i></button>
+                <span class="font-black tracking-tight text-brand-red text-lg">EDUCATION POINT</span>
+                <button onclick="toggleNotifications()" class="relative text-gray-700 focus:outline-none">
+                    <i data-lucide="bell" class="w-6 h-6"></i>
+                    <span class="notif-badge-indicator absolute top-0 right-0 w-2.5 h-2.5 bg-brand-red rounded-full hidden-layer border border-white"></span>
+                </button>
+            </header>
+
+            <div class="absolute top-6 right-8 z-40 hidden md:block">
+                <button onclick="toggleNotifications()" class="relative p-3 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 transition-all focus:outline-none group">
+                    <i data-lucide="bell" class="w-5 h-5 text-gray-600 group-hover:text-brand-red transition-colors"></i>
+                    <span class="notif-badge-indicator absolute top-0 right-0 w-3 h-3 bg-brand-red rounded-full border-2 border-white hidden-layer"></span>
+                </button>
+            </div>
+
+            <div class="p-4 md:p-8 flex-1 overflow-y-auto mt-4 md:mt-0">
+                
+                <section id="student-dashboard" class="view-layer page-layer space-y-6">
+                    <div class="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+                        <div class="relative z-10 space-y-2 max-w-xl">
+                            <span class="px-3 py-1 bg-white/20 backdrop-blur text-xs font-bold uppercase rounded-full tracking-wider">Premium LMS Environment</span>
+                            <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight" id="dash-welcome-title">Welcome back, Scholar!</h2>
+                            <p class="text-white/80 text-sm md:text-base">Your daily structured curriculum matrix remains open. Assignments must be routed before the 10:00 PM network freeze.</p>
+                        </div>
+                        <i data-lucide="sparkles" class="absolute right-6 bottom-4 w-32 h-32 text-white/5 pointer-events-none"></i>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
+                            <div class="p-3 bg-red-100 text-brand-red rounded-xl"><i data-lucide="zap" class="w-6 h-6"></i></div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Current Streak</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-current-streak">0 Days</h3>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
+                            <div class="p-3 bg-amber-100 text-amber-600 rounded-xl"><i data-lucide="trophy" class="w-6 h-6"></i></div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Longest Streak</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-longest-streak">0 Days</h3>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
+                            <div class="p-3 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="calendar" class="w-6 h-6"></i></div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Active Students</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-attendance-rate">0%</h3>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
+                            <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i data-lucide="clock" class="w-6 h-6"></i></div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Active Time (Today)</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-study-hours">0 mins</h3>
+                            </div>
+                        </div>
+                    </div>
+  
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center justify-between">
+                                    <span>Enrolled Academic Tracks</span>
+                                    <span class="text-xs font-semibold text-brand-red bg-red-50 px-2.5 py-1 rounded-full" id="dash-course-progress-badge">Select a course</span>
+                                </h3>
+                                <!-- DYNAMIC COURSES LIST INJECTED HERE -->
+                                <div id="dynamic-courses-list" class="space-y-3">
+                                    <p class="text-sm text-gray-500 text-center py-4">Loading your courses...</p>
+                                </div>
+                                <div class="mt-4 hidden" id="course-progress-wrapper">
+                                    <div class="w-full bg-gray-100 rounded-full h-2">
+                                        <div id="dash-progress-bar-fill" class="bg-brand-red h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="bg-white p-6 rounded-2xl border border-brand-red/30 shadow-lg">
+                                <h3 class="text-base font-bold text-gray-800 flex items-center space-x-2 mb-3">
+                                    <i data-lucide="clock" class="text-brand-red w-5 h-5"></i><span>Assignment Gate Engine</span>
+                                </h3>
+                                <div class="bg-red-50 border border-red-100 rounded-xl p-4 text-center">
+                                    <p class="text-xs text-red-600 font-medium mb-1">Static Daily Closing Parameter</p>
+                                    <div class="text-2xl font-black text-brand-red tracking-tight">10:00 PM SHARP</div>
+                                    <div id="assignment-countdown" class="text-xs text-gray-500 font-mono mt-1 font-semibold">--:--:-- Left</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
+                                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider">System Credentials</h3>
+                                <div class="text-xs space-y-2 text-gray-600 border-t border-gray-50 pt-2">
+                                    <div class="flex justify-between"><span>Database Student Identification:</span><span class="font-mono font-bold text-gray-800" id="meta-student-id">--</span></div>
+                                </div>
+                                <div id="certificate-delivery-wrapper" class="pt-2">
+                                    <button id="download-cert-btn" disabled class="w-full py-2 bg-gray-100 text-gray-400 font-bold text-xs rounded-xl cursor-not-allowed">Certificate Locked (Complete Course)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="profile-completion-view" class="view-layer page-layer hidden-layer p-6 md:p-8 space-y-6">
+                    <div class="max-w-4xl mx-auto bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
+                        <div class="flex items-center gap-6 mb-8 pb-8 border-b border-gray-100">
+                            <div class="relative group">
+                                <div class="w-24 h-24 rounded-full border-4 border-gray-50 shadow-inner overflow-hidden">
+                                    <img id="prof-avatar-preview" src="https://ui-avatars.com/api/?name=Student&background=DC2626&color=fff" class="w-full h-full object-cover">
+                                </div>
+                                <label class="absolute bottom-0 right-0 p-2 bg-brand-red text-white rounded-full cursor-pointer shadow-lg hover:scale-105 transition-transform">
+                                    <i data-lucide="camera" class="w-4 h-4"></i>
+                                    <input type="file" id="prof-avatar-input" class="hidden" onchange="handleAvatarSelect(event)">
+                                </label>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-black text-gray-900">Personal Identity</h2>
+                                <p class="text-sm text-gray-500">Manage your account information and profile display.</p>
+                            </div>
+                        </div>
+
+                        <form id="profile-form" onsubmit="saveUserProfileDataState(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Full Name *</label><input type="text" id="prof-fullname" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
+                            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Father's Name *</label><input type="text" id="prof-fathername" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
+                            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Mobile Number *</label><input type="text" id="prof-mobile" placeholder="03XXXXXXXXX" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
+                            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">City *</label><input type="text" id="prof-city" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
+                            <div class="sm:col-span-2 space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Complete Address *</label><input type="text" id="prof-address" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:ring-2 focus:ring-red-500 outline-none" required></div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Gender *</label>
+                                <select id="prof-gender" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1"><label class="text-xs font-bold text-gray-500 uppercase">Date of Birth *</label><input type="date" id="prof-dob" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required></div>
+                            <div class="sm:col-span-2 space-y-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Education Level *</label>
+                                <select id="prof-education" class="w-full p-2.5 bg-gray-50 border border-gray-200 text-sm rounded-xl" required>
+                                    <option value="Matric">Matric</option>
+                                    <option value="Intermediate">Intermediate (F.Sc / FA / ICS / Inter)</option>
+                                    <option value="Bachelors">Bachelors</option>
+                                    <option value="Masters">Masters</option>
+                                </select>
+                            </div>
+                            <div class="sm:col-span-2 pt-2">
+                                <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-hover text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow transition-all">Save Profile Data Securely</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-[calc(100vh-140px)] flex flex-col">
+                        <h2 class="text-lg font-bold text-gray-800 border-b border-gray-100 pb-3 flex items-center space-x-2"><i data-lucide="history" class="text-brand-red w-5 h-5"></i><span>Activity History (Real-Time)</span></h2>
+                        <p class="text-xs text-gray-500 mt-2">Your daily active time spent learning on Education Point.</p>
+                        <div id="activity-history-list" class="flex-1 overflow-y-auto custom-scrollbar mt-4 space-y-3"></div>
+                    </div>
+                </section>
+
+                <section id="classroom-portal" class="view-layer page-layer hidden-layer space-y-6">
+                    <div class="flex flex-col xl:flex-row gap-6">
+                        <div class="flex-1 space-y-4">
+                            <div class="bg-black rounded-2xl overflow-hidden shadow-xl w-full relative border-4 border-white pb-[56.25%]"> 
+                                <iframe id="gdrive-video-player" class="absolute top-0 left-0 w-full h-full bg-neutral-900" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+                            </div>
+                            
+                            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+                                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                                    <div class="space-y-1">
+                                        <h2 id="player-lesson-title" class="text-xl font-bold tracking-tight text-gray-900">Select Scheduled Module Node</h2>
+                                        <span id="player-duration-badge" class="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full whitespace-nowrap">Est. Duration: -- mins</span>
+                                    </div>
+                                    <a id="drive-fullscreen-btn" href="#" target="_blank" 
+                                        class="shrink-0 hidden px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-2xl text-xs font-bold shadow-lg shadow-red-500/20 flex items-center space-x-2 transition-all duration-300 transform hover:scale-[1.02] border border-white/10 backdrop-blur-sm">
+                                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                                        <span class="tracking-wide">Watch Full Video in Drive</span>
+                                    </a>
+                                </div>
+                                <p id="player-lesson-desc" class="text-sm text-gray-500 leading-relaxed">Launch an engineering stream sequence parameter from the right matrix map vector tree.</p>
+                                
+                                <div class="pt-2 border-t border-gray-100">
+                                    <div class="flex justify-between text-xs font-semibold text-gray-500 mb-1">
+                                        <span>Video Watch Validation Audit</span>
+                                        <span id="lesson-watch-percentage-text">0% Stream Checked</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-2">
+                                        <div id="lesson-watch-progress-bar" class="bg-emerald-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="assignment-gate-container" class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
+                                <h3 class="text-base font-bold text-gray-800 flex items-center space-x-2">
+                                    <i data-lucide="file-check" class="text-brand-red w-5 h-5"></i><span>Daily Secure Assignment Gateway</span>
+                                </h3>
+                                <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
+                                    اپ کے پاس رات 10:00 بجے تک اسائنمنٹ جمع کروانے کا وقت ہے۔ ویڈیو مکمل دیکھیں تاکہ اسائنمنٹ سبمیشن کا لنک اوپن ہو سکے۔ (Watch video to 90%+ to unlock submission).
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-full xl:w-80 bg-white rounded-2xl border border-gray-200 shadow-sm p-4 h-auto xl:h-[calc(100vh-120px)] flex flex-col">
+                            <h3 class="font-bold text-gray-800 text-base pb-3 border-b border-gray-100 flex items-center space-x-2">
+                                <i data-lucide="list-video" class="text-brand-red w-5 h-5"></i><span id="active-course-sidebar-title">Course Syllabus Node</span>
+                            </h3>
+                            <div id="classroom-lessons-stack" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 mt-3 pr-1">
+                                <p class="text-xs text-gray-500 py-4 text-center">Please select a course from the dashboard.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="leaderboard-view" class="view-layer page-layer hidden-layer p-4 md:p-8 space-y-6">
+                    <div class="relative overflow-hidden bg-gradient-to-br from-amber-500 to-amber-700 rounded-[2rem] p-8 md:p-10 text-white shadow-2xl shadow-amber-900/20">
+                        <div class="relative z-10 max-w-xl space-y-3">
+                            <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest">
+                                <i data-lucide="medal" class="w-3 h-3"></i> Elite Scholar Board
+                            </div>
+                            <h2 class="text-3xl md:text-4xl font-black tracking-tight">Top Active Scholars</h2>
+                            <p class="text-amber-100 text-sm md:text-base leading-relaxed">
+                                Celebrating the most dedicated students. Rankings are calculated based on your total active learning minutes.
+                            </p>
+                        </div>
+                        <i data-lucide="award" class="absolute -right-6 -bottom-6 w-40 h-40 text-white/10 rotate-12 pointer-events-none"></i>
+                    </div>
+
+                    <div class="max-w-4xl mx-auto bg-white rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
+                        <div class="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                            <h3 class="font-black text-gray-900 flex items-center gap-2">
+                                <i data-lucide="bar-chart-3" class="w-5 h-5 text-amber-500"></i> Real-Time Rankings
+                            </h3>
+                            <button onclick="fetchLeaderboard()" class="group px-4 py-2 bg-white border border-gray-200 hover:border-amber-500 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-amber-600 transition-all shadow-sm flex items-center gap-2">
+                                <i data-lucide="refresh-cw" class="w-3 h-3 group-hover:rotate-180 transition-transform duration-500"></i> Refresh
+                            </button>
+                        </div>
+
+                        <div id="leaderboard-list" class="divide-y divide-gray-50">
+                            <div class="p-12 text-center text-gray-400">
+                                <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                                <p class="text-sm font-bold uppercase tracking-widest text-gray-500">Syncing Network Data...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="admin-console" class="view-layer page-layer hidden-layer space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-red-200 shadow-sm">
+                        <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
+                            <h2 class="text-xl font-bold text-red-700">Super Admin Production Console</h2>
+                            <span class="px-3 py-1 bg-red-50 text-brand-red text-xs font-bold rounded-full border border-red-100 uppercase tracking-widest animate-pulse">Root Configuration Access</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs text-gray-500 font-bold uppercase">Total Registered Students</p>
+                                    <h3 class="text-2xl font-black text-gray-800" id="admin-total-students">Loading...</h3>
+                                </div>
+                                <i data-lucide="users" class="w-8 h-8 text-blue-500"></i>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-xl border border-emerald-200 flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs text-emerald-600 font-bold uppercase">Live Active Students</p>
+                                    <h3 class="text-2xl font-black text-emerald-700" id="admin-active-students">Loading...</h3>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-3 h-3 bg-emerald-500 rounded-full animate-ping"></span>
+                                    <i data-lucide="activity" class="w-8 h-8 text-emerald-500"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NEW COURSE ADDITION FORM -->
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-6">
+                            <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Create New Course Track</h3>
+                            <form id="admin-course-form" onsubmit="adminConsole.createCourse(event)" class="flex flex-col sm:flex-row gap-3">
+                                <input type="text" id="adm-new-course-title" placeholder="E.g., Web Development 101" class="flex-1 p-3 bg-white border border-gray-300 rounded-lg text-sm font-semibold outline-none focus:border-brand-red" required>
+                                <button type="submit" class="px-6 py-3 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md whitespace-nowrap">Add Course</button>
+                            </form>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-6">
+                            <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Publish New Classroom Module</h3>
+                            <form id="admin-lesson-form" onsubmit="adminConsole.createLesson(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="space-y-1 sm:col-span-2">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Select Course *</label>
+                                    <select id="adm-les-course" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
+                                        <option value="">-- Loading Courses --</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Number *</label>
+                                    <input type="number" id="adm-les-num" placeholder="e.g. 1, 2, 45" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Lesson Title *</label>
+                                    <input type="text" id="adm-les-title" placeholder="Core System Architecture" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Google Drive Video ID *</label>
+                                    <input type="text" id="adm-les-gdrive" placeholder="Extract ID from link" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-mono" required>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Est. Runtime Metrics (Seconds) *</label>
+                                    <input type="number" id="adm-les-duration" placeholder="e.g. 1800" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
+                                </div>
+                                <div class="sm:col-span-2 space-y-1">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Description Notes Context</label>
+                                    <textarea id="adm-les-desc" placeholder="Notes..." class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs" rows="3"></textarea>
+                                </div>
+                                <div class="sm:col-span-2 pt-2">
+                                    <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Publish Lecture & Notify Users</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-6">
+                            <h3 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Push Custom Real-Time Notification</h3>
+                            <form id="admin-notif-form" onsubmit="adminConsole.createNotification(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="space-y-1 sm:col-span-2">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Notification Title *</label>
+                                    <input type="text" id="adm-notif-title" placeholder="Important Update / Announcement" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-semibold" required>
+                                </div>
+                                <div class="space-y-1 sm:col-span-2">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Message Body *</label>
+                                    <textarea id="adm-notif-message" placeholder="Type notification details here..." class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs" rows="2" required></textarea>
+                                </div>
+                                <div class="space-y-1 sm:col-span-2">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase">Image URL (Optional Thumbnail)</label>
+                                    <input type="url" id="adm-notif-image" placeholder="https://example.com/image.png" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-xs font-mono">
+                                </div>
+                                <div class="sm:col-span-2 pt-2">
+                                    <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-hover text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Send Notification Broadcast</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="assignment-modal" class="fixed inset-0 z-[10000] bg-black/60 hidden-layer flex items-center justify-center backdrop-blur-sm transition-opacity duration-300 page-layer">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 transform transition-all shadow-2xl border border-gray-200">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="file-check" class="text-brand-red w-5 h-5"></i> Assignment Task Details</h3>
+                <button onclick="closeAssignmentModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-4 bg-red-50 text-red-900 rounded-xl text-sm leading-relaxed border border-red-100">
+                جو بھی آج تک آپ نے ٹاسک کمپلیٹ کیا ہے، اس کو آپ نے ڈاکومنٹ کی فارم میں <strong class="font-black text-brand-red text-base tracking-wide">محمد رضوان</strong> کو سبمٹ کروانا ہے۔
+            </div>
+            <div class="flex gap-3 pt-2">
+                <a id="wa-submit-btn" href="#" target="_blank" class="flex-1 text-center py-3 bg-brand-red hover:bg-brand-hover text-white font-bold text-sm rounded-xl shadow-lg transition-all" onclick="closeAssignmentModal()">Submit Document Now</a>
+                <button onclick="closeAssignmentModal()" class="px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm rounded-xl transition-all">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="auth-shield-container" class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-red-50 to-neutral-100 p-4 hidden-layer page-layer">
+        <div class="w-full max-w-md bg-white rounded-3xl border border-gray-200 shadow-2xl p-6 md:p-8 space-y-6">
+            <div class="text-center space-y-2">
+                <div class="inline-flex p-3 bg-red-50 text-brand-red rounded-2xl border border-red-100"><i data-lucide="shield-check" class="w-8 h-8"></i></div>
+                <h2 class="text-2xl font-black tracking-tight text-gray-900">Education Point LMS</h2>
+                <p class="text-xs text-gray-400">Authenticated Enterprise Identity Gateway Terminal</p>
+            </div>
+            <form id="auth-form" onsubmit="appAuth.handlePrimarySubmission(event)" class="space-y-4">
+                <div class="space-y-1">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Network Email Identification</label>
+                    <input type="email" id="auth-email" class="w-full p-3 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:border-brand-red focus:bg-white outline-none transition-all" placeholder="name@domain.com" required>
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Secure Encryption Passphrase</label>
+                    <input type="password" id="auth-password" class="w-full p-3 bg-gray-50 border border-gray-200 text-sm rounded-xl focus:border-brand-red focus:bg-white outline-none transition-all" placeholder="••••••••••••" required>
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-brand-red hover:bg-brand-hover text-white font-bold text-sm tracking-wide rounded-xl shadow-lg transition-all">
+                    Authenticate Identity Stream Block
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- HIGH SECURITY ANTI-DEBUGER & ANTI-COPY SCRIPT ---
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && ['c', 'v', 'u', 's', 'p'].includes(e.key.toLowerCase())) { e.preventDefault(); }
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J'))) { e.preventDefault(); }
+        });
+
+        setInterval(function() {
+            const before = new Date().getTime();
+            debugger;
+            const after = new Date().getTime();
+            if (after - before > 100) {
+                document.body.innerHTML = '<div style="height:100vh; display:flex; justify-content:center; align-items:center; background:black; color:red; font-family:sans-serif; font-size:1.5rem; font-weight:bold;">Security Breach Detected. Access Denied.</div>';
+                window.location.reload();
+            }
+        }, 1500);
+
+        // --- 1. CONFIGURATION SYSTEM ENGINES STACK MAP ---
+        const SUPABASE_URL = "https://sulgxyktyvngazgodvxf.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_WXhdCUvVr1TNQhv9_24MBQ_0wdXy-VB";
+        
+        let supabaseClientInstance = null;
+        try {
+            if (typeof supabase !== 'undefined' && supabase.createClient) {
+                supabaseClientInstance = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch(err) { console.error("Client Init Interruption:", err); }
+
+        let globalState = {
+            sessionUser: null,
+            profileData: null,
+            courses: [],
+            lessonsCollection: [],
+            progressMatrix: [],
+            notifications: [],
+            activeCourseId: null,
+            activeCourseTitle: null
+        };
+        let todayActiveMinutes = 0;
+        let loginTimeRecorded = false;
+
+        // --- TOAST NOTIFICATION ENGINE ---
+        function triggerToastNotification(message, isSuccess = true) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `px-6 py-4 rounded-xl shadow-2xl transform transition-all duration-300 translate-y-[-20px] opacity-0 flex items-center space-x-3 pointer-events-auto border-l-4 ${isSuccess ? 'bg-white border-emerald-500 text-gray-800' : 'bg-white border-brand-red text-gray-800'}`;
+            
+            toast.innerHTML = `
+                <div class="p-2 rounded-full ${isSuccess ? 'bg-emerald-50 text-emerald-500' : 'bg-red-50 text-brand-red'}">
+                    <i data-lucide="${isSuccess ? 'bell-ring' : 'alert-circle'}" class="w-5 h-5"></i>
+                </div>
+                <span class="font-bold text-sm">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            if (typeof lucide !== 'undefined') lucide.createIcons({root: toast});
+            
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-20px]', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // --- 2. LIFE-CYCLE PIPELINE LOADER BOOTSTRAPS ---
+        document.addEventListener("DOMContentLoaded", async () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            runClockEngine();
+            await evaluateSessionContextState();
+            startRealTimeActivityTracker(); 
+            initRealTimeSubscriptions();
+            
+            window.history.replaceState({ viewId: 'student-dashboard' }, '');
+
+            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
+        });
+
+        // --- ADVANCED BACK NAVIGATION SHIELD ---
+        window.addEventListener('popstate', function (event) {
+            if (event.state && event.state.viewId) {
+                executeViewSwitchLogic(event.state.viewId, false);
+            } else {
+                executeViewSwitchLogic('student-dashboard', false);
+            }
+        });
+
+        function initRealTimeSubscriptions() {
+            if (!supabaseClientInstance) return;
+            
+            supabaseClientInstance
+                .channel('public:lessons')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'lessons' }, payload => {
+                    if (globalState.activeCourseId && payload.new.course_id === globalState.activeCourseId) {
+                        syncClassroomSyllabusEngine();
+                    } 
+                })
+                .subscribe();
+
+            supabaseClientInstance
+                .channel('public:notifications')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
+                    const n = payload.new;
+                    if(!n.user_id || (globalState.sessionUser && n.user_id === globalState.sessionUser.id)) {
+                        triggerToastNotification(n.title || "New Notification Received");
+                        fetchNotifications(); 
+                        
+                        if ("Notification" in window && Notification.permission === "granted") {
+                            new Notification(n.title || "Education Point Update", {
+                                body: n.message,
+                                icon: n.image_url || "https://i.ibb.co/d44ds7rw/1783870808728.png"
+                            });
+                        }
+                    }
+                })
+                .subscribe();
+        }
+
+        async function evaluateSessionContextState() {
+            try {
+                if (!supabaseClientInstance) return;
+                const { data: { session }, error } = await supabaseClientInstance.auth.getSession();
+                if (session) {
+                    globalState.sessionUser = session.user;
+                    await pullProfileContextAndInitialize(session.user.id);
+                    recordLoginTime();
+                } else {
+                    displayScreenLayer("auth-shield-container");
+                }
+            } catch (err) {
+                displayScreenLayer("auth-shield-container");
+            } finally {
+                const loader = document.getElementById("global-loader");
+                if (loader) loader.classList.add("hidden");
+            }
+        }
+
+        function recordLoginTime() {
+            if(!loginTimeRecorded) {
+                console.log("User logged in at: " + new Date().toLocaleTimeString());
+                loginTimeRecorded = true;
+            }
+        }
+
+        async function fetchCourses() {
+            try {
+                const { data, error } = await supabaseClientInstance.from('courses').select('*').order('created_at', { ascending: true });
+                if (error) throw error;
+                globalState.courses = data || [];
+                renderDashboardCourses();
+                renderAdminCourseDropdown();
+            } catch (err) {
+                console.error("Error fetching courses:", err);
+            }
+        }
+
+        function renderDashboardCourses() {
+            const container = document.getElementById("dynamic-courses-list");
+            if (!container) return;
+
+            if (globalState.courses.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">No courses available at the moment.</p>`;
+                return;
+            }
+
+            container.innerHTML = globalState.courses.map(course => `
+                <div class="border border-gray-100 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white shadow-sm hover:border-brand-red transition-all cursor-pointer">
+                    <div class="space-y-1">
+                        <h4 class="font-bold text-gray-800 text-base">💻 ${course.title}</h4>
+                        <p class="text-xs text-gray-400">Enterprise structured modules & assignments.</p>
+                    </div>
+                    <button onclick="launchCourse('${course.id}', '${course.title.replace(/'/g, "\\'")}')" class="w-full md:w-auto px-5 py-2.5 bg-brand-red hover:bg-brand-hover text-white rounded-xl text-xs font-bold shadow transition-all">Launch Player Terminal</button>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminCourseDropdown() {
+            const selectEl = document.getElementById('adm-les-course');
+            if(!selectEl) return;
+            selectEl.innerHTML = `<option value="">-- Select Course --</option>` + 
+                globalState.courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+        }
+
+        async function launchCourse(courseId, courseTitle) {
+            globalState.activeCourseId = courseId;
+            globalState.activeCourseTitle = courseTitle;
+            
+            document.getElementById('active-course-sidebar-title').textContent = courseTitle;
+            
+            await syncClassroomSyllabusEngine();
+            switchView('classroom-portal');
+        }
+
+        async function pullProfileContextAndInitialize(uid) {
+            try {
+                let { data: profile, error } = await supabaseClientInstance.from('profiles').select('*').eq('id', uid).maybeSingle();
+                if (!profile) {
+                    const { data: seededProfile } = await supabaseClientInstance.from('profiles').insert([{
+                        id: uid, full_name: "Premium Scholar Student", email: globalState.sessionUser.email, role: "student"
+                    }]).select().single();
+                    profile = seededProfile;
+                }
+
+                globalState.profileData = profile;
+                syncProfileUILayoutRepresentations();
+                populateProfileInputsUIFields();
+                await fetchCourses(); 
+                await fetchActivityHistory();
+                await calculateAndDisplayStreak();
+                await fetchNotifications(); 
+                await fetchLeaderboard();
+                
+                if(profile.role === 'super_admin') {
+                    updateAdminDashboard(); 
+                }
+
+                displayScreenLayer("app-container");
+                switchView("student-dashboard");
+            } catch(err) {
+                displayScreenLayer("auth-shield-container");
+            }
+        }
+
+        function populateProfileInputsUIFields() {
+            if (!globalState.profileData) return;
+            const fields = ["prof-fullname", "prof-fathername", "prof-mobile", "prof-city", "prof-address", "prof-gender", "prof-dob", "prof-education"];
+            const keys = ["full_name", "father_name", "mobile_number", "city", "complete_address", "gender", "date_of_birth", "education_level"];
+            fields.forEach((fid, idx) => {
+                const el = document.getElementById(fid);
+                if(el) el.value = globalState.profileData[keys[idx]] || "";
+            });
+            
+            if(globalState.profileData.avatar_url) {
+                document.getElementById('prof-avatar-preview').src = globalState.profileData.avatar_url;
+                document.getElementById('sb-avatar').src = globalState.profileData.avatar_url;
+            }
+        }
+
+        async function saveUserProfileDataState(e) {
+            e.preventDefault();
+            if (!globalState.sessionUser) return;
+            try {
+                const { error } = await supabaseClientInstance.from('profiles').update({
+                    full_name: document.getElementById("prof-fullname").value.trim(),
+                    father_name: document.getElementById("prof-fathername").value.trim(),
+                    mobile_number: document.getElementById("prof-mobile").value.trim(),
+                    city: document.getElementById("prof-city").value.trim(),
+                    complete_address: document.getElementById("prof-address").value.trim(),
+                    gender: document.getElementById("prof-gender").value,
+                    date_of_birth: document.getElementById("prof-dob").value,
+                    education_level: document.getElementById("prof-education").value
+                }).eq('id', globalState.sessionUser.id);
+
+                if (error) throw error;
+                triggerToastNotification("پروفائل کامیابی سے سیو ہو گئی ہے!");
+                await pullProfileContextAndInitialize(globalState.sessionUser.id);
+            } catch(err) { alert("Error: " + err.message); }
+        }
+
+        async function handleAvatarSelect(e) {
+            const file = e.target.files[0];
+            if(!file || !globalState.sessionUser) return;
+            try {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${globalState.sessionUser.id}-${Math.random()}.${fileExt}`;
+                const filePath = `avatars/${fileName}`;
+                
+                let { error: uploadError } = await supabaseClientInstance.storage.from('avatars').upload(filePath, file);
+                if (uploadError) throw uploadError;
+
+                const { data } = supabaseClientInstance.storage.from('avatars').getPublicUrl(filePath);
+                
+                await supabaseClientInstance.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', globalState.sessionUser.id);
+                document.getElementById('prof-avatar-preview').src = data.publicUrl;
+                document.getElementById('sb-avatar').src = data.publicUrl;
+                triggerToastNotification("تصویر اپڈیٹ ہو گئی!");
+            } catch (error) {
+                console.error("Avatar error:", error);
+            }
+        }
+
+        function displayScreenLayer(targetId) {
+            ["global-loader", "app-container", "auth-shield-container"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add("hidden-layer");
+            });
+            const target = document.getElementById(targetId);
+            if (target) target.classList.remove("hidden-layer");
+        }
+
+        function toggleMobileSidebar() {
+            const sb = document.getElementById("main-sidebar");
+            if (sb) sb.classList.toggle("-translate-x-full");
+        }
+
+        function switchView(viewId) {
+            executeViewSwitchLogic(viewId, true);
+        }
+
+        function executeViewSwitchLogic(viewId, shouldPushState = true) {
+            const sb = document.getElementById("main-sidebar");
+            if (sb && !sb.classList.contains("-translate-x-full")) {
+                sb.classList.add("-translate-x-full");
+            }
+
+            document.querySelectorAll(".view-layer").forEach(layer => layer.classList.add("hidden-layer"));
+            
+            const target = document.getElementById(viewId);
+            if (target) target.classList.remove("hidden-layer");
+
+            const footer = document.getElementById('main-footer');
+            if (footer) {
+                footer.style.display = (viewId === 'student-dashboard') ? 'block' : 'none';
+            }
+
+            if(viewId === 'leaderboard-view') {
+                fetchLeaderboard();
+            }
+
+            if (shouldPushState) {
+                window.history.pushState({ viewId: viewId }, '');
+            }
+        }
+        
+        function syncProfileUILayoutRepresentations() {
+            if(!globalState.profileData) return;
+            if(document.getElementById("sb-username")) document.getElementById("sb-username").textContent = globalState.profileData.full_name;
+            if(document.getElementById("sb-role")) document.getElementById("sb-role").textContent = globalState.profileData.role;
+            if(document.getElementById("meta-student-id")) document.getElementById("meta-student-id").textContent = globalState.profileData.id.substring(0,8).toUpperCase();
+            
+            const adminNav = document.getElementById("admin-nav-item");
+            if(globalState.profileData.role === 'super_admin' && adminNav) adminNav.classList.remove("hidden");
+        }
+
+        const appAuth = {
+            handlePrimarySubmission: async (e) => {
+                e.preventDefault();
+                const email = document.getElementById("auth-email").value.trim();
+                const password = document.getElementById("auth-password").value;
+                try {
+                    const { data, error } = await supabaseClientInstance.auth.signInWithPassword({ email, password });
+                    if (error) {
+                        const { data: upData, error: upErr } = await supabaseClientInstance.auth.signUp({ email, password });
+                        if (upData) { alert("اکاؤنٹ بن گیا ہے! اب دوبارہ لاگ ان کریں۔"); location.reload(); }
+                    } else if(data.user) {
+                        globalState.sessionUser = data.user;
+                        await pullProfileContextAndInitialize(data.user.id);
+                    }
+                } catch(err) { alert(err.message); }
+            },
+            logout: async () => {
+                await supabaseClientInstance.auth.signOut();
+                location.reload();
+            }
+        };
+
+        async function fetchNotifications() {
+            try {
+                const { data } = await supabaseClientInstance
+                    .from('notifications')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+                
+                globalState.notifications = data || [];
+                renderNotificationsUI();
+            } catch (err) {
+                console.error("Notifications Fetch Error:", err);
+            }
+        }
+
+        function renderNotificationsUI() {
+            const list = document.getElementById('notif-list');
+            const badges = document.querySelectorAll('.notif-badge-indicator');
+            if(!list) return;
+            
+            let readNotifs = JSON.parse(localStorage.getItem('read_notifs_all') || '[]');
+            let unreadCount = 0;
+            
+            list.innerHTML = globalState.notifications.map(n => {
+                const isRead = readNotifs.includes(n.id);
+                if(!isRead) unreadCount++;
+                
+                let titleHtml = n.title ? `<h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">${n.title}</h4>` : `<h4 class="font-bold text-xs ${isRead ? '' : 'text-brand-red'}">Platform Update</h4>`;
+                let imageHtml = n.image_url ? `<div class="mt-2 ml-6 rounded-lg overflow-hidden border border-gray-200"><img src="${n.image_url}" class="w-full h-auto object-cover max-h-32"></div>` : '';
+
+                return `
+                    <div class="p-3 mb-2 rounded-xl ${isRead ? 'bg-white text-gray-500' : 'bg-red-50 text-gray-900 border border-red-100'} transition-colors shadow-sm">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i data-lucide="${isRead ? 'check-circle' : 'bell-ring'}" class="w-4 h-4 ${isRead ? 'text-gray-400' : 'text-brand-red'} shrink-0"></i>
+                            ${titleHtml}
+                        </div>
+                        <p class="text-xs leading-relaxed ml-6">${n.message || ''}</p>
+                        ${imageHtml}
+                    </div>
+                `;
+            }).join('') || '<p class="text-xs text-gray-400 p-4 text-center">No notifications yet.</p>';
+            
+            badges.forEach(badge => {
+                if(unreadCount > 0) badge.classList.remove('hidden-layer');
+                else badge.classList.add('hidden-layer');
+            });
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notification-panel');
+            panel.classList.toggle('hidden-layer');
+            if(!panel.classList.contains('hidden-layer')) {
+                fetchNotifications();
+            }
+        }
+
+        function markAllNotificationsRead() {
+            if(globalState.notifications.length === 0) return;
+            const ids = globalState.notifications.map(n => n.id);
+            localStorage.setItem('read_notifs_all', JSON.stringify(ids));
+            renderNotificationsUI();
+        }
+
+        async function fetchLeaderboard() {
+            try {
+                const { data: profiles, error: profileErr } = await supabaseClientInstance
+                    .from('profiles')
+                    .select('id, full_name, avatar_url');
+                
+                const { data: activity, error: actErr } = await supabaseClientInstance
+                    .from('daily_activity')
+                    .select('student_id, active_minutes, last_seen');
+                
+                if (profileErr || actErr) throw new Error("Could not fetch leaderboard data.");
+                
+                let aggregatedActivity = {};
+                activity.forEach(act => {
+                    if(!aggregatedActivity[act.student_id]) aggregatedActivity[act.student_id] = { mins: 0, last_seen: null };
+                    aggregatedActivity[act.student_id].mins += act.active_minutes || 0;
+                    
+                    if(!aggregatedActivity[act.student_id].last_seen || new Date(act.last_seen) > new Date(aggregatedActivity[act.student_id].last_seen)) {
+                        aggregatedActivity[act.student_id].last_seen = act.last_seen;
+                    }
+                });
+
+                let leaderboard = profiles
+                    .map(p => {
+                        const acts = aggregatedActivity[p.id] || { mins: 0, last_seen: null };
+                        let isOnline = false;
+                        if(acts.last_seen) {
+                            const diffMins = (new Date() - new Date(acts.last_seen)) / 60000;
+                            if(diffMins <= 5) isOnline = true; 
+                        }
+                        return { ...p, total_minutes: acts.mins, isOnline };
+                    })
+                    .filter(p => p.total_minutes > 0)
+                    .sort((a, b) => b.total_minutes - a.total_minutes)
+                    .slice(0, 10);
+                  
+                const list = document.getElementById('leaderboard-list');
+                if(!list) return;
+
+                if(leaderboard.length === 0) {
+                    list.innerHTML = '<div class="p-8 text-center text-gray-400">No activity recorded yet. Start learning to get on the board!</div>';
+                    return;
+                }
+
+                list.innerHTML = leaderboard.map((user, idx) => {
+                    let rankVisual = '';
+                    if(idx === 0) rankVisual = '<div class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-500 text-white flex items-center justify-center font-black text-lg shadow-lg border-2 border-yellow-200">1</div>';
+                    else if(idx === 1) rankVisual = '<div class="w-9 h-9 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 text-white flex items-center justify-center font-bold text-base shadow-md border-2 border-gray-200">2</div>';
+                    else if(idx === 2) rankVisual = '<div class="w-9 h-9 rounded-full bg-gradient-to-br from-orange-300 to-orange-500 text-white flex items-center justify-center font-bold text-base shadow-md border-2 border-orange-200">3</div>';
+                    else rankVisual = `<div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center font-bold text-sm text-gray-500 border border-gray-200">${idx + 1}</div>`;
+
+                    const isMe = globalState.sessionUser && user.id === globalState.sessionUser.id;
+                    
+                    const statusDot = user.isOnline 
+                        ? `<span class="flex h-2.5 w-2.5 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span></span>`
+                        : `<span class="h-2.5 w-2.5 rounded-full bg-gray-300"></span>`;
+                    const statusText = user.isOnline 
+                        ? `<span class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest ml-1.5">Online</span>`
+                        : `<span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest ml-1.5">Offline</span>`;
+
+                    return `
+                        <div class="flex items-center p-4 hover:bg-red-50/50 transition-colors ${isMe ? 'bg-red-50/30' : ''}">
+                            <div class="w-16 text-center flex justify-center">${rankVisual}</div>
+                            <div class="ml-2 flex items-center gap-4 flex-1">
+                                <div class="relative">
+                                    <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=User&background=DC2626&color=fff'}" class="w-12 h-12 rounded-full object-cover border-2 ${isMe ? 'border-brand-red shadow-md' : 'border-gray-200'}">
+                                    <div class="absolute bottom-0 right-0 border border-white rounded-full bg-white flex items-center justify-center">
+                                        ${statusDot}
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-gray-800 text-sm uppercase block flex items-center gap-2">
+                                        ${user.full_name || 'Anonymous Student'}
+                                        ${isMe ? '<span class="px-2 py-0.5 bg-brand-red text-white text-[9px] rounded-full tracking-widest uppercase">You</span>' : ''}
+                                    </span>
+                                    <span class="flex items-center mt-0.5">${statusText}</span>
+                                </div>
+                            </div>
+                            <div class="text-right pr-4">
+                                <span class="text-brand-red font-black text-xl tracking-tight">${user.total_minutes}</span>
+                                <span class="text-[10px] text-gray-500 block uppercase font-bold tracking-widest">Active Mins</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (err) {
+                console.error("Leaderboard generation failed:", err);
+            }
+        }
+
+        async function syncClassroomSyllabusEngine() {
+            if(!globalState.activeCourseId) return;
+
+            try {
+                let { data: lessons, error: lessonError } = await supabaseClientInstance
+                    .from('lessons')
+                    .select('*')
+                    .eq('course_id', globalState.activeCourseId)
+                    .order('lesson_number', { ascending: true });
+
+                if (lessonError) throw lessonError;
+                globalState.lessonsCollection = lessons || [];
+
+                if(globalState.sessionUser) {
+                    let { data: progress, error: progError } = await supabaseClientInstance
+                        .from('lesson_progress')
+                        .select('*')
+                        .eq('student_id', globalState.sessionUser.id);
+                    
+                    globalState.progressMatrix = progress || [];
+                }
+                
+                renderClassroomSyllabusTreeLayout();
+                await evaluateAnalyticsAggregatesMetricsContainers(); 
+                        
+            } catch(e) { 
+                console.error("Critical System Error:", e);
+            }
+        } 
+        
+        function renderClassroomSyllabusTreeLayout() {
+            const container = document.getElementById("classroom-lessons-stack");
+            if(!container) return;
+            container.innerHTML = "";
+
+            if(globalState.lessonsCollection.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-8">کوئی لیسن ابھی تک اپلوڈ نہیں ہوا۔</p>`;
+                return;
+            }
+
+            let sequentialGateUnlocked = true;
+            globalState.lessonsCollection.forEach((lesson) => {
+                const log = globalState.progressMatrix.find(p => p.lesson_id === lesson.id);
+                const isCompleted = log ? log.is_completed : false;
+                const activeLockedState = !sequentialGateUnlocked;
+
+                const btn = document.createElement("button");
+                btn.disabled = activeLockedState;
+                btn.className = `w-full text-left p-3.5 rounded-xl border transition-all flex items-center justify-between gap-2 ${
+                    activeLockedState ? 'bg-gray-50 border-gray-200 opacity-50 cursor-not-allowed' :
+                    isCompleted ? 'bg-emerald-50/60 border-emerald-200 hover:bg-emerald-50' : 'bg-white border-gray-200 hover:border-brand-red'
+                }`;
+
+                btn.onclick = () => mountActiveLessonToStagePlayer(lesson, log);
+                btn.innerHTML = `
+                    <div class="overflow-hidden space-y-0.5">
+                        <span class="block text-[10px] font-bold tracking-widest uppercase ${isCompleted ? 'text-emerald-600' : 'text-brand-red'}">Module ${lesson.lesson_number}</span>
+                        <h4 class="font-bold text-xs text-gray-800 truncate">${lesson.title}</h4>
+                    </div>
+                    <div><i data-lucide="${activeLockedState ? 'lock' : isCompleted ? 'check-circle' : 'play-circle'}" class="w-4 h-4"></i></div>
+                `;
+                container.appendChild(btn);
+                if(!isCompleted) sequentialGateUnlocked = false;
+            });
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function mountActiveLessonToStagePlayer(lesson, logContainer) {
+            document.getElementById("player-lesson-title").textContent = `Lesson ${lesson.lesson_number}: ${lesson.title}`;
+            document.getElementById("player-lesson-desc").textContent = lesson.description || "";
+            document.getElementById("player-duration-badge").textContent = `Est. Duration: ${Math.round(lesson.estimated_duration / 60)} mins`;
+            
+            const driveBtn = document.getElementById("drive-fullscreen-btn");
+            if(driveBtn) {
+                driveBtn.classList.remove("hidden");
+                driveBtn.href = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/view`;
+            }
+
+            const videoFrame = document.getElementById("gdrive-video-player");
+            if (videoFrame) videoFrame.src = `https://drive.google.com/file/d/${lesson.google_drive_video_id}/preview`;
+
+            const percentage = logContainer ? logContainer.watch_percentage : 0;
+            updateWatchProgressBarUIState(percentage);
+
+            const gateContainer = document.getElementById("assignment-gate-container");
+            if(gateContainer) {
+                gateContainer.innerHTML = `
+                    <div class="p-5 border border-emerald-200 bg-emerald-50/50 rounded-2xl space-y-3">
+                        <div class="flex items-center space-x-2 text-emerald-800"><i data-lucide="check-circle" class="w-5 h-5"></i><span class="font-bold text-sm">Assignment Gateway</span></div>
+                        <p class="text-xs text-gray-600">ویڈیو مکمل دیکھنے کے بعد نیچے بٹن سے اسائنمنٹ سبمٹ کروانے کا پاپ اپ ان لاک کریں۔</p>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <button onclick="showAssignmentPopup('${lesson.lesson_number}')" class="px-5 py-2.5 bg-brand-red hover:bg-brand-hover text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-2"><i data-lucide="upload-cloud" class="w-4 h-4"></i> Submit Complete Task</button>
+                            <button onclick="unlockAssignmentManually('${lesson.id}')" class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl shadow-sm transition-all border border-gray-200">Mark Completed Internally</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            logLectureActivity(lesson.title);
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function showAssignmentPopup(lessonNumber) {
+            const modal = document.getElementById('assignment-modal');
+            const waBtn = document.getElementById('wa-submit-btn');
+            waBtn.href = `https://wa.me/923314220506?text=Hello,%20Here%20is%20my%20completed%20document%20for%20Lesson%20${lessonNumber}%20submission.`;
+            
+            modal.classList.remove('hidden-layer');
+            setTimeout(() => {
+                modal.classList.add('opacity-100');
+            }, 10);
+        }
+
+        function closeAssignmentModal() {
+            const modal = document.getElementById('assignment-modal');
+            modal.classList.remove('opacity-100');
+            setTimeout(() => {
+                modal.classList.add('hidden-layer');
+            }, 300);
+        }
+
+        function updateWatchProgressBarUIState(pct) {
+            const bar = document.getElementById("lesson-watch-progress-bar");
+            const text = document.getElementById("lesson-watch-percentage-text");
+            if(bar && text) {
+                bar.style.width = `${pct}%`;
+                text.textContent = `${pct}% Completed`;
+            }
+        }
+
+        async function evaluateAnalyticsAggregatesMetricsContainers() {
+            if (!globalState.sessionUser) return;
+            const wrapper = document.getElementById('course-progress-wrapper');
+            const badge = document.getElementById("dash-course-progress-badge");
+            const bar = document.getElementById("dash-progress-bar-fill");
+            
+            if(!globalState.activeCourseId) {
+                if(wrapper) wrapper.classList.add('hidden');
+                if(badge) badge.textContent = "Select a course";
+                return;
+            }
+
+            if(wrapper) wrapper.classList.remove('hidden');
+
+            const totalItemsCount = globalState.lessonsCollection.length;
+            const completedCount = globalState.progressMatrix.filter(p => globalState.lessonsCollection.some(l => l.id === p.lesson_id) && p.is_completed).length;
+            const completionRatio = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0;
+
+            if (badge) badge.textContent = `${completedCount}/${totalItemsCount} Modules (${globalState.activeCourseTitle})`;
+            if (bar) bar.style.width = `${completionRatio}%`;
+        }
+
+        async function calculateAndDisplayStreak() {
+            if (!globalState.sessionUser) return;
+            
+            const { data: activity, error } = await supabaseClientInstance
+                .from('daily_activity')
+                .select('date')
+                .eq('student_id', globalState.sessionUser.id)
+                .order('date', { ascending: false });
+
+            if (error || !activity || activity.length === 0) {
+                document.getElementById("stat-current-streak").textContent = "0 Days";
+                document.getElementById("stat-longest-streak").textContent = "0 Days";
+                return;
+            }
+
+            const uniqueDates = Array.from(new Set(activity.map(a => a.date)))
+                .map(dStr => new Date(dStr))
+                .sort((a, b) => b - a);
+
+            const normalizeDate = (d) => {
+                const normalized = new Date(d);
+                normalized.setHours(0, 0, 0, 0);
+                return normalized;
+            };
+
+            const today = normalizeDate(new Date());
+            const yesterday = normalizeDate(new Date());
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            let currentStreak = 0;
+            let longestStreak = 0;
+            let tempStreak = 0;
+
+            const mostRecentActiveDate = normalizeDate(uniqueDates[0]);
+            const isStreakActive = (mostRecentActiveDate.getTime() === today.getTime() || mostRecentActiveDate.getTime() === yesterday.getTime());
+
+            if (uniqueDates.length > 0) {
+                tempStreak = 1;
+                longestStreak = 1;
+
+                for (let i = 0; i < uniqueDates.length - 1; i++) {
+                    const current = normalizeDate(uniqueDates[i]);
+                    const next = normalizeDate(uniqueDates[i + 1]);
+                    
+                    const diffTime = Math.abs(current - next);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    if (diffDays === 1) {
+                        tempStreak++;
+                    } else if (diffDays > 1) {
+                        if (tempStreak > longestStreak) { longestStreak = tempStreak; }
+                        tempStreak = 1; 
+                    }
+                }
+                
+                if (tempStreak > longestStreak) { longestStreak = tempStreak; }
+                
+                if (isStreakActive) {
+                    let runningCurrentStreak = 0;
+                    let expectedDate = mostRecentActiveDate;
+
+                    for (let i = 0; i < uniqueDates.length; i++) {
+                        const checkDate = normalizeDate(uniqueDates[i]);
+                        if (checkDate.getTime() === expectedDate.getTime()) {
+                            runningCurrentStreak++;
+                            expectedDate.setDate(expectedDate.getDate() - 1);
+                        } else {
+                            break;
+                        }
+                    }
+                    currentStreak = runningCurrentStreak;
+                } else {
+                    currentStreak = 0;
+                }
+            }
+
+            const streakEl = document.getElementById("stat-current-streak");
+            const longestEl = document.getElementById("stat-longest-streak");
+            const attendanceEl = document.getElementById("stat-attendance-rate");
+
+            if (streakEl) streakEl.textContent = `${currentStreak} Day${currentStreak !== 1 ? 's' : ''}`;
+            if (longestEl) longestEl.textContent = `${longestStreak} Day${longestStreak !== 1 ? 's' : ''}`;
+            
+            if (attendanceEl) {
+                const totalDaysActive = uniqueDates.length;
+                attendanceEl.textContent = `${Math.min((totalDaysActive / 60) * 100, 100).toFixed(0)}%`;
+            }
+        }
+
+        async function fetchActivityHistory() {
+            if (!globalState.sessionUser) return;
+            let { data: history } = await supabaseClientInstance
+                .from('daily_activity')
+                .select('*')
+                .eq('student_id', globalState.sessionUser.id)
+                .order('date', { ascending: false });
+
+            const list = document.getElementById('activity-history-list');
+            if (!list) return;
+
+            list.innerHTML = history.map(h => {
+                let parsedDate = new Date(h.date).toLocaleDateString('ur-PK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                let lecturesHtml = h.lectures_watched.length > 0 
+                    ? h.lectures_watched.map(l => `<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs inline-block m-0.5">${l}</span>`).join('') 
+                    : '<span class="text-xs text-gray-400">کوئی لیکچر نہیں دیکھا گیا</span>';
+
+                return `
+                <div class="activity-card p-4 bg-white border border-gray-100 rounded-xl shadow-sm space-y-2 hover:border-brand-red transition-all">
+                    <div class="flex justify-between items-center border-b border-gray-50 pb-2">
+                        <h4 class="font-bold text-sm text-gray-800"><i data-lucide="calendar" class="w-4 h-4 inline mr-1 text-brand-red"></i> ${parsedDate}</h4>
+                        <span class="text-xs font-bold bg-red-50 text-brand-red px-2 py-1 rounded-full">${h.active_minutes} Mins Active</span>
+                    </div>
+                    <div class="pt-1">
+                        <p class="text-xs text-gray-500 font-bold uppercase mb-1">Lectures Accessed:</p>
+                        <div class="flex flex-wrap">${lecturesHtml}</div>
+                    </div>
+                </div>
+            `}).join('');
+            
+            if(history.length > 0 && history[0].date === new Date().toISOString().split('T')[0]) {
+                todayActiveMinutes = history[0].active_minutes;
+                const hrsUI = document.getElementById('stat-study-hours');
+                if(hrsUI) hrsUI.textContent = `${todayActiveMinutes} mins`;
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        async function trackActivity() {
+            if (!globalState.sessionUser) return;
+            todayActiveMinutes++; 
+            const today = new Date().toISOString().split('T')[0];
+            
+            await supabaseClientInstance.from('daily_activity').upsert({
+                student_id: globalState.sessionUser.id,
+                date: today,
+                active_minutes: todayActiveMinutes,
+                last_seen: new Date().toISOString()
+            }, { onConflict: 'student_id, date' });
+
+            const hrsUI = document.getElementById('stat-study-hours');
+            if(hrsUI) hrsUI.textContent = `${todayActiveMinutes} mins`;
+            
+            if (todayActiveMinutes % 5 === 0) fetchLeaderboard(); 
+        }
+        
+        function startRealTimeActivityTracker() { setInterval(trackActivity, 60000); }
+
+        async function logLectureActivity(lessonTitle) {
+            if (!globalState.sessionUser) return;
+            const today = new Date().toISOString().split('T')[0];
+            let timeAccessed = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            let logString = `${lessonTitle} (at ${timeAccessed})`;
+            
+            let { data: row } = await supabaseClientInstance.from('daily_activity').select('lectures_watched').eq('student_id', globalState.sessionUser.id).eq('date', today).single();
+            let list = row ? row.lectures_watched : [];
+            let alreadyWatched = list.some(l => l.includes(lessonTitle));
+
+            if (!alreadyWatched) {
+                list.push(logString);
+                await supabaseClientInstance.from('daily_activity').upsert({ student_id: globalState.sessionUser.id, date: today, lectures_watched: list }, { onConflict: 'student_id, date' });
+                fetchActivityHistory();
+            }
+        }
+        
+        async function updateAdminDashboard() {
+            try {
+                const { count: totalStudents } = await supabaseClientInstance.from('profiles').select('*', { count: 'exact', head: true });
+                const fiveMinsAgo = new Date(Date.now() - 5 * 60000).toISOString();
+                const { count: activeStudents } = await supabaseClientInstance.from('daily_activity').select('*', { count: 'exact', head: true }).gte('last_seen', fiveMinsAgo);
+
+                if(document.getElementById('admin-total-students')) document.getElementById('admin-total-students').textContent = totalStudents || 0;
+                if(document.getElementById('admin-active-students')) document.getElementById('admin-active-students').textContent = activeStudents || 0;
+            } catch (err) {}
+        }
+        setInterval(updateAdminDashboard, 30000);
+
+        const adminConsole = {
+            createCourse: async (e) => {
+                e.preventDefault();
+                const title = document.getElementById("adm-new-course-title").value.trim();
+                try {
+                    const { error } = await supabaseClientInstance.from('courses').insert([{ title }]);
+                    if (error) { alert("کورس ایڈ کرنے میں ایرر: " + error.message); }
+                    else {
+                        triggerToastNotification("کورس کامیابی سے ایڈ ہو گیا!");
+                        document.getElementById("admin-course-form").reset();
+                        await fetchCourses(); // Refresh courses list
+                    }
+                } catch(err) { alert(err.message); }
+            },
+            createLesson: async (e) => {
+                e.preventDefault();
+                const course_id = document.getElementById("adm-les-course").value;
+                const lesson_number = parseInt(document.getElementById("adm-les-num").value);
+                const title = document.getElementById("adm-les-title").value.trim();
+                const gdrive_id = document.getElementById("adm-les-gdrive").value.trim();
+                const duration = parseInt(document.getElementById("adm-les-duration").value);
+                const description = document.getElementById("adm-les-desc").value.trim();
+
+                try {
+                    const { error } = await supabaseClientInstance.from('lessons').insert([{ 
+                        course_id, lesson_number, title, google_drive_video_id: gdrive_id, estimated_duration: duration, description 
+                    }]);
+                    if (error) { alert("اپلوڈ میں ایرر ہے: " + error.message); } 
+                    else {
+                        await supabaseClientInstance.from('notifications').insert([{
+                            title: "New Module Available",
+                            message: `Lesson ${lesson_number}: ${title} is now live! Watch and complete your assignments.`,
+                            user_id: null
+                        }]);
+                        
+                        triggerToastNotification("کامیابی: لیکچر اپلوڈ ہو گیا!");
+                        document.getElementById("admin-lesson-form").reset();
+                        if(globalState.activeCourseId === course_id) { syncClassroomSyllabusEngine(); }
+                    }
+                } catch (err) {}
+            },
+            createNotification: async (e) => {
+                e.preventDefault();
+                const title = document.getElementById("adm-notif-title").value.trim();
+                const message = document.getElementById("adm-notif-message").value.trim();
+                const image_url = document.getElementById("adm-notif-image").value.trim();
+
+                try {
+                    const { error } = await supabaseClientInstance.from('notifications').insert([{
+                        title: title, message: message, image_url: image_url || null, user_id: null 
+                    }]);
+                    
+                    if (error) { alert("نوٹیفکیشن اپلوڈ میں ایرر ہے: " + error.message); } 
+                    else {
+                        triggerToastNotification("کامیابی: نوٹیفکیشن تمام سٹوڈنٹس کو بھیج دیا گیا ہے!");
+                        document.getElementById("admin-notif-form").reset();
+                    }
+                } catch (err) { alert("System Error: " + err.message); }
+            }
+        };
+
+        async function unlockAssignmentManually(lessonId) {
+            if(!confirm("کیا آپ واقعی اسائنمنٹ ان لاک کرنا چاہتے ہیں؟")) return;
+            try {
+                await supabaseClientInstance.from('lesson_progress').upsert({
+                    student_id: globalState.sessionUser.id, lesson_id: lessonId, is_completed: true
+                });
+                triggerToastNotification("اسائنمنٹ مکمل مارک ہو گئی ہے۔");
+                syncClassroomSyllabusEngine(); 
+            } catch(err) {}
+        }
+
+        // --- CLOCK CONTROLLER ---
+        function runClockEngine() {
+            setInterval(() => {
+                const now = new Date();
+                const deadline = new Date();
+                deadline.setHours(22, 0, 0, 0); 
+                let diff = deadline - now;
+                const element = document.getElementById("assignment-countdown");
+                if (!element) return;
+                if (diff < 0) {
+                    element.textContent = "Lock frame active.";
+                } else {
+                    const hrs = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+                    const mins = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+                    const secs = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+                    element.textContent = `${hrs}:${mins}:${secs} Remaining`;
+                }
+            }, 1000);
+        }
+    </script>
+
+    <footer id="main-footer" class="mt-16 bg-white border-t border-gray-100 relative overflow-hidden transition-all duration-300">
+        <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-gradient-to-b from-red-500/5 to-transparent blur-[140px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-6 pt-16 pb-8 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 xl:gap-16 pb-12 border-b border-gray-100">
+                
+                <div class="space-y-5">
+                    <div onclick="switchView('student-dashboard')" class="flex items-center space-x-3 group cursor-pointer w-fit">
+                        <div class="bg-brand-red p-2.5 rounded-xl text-white shadow-md shadow-red-500/10 transform transition-transform duration-500 group-hover:rotate-12">
+                            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-black text-lg tracking-tight text-brand-red uppercase">Education Point</span>
+                    </div>
+                    <p class="text-xs text-gray-500 leading-relaxed font-medium">
+                        Making learning simple, accessible, and effective through interactive frameworks, premium assets, and modern digital ecosystems. Dedicated to delivering practical enterprise skill sets.
+                    </p>
+                    <div class="p-4 bg-gray-50/50 border border-gray-100 rounded-2xl space-y-1.5 hover:border-red-100 transition-colors duration-300">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Founder & CEO</p>
+                        <p class="text-xs font-bold text-gray-800">Muhammad Rizwan</p>
+                        <p class="text-[11px] text-gray-500 leading-relaxed">Dedicated to making quality education accessible, providing premium tools to help students build confidence and achieve success.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Connect Matrix Link</h4>
+                    <div class="flex flex-col gap-3">
+                        <a href="https://whatsapp.com/channel/0029Vb7bYUSJUM2eWSlWfo36" target="_blank" 
+                           class="group relative w-full px-4 py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs font-bold shadow-lg shadow-emerald-600/10 transition-all duration-300 transform hover:scale-[1.01] hover:-translate-y-0.5 overflow-hidden flex items-center justify-between">
+                            <div class="flex items-center space-x-2.5 relative z-10">
+                                <div class="relative flex h-2.5 w-2.5">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+                                </div>
+                                <span class="tracking-wide">Join WhatsApp Channel</span>
+                            </div>
+                            <i data-lucide="bell-ring" class="w-4 h-4 text-emerald-100/80 animate-pulse relative z-10"></i>
+                        </a>
+                        
+                        <a href="https://wa.me/923314220506?text=Hello%20Education%20Point%20Support" target="_blank" 
+                           class="group w-full px-4 py-3.5 bg-gray-50 border border-gray-200/80 hover:border-emerald-500 hover:bg-emerald-50/30 text-gray-700 hover:text-emerald-700 rounded-xl text-xs font-bold transition-all duration-300 transform hover:scale-[1.01] flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-emerald-100 group-hover:bg-emerald-500 p-1.5 rounded-lg transition-colors duration-300 text-emerald-600 group-hover:text-white">
+                                    <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <span class="tracking-wide text-gray-600 group-hover:text-emerald-700">0331 4220506</span>
+                            </div>
+                            <span class="text-[10px] uppercase font-bold text-gray-400 group-hover:text-emerald-500 transition-colors">Direct Chat</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Syllabus Node Assets</h4>
+                    <ul class="space-y-3 text-xs font-medium text-gray-600">
+                        <li>
+                            <button onclick="switchView('classroom-portal')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                                <i data-lucide="book-open" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                                <span>High-Quality Video Lectures</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="switchView('classroom-portal')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                                <i data-lucide="file-check" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                                <span>Real-World Assignments Matrix</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="switchView('leaderboard-view')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                                <i data-lucide="trophy" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                                <span>Real-Time Scholar Rankings</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="switchView('profile-completion-view')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                                <i data-lucide="award" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                                <span>Verified Course Certificates</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">LMS User Ecosystem</h4>
+                    <ul class="space-y-3 text-xs font-medium text-gray-600">
+                        <li>
+                            <button onclick="switchView('student-dashboard')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                                <i data-lucide="layout-dashboard" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                                <span>Student Cloud Terminal</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="switchView('profile-completion-view')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                                <i data-lucide="user-cog" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                                <span>Identity Profile Context</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="switchView('leaderboard-view')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                                <i data-lucide="activity" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                                <span>Academic Performance Log</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="switchView('student-dashboard')" class="hover:text-brand-red transition-colors duration-200 flex items-center gap-2 group text-left">
+                                <i data-lucide="shield-check" class="w-4 h-4 text-gray-400 group-hover:text-brand-red transition-colors"></i> 
+                                <span>Secure Encryption Matrix</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="text-center sm:text-left space-y-1">
+                    <p class="text-[11px] font-semibold text-gray-400">&copy; 2026 Education Point Platforms. All Rights Reserved.</p>
+                    <p class="text-[9px] font-mono text-gray-400">System Core V-3.0 Multi-Course Realtime</p>
+                </div>
+            </div>
+        </div>
+    </footer> 
+    
+</body>
+</html>
