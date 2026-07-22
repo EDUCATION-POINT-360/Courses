@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta name="google-adsense-account" content="ca-pub-2204631154740736">
@@ -283,10 +283,10 @@
                             </div>
                         </div>
                         <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
-                            <div class="p-3 bg-amber-100 text-amber-600 rounded-xl"><i data-lucide="trophy" class="w-6 h-6"></i></div>
+                            <div class="p-3 bg-amber-100 text-amber-600 rounded-xl"><i data-lucide="star" class="w-6 h-6"></i></div>
                             <div>
-                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Longest Streak</p>
-                                <h3 class="text-xl font-black text-gray-800" id="stat-longest-streak">0 Days</h3>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Total XP Points</p>
+                                <h3 class="text-xl font-black text-gray-800" id="stat-xp-points">0 XP</h3>
                             </div>
                         </div>
                         <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center space-x-4">
@@ -464,7 +464,7 @@
             </div>
             <h2 class="text-3xl md:text-4xl font-black tracking-tight">Top Active Scholars</h2>
             <p class="text-amber-100 text-sm md:text-base leading-relaxed">
-                Celebrating the most dedicated students. Rankings are calculated based on your total active learning minutes.
+                Celebrating the most dedicated students. Rankings are calculated based on your total XP Points (Active Minutes + Lectures Watched).
             </p>
         </div>
         <i data-lucide="award" class="absolute -right-6 -bottom-6 w-40 h-40 text-white/10 rotate-12 pointer-events-none"></i>
@@ -1033,14 +1033,17 @@
                 
                 const { data: activity, error: actErr } = await supabaseClientInstance
                     .from('daily_activity')
-                    .select('student_id, active_minutes, last_seen');
+                    .select('student_id, active_minutes, lectures_watched, last_seen');
                 
                 if (profileErr || actErr) throw new Error("Could not fetch leaderboard data.");
                 
                 let aggregatedActivity = {};
                 activity.forEach(act => {
-                    if(!aggregatedActivity[act.student_id]) aggregatedActivity[act.student_id] = { mins: 0, last_seen: null };
-                    aggregatedActivity[act.student_id].mins += act.active_minutes || 0;
+                    if(!aggregatedActivity[act.student_id]) aggregatedActivity[act.student_id] = { xp: 0, last_seen: null };
+                    
+                    const lecturesCount = act.lectures_watched ? act.lectures_watched.length : 0;
+                    const xpPoints = (act.active_minutes || 0) + (lecturesCount * 10);
+                    aggregatedActivity[act.student_id].xp += xpPoints;
                     
                     if(!aggregatedActivity[act.student_id].last_seen || new Date(act.last_seen) > new Date(aggregatedActivity[act.student_id].last_seen)) {
                         aggregatedActivity[act.student_id].last_seen = act.last_seen;
@@ -1049,16 +1052,16 @@
 
                 let leaderboard = profiles
                     .map(p => {
-                        const acts = aggregatedActivity[p.id] || { mins: 0, last_seen: null };
+                        const acts = aggregatedActivity[p.id] || { xp: 0, last_seen: null };
                         let isOnline = false;
                         if(acts.last_seen) {
                             const diffMins = (new Date() - new Date(acts.last_seen)) / 60000;
                             if(diffMins <= 5) isOnline = true; 
                         }
-                        return { ...p, total_minutes: acts.mins, isOnline };
+                        return { ...p, total_xp: acts.xp, isOnline };
                     })
-                    .filter(p => p.total_minutes > 0)
-                    .sort((a, b) => b.total_minutes - a.total_minutes)
+                    .filter(p => p.total_xp > 0)
+                    .sort((a, b) => b.total_xp - a.total_xp)
                     .slice(0, 10);
                   
                 const list = document.getElementById('leaderboard-list');
@@ -1104,8 +1107,8 @@
                                 </div>
                             </div>
                             <div class="text-right pr-4">
-                                <span class="text-brand-red font-black text-xl tracking-tight">${user.total_minutes}</span>
-                                <span class="text-[10px] text-gray-500 block uppercase font-bold tracking-widest">Active Mins</span>
+                                <span class="text-brand-red font-black text-xl tracking-tight">${user.total_xp}</span>
+                                <span class="text-[10px] text-gray-500 block uppercase font-bold tracking-widest">XP Points</span>
                             </div>
                         </div>
                     `;
@@ -1240,7 +1243,7 @@
             const percentage = logContainer ? logContainer.watch_percentage : 0;
             updateWatchProgressBarUIState(percentage);
             
-            logLectureActivity(lesson.title);
+            logLectureActivity(lesson.title, lesson.id);
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
@@ -1273,13 +1276,16 @@
             
             const { data: activity, error } = await supabaseClientInstance
                 .from('daily_activity')
-                .select('date')
+                .select('date, active_minutes, lectures_watched')
                 .eq('student_id', globalState.sessionUser.id)
                 .order('date', { ascending: false });
 
+            let totalXP = 0;
+
             if (error || !activity || activity.length === 0) {
                 document.getElementById("stat-current-streak").textContent = "0 Days";
-                document.getElementById("stat-longest-streak").textContent = "0 Days";
+                const xpEl = document.getElementById("stat-xp-points");
+                if (xpEl) xpEl.textContent = "0 XP";
                 return;
             }
 
@@ -1298,62 +1304,37 @@
             yesterday.setDate(yesterday.getDate() - 1);
 
             let currentStreak = 0;
-            let longestStreak = 0;
-            let tempStreak = 0;
-
             const mostRecentActiveDate = normalizeDate(uniqueDates[0]);
             const isStreakActive = (mostRecentActiveDate.getTime() === today.getTime() || mostRecentActiveDate.getTime() === yesterday.getTime());
 
-            if (uniqueDates.length > 0) {
-                tempStreak = 1;
-                longestStreak = 1;
+            // Calculate XP Points
+            activity.forEach(a => {
+                const lecturesCount = a.lectures_watched ? a.lectures_watched.length : 0;
+                totalXP += (a.active_minutes || 0) + (lecturesCount * 10);
+            });
 
-                for (let i = 0; i < uniqueDates.length - 1; i++) {
-                    const current = normalizeDate(uniqueDates[i]);
-                    const next = normalizeDate(uniqueDates[i + 1]);
-                    
-                    const diffTime = Math.abs(current - next);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (uniqueDates.length > 0 && isStreakActive) {
+                let runningCurrentStreak = 0;
+                let expectedDate = mostRecentActiveDate;
 
-                    if (diffDays === 1) {
-                        tempStreak++;
-                    } else if (diffDays > 1) {
-                        if (tempStreak > longestStreak) {
-                            longestStreak = tempStreak;
-                        }
-                        tempStreak = 1; 
+                for (let i = 0; i < uniqueDates.length; i++) {
+                    const checkDate = normalizeDate(uniqueDates[i]);
+                    if (checkDate.getTime() === expectedDate.getTime()) {
+                        runningCurrentStreak++;
+                        expectedDate.setDate(expectedDate.getDate() - 1);
+                    } else {
+                        break;
                     }
                 }
-                
-                if (tempStreak > longestStreak) {
-                    longestStreak = tempStreak;
-                }
-                
-                if (isStreakActive) {
-                    let runningCurrentStreak = 0;
-                    let expectedDate = mostRecentActiveDate;
-
-                    for (let i = 0; i < uniqueDates.length; i++) {
-                        const checkDate = normalizeDate(uniqueDates[i]);
-                        if (checkDate.getTime() === expectedDate.getTime()) {
-                            runningCurrentStreak++;
-                            expectedDate.setDate(expectedDate.getDate() - 1);
-                        } else {
-                            break;
-                        }
-                    }
-                    currentStreak = runningCurrentStreak;
-                } else {
-                    currentStreak = 0;
-                }
+                currentStreak = runningCurrentStreak;
             }
 
             const streakEl = document.getElementById("stat-current-streak");
-            const longestEl = document.getElementById("stat-longest-streak");
+            const xpEl = document.getElementById("stat-xp-points");
             const attendanceEl = document.getElementById("stat-attendance-rate");
 
             if (streakEl) streakEl.textContent = `${currentStreak} Day${currentStreak !== 1 ? 's' : ''}`;
-            if (longestEl) longestEl.textContent = `${longestStreak} Day${longestStreak !== 1 ? 's' : ''}`;
+            if (xpEl) xpEl.textContent = `${totalXP} XP`;
             
             if (attendanceEl) {
                 const totalDaysActive = uniqueDates.length;
@@ -1419,20 +1400,49 @@
         
         function startRealTimeActivityTracker() { setInterval(trackActivity, 60000); }
 
-        async function logLectureActivity(lessonTitle) {
+        async function logLectureActivity(lessonTitle, lessonId) {
             if (!globalState.sessionUser) return;
             const today = new Date().toISOString().split('T')[0];
             let timeAccessed = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             let logString = `${lessonTitle} (at ${timeAccessed})`;
             
             let { data: row } = await supabaseClientInstance.from('daily_activity').select('lectures_watched').eq('student_id', globalState.sessionUser.id).eq('date', today).single();
-            let list = row ? row.lectures_watched : [];
+            let list = row && row.lectures_watched ? row.lectures_watched : [];
             let alreadyWatched = list.some(l => l.includes(lessonTitle));
 
             if (!alreadyWatched) {
                 list.push(logString);
                 await supabaseClientInstance.from('daily_activity').upsert({ student_id: globalState.sessionUser.id, date: today, lectures_watched: list }, { onConflict: 'student_id, date' });
                 fetchActivityHistory();
+                calculateAndDisplayStreak(); // Update XP Points display visually
+            }
+
+            // AUTO-UNLOCK NEXT CLASS LOGIC
+            if(lessonId) {
+                const existingProg = globalState.progressMatrix.find(p => p.lesson_id === lessonId);
+                if (!existingProg || !existingProg.is_completed) {
+                    await supabaseClientInstance.from('lesson_progress').upsert({
+                        student_id: globalState.sessionUser.id,
+                        lesson_id: lessonId,
+                        is_completed: true,
+                        watch_percentage: 100
+                    }, { onConflict: 'student_id, lesson_id' });
+                    
+                    // Update Local State directly to render real-time UI without reloading
+                    if (existingProg) {
+                        existingProg.is_completed = true;
+                        existingProg.watch_percentage = 100;
+                    } else {
+                        globalState.progressMatrix.push({
+                            student_id: globalState.sessionUser.id,
+                            lesson_id: lessonId,
+                            is_completed: true,
+                            watch_percentage: 100
+                        });
+                    }
+                    renderClassroomSyllabusTreeLayout();
+                    evaluateAnalyticsAggregatesMetricsContainers();
+                }
             }
         }
         
